@@ -1,0 +1,98 @@
+/* Global Elements */
+
+* {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  outline:none;
+}
+
+%vertical-rhythm {
+  margin-bottom: 9 / 2;
+}
+
+// Placeholder
+@include placeholder($gray_01,1.2);
+
+.firefox {
+  @include placeholder($gray_01,1.6);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+svg {
+  @extend %transition;
+  @extend %translate-3d;
+  path {
+    @extend %transition;
+  }
+}
+
+img {
+  display:block;
+  margin:0;
+  padding:0;
+  max-width:100%;
+  // outline:1px solid transparent; // Weird bug fix for all fixed elements on iOS
+  &.full {
+    width:100%;
+  }
+}
+
+a {
+  text-decoration:none;
+  color:$gray_02;
+  cursor:pointer;
+  @extend %transition;
+  &:hover {
+    outline:none;
+  }
+  &:active, &:visited, &:focus {
+    outline:none;
+  }
+}
+
+  p {
+    margin:0;
+    padding:0;
+    padding-bottom:$v_pad;
+    &:last-child {
+      padding-bottom:0;
+    }
+  }
+
+html, body {
+  -webkit-overflow-scrolling:touch;
+}
+
+html { 
+  font-size:$font_base;
+  // @include respond_to(desktop-max){
+  //   font-size:85%;
+  // }
+  // @include respond_to(desktop-large){
+  //   font-size:75%;
+  // }
+  // @include respond_to(tablet-below){
+  //   font-size:60%;
+  // }
+  // @include respond_to(mobile-large){
+  //   font-size:55%;
+  // }
+}
+
+body {
+  font-family:$font_stack;
+  color:$gray_02;
+  background:$white;
+  @extend %antialiased;
+  @include font_size($size_body,3);
+  // @include respond_to(mobile){
+  //   @include font_size(2,(2 * 1.65));
+  // }
+}
+
+

@@ -2,22 +2,25 @@
 layout: default
 ---
 
-<div class="home">
-
-  <h1 class="page-heading">Posts</h1>
-
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title | escape }}</a>
+  {% for post in site.posts limit:50 %}
+    <article class="clearfix post type-post status-publish format-standard hentry category-technology tag-medium tag-wordpress" role="article">
+      <header class="article-header">
+				<div class="post-date">{{ post.date | date: "%Y-%m-%d" }}</div>
+        <h2 class="h2">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title | escape }}</a>
         </h2>
-      </li>
+      </header>
+      <section class="entry-content entry-content-excerpt clearfix">
+        {% if post.content contains "<!-- more -->" %}
+        <p>
+			    {{ post.content | split:"<!-- more -->" | first }}
+        </p>
+		    <div class="excerpt-link-wrapper">
+			    <a href='{{post.url}}' title='Read more...'>Read more</a>
+		    </div>
+		    {% else %}
+			    {{ post.content }}
+		    {% endif %}
+      </section>
+    </article>
     {% endfor %}
-  </ul>
-
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
-
-</div>

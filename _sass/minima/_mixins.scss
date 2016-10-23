@@ -1,0 +1,362 @@
+/* Mixins - SCSS */
+
+@mixin build_columns($col_array,$col_fraction,$con_base){
+  @each $column in $col_array {
+      .span-#{$column} {
+          width:percentage(($col_fraction * $column) / $con_base);
+      }
+  }
+}
+
+@mixin rounded($val) {
+  -moz-border-radius:$val;
+  -webkit-border-radius:$val;
+  -o-border-radius:$val;
+  border-radius:$val;
+  // keeps background from busting out of border
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+}
+
+@mixin opacity($val) {
+  -moz-opacity:$val;
+  -webkit-opacity:$val;
+  -o-opacity:$val;
+  opacity:$val;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=" $val * 100 ")";
+  filter: alpha(opacity= $val * 100 );
+  zoom: 1;
+}
+
+@mixin translate($x, $y){
+  -moz-transform: translate($x, $y);
+  -webkit-transform: translate($x, $y);
+  -o-transform: translate($x, $y);
+  transform: translate($x, $y);
+}
+
+@mixin translate3d($x, $y, $z){
+  -moz-transform: translate3d($x, $y, $z);
+  -webkit-transform: translate3d($x, $y, $z);
+  -o-transform: translate3d($x, $y, $z);
+  transform: translate3d($x, $y, $z);
+}
+
+@mixin shadow($x, $y, $size, $opacity) {
+  -moz-box-shadow: $x $y $size rgba($black, $opacity);
+  -webkit-box-shadow: $x $y $size rgba($black, $opacity);
+  -o-box-shadow: $x $y $size rgba($black, $opacity);
+  box-shadow: $x $y $size rgba($black, $opacity);
+}
+
+@mixin highlight($x, $y, $size, $opacity) {
+  -moz-box-shadow: $x $y $size rgba($white, $opacity);
+  -webkit-box-shadow: $x $y $size rgba($white, $opacity);
+  -o-box-shadow: $x $y $size rgba($white, $opacity);
+  box-shadow: $x $y $size rgba($white, $opacity);
+}
+
+@mixin text_shadow($x, $y, $size, $opacity) {
+  -moz-text-shadow: $x $y $size rgba($black, $opacity);
+  -webkit-text-shadow: $x $y $size rgba($black, $opacity);
+  -o-text-shadow: $x $y $size rgba($black, $opacity);
+  text-shadow: $x $y $size rgba($black, $opacity);
+}
+
+@mixin text_highlight($x, $y, $size, $opacity) {
+  -moz-text-shadow: $x $y $size rgba($white, $opacity);
+  -webkit-text-shadow: $x $y $size rgba($white, $opacity);
+  -o-text-shadow: $x $y $size rgba($white, $opacity);
+  text-shadow: $x $y $size rgba($white, $opacity);
+}
+
+@mixin scale($size) {
+  -moz-transform:scale($size);
+  -webkit-transform:scale($size);
+  -o-transform:scale($size);
+  transform:scale($size);
+}
+
+@mixin rotate($deg) {
+  -moz-transform:rotate($deg);
+  -webkit-transform:rotate($deg);
+  -o-transform:rotate($deg);
+  -ms-transform:rotate($deg);
+  transform:rotate($deg);
+}
+
+@mixin transform_origin($val) {
+  -moz-transform-origin:$val;
+  -webkit-transform-origin:$val;
+  -o-transform-origin:$val;
+  transform-origin:$val;
+}
+
+@mixin grayscale($val){
+  -moz-filter: grayscale($val);
+  -webkit-filter: grayscale($val);
+  -o-filter: grayscale($val);
+  -ms-filter: grayscale($val);
+  filter: grayscale($val);
+  // Fixes blur on retina
+  -moz-transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+@mixin gray_bright($gray, $bright){
+  -moz-filter: grayscale($gray) brightness($bright);
+  -webkit-filter: grayscale($gray) brightness($bright);
+  -o-filter: grayscale($gray) brightness($bright);
+  -ms-filter: grayscale($gray) brightness($bright);
+  filter: grayscale($gray) brightness($bright);
+  // Fixes blur on retina
+  -moz-transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+@mixin brightness($val){
+  -moz-filter: brightness($val);
+  -webkit-filter: brightness($val);
+  -o-filter: brightness($val);
+  filter: brightness($val);
+}
+
+@mixin blur($val){
+  -moz-filter: blur($val);
+  -webkit-filter: blur($val);
+  -o-filter: blur($val);
+  filter: blur($val);
+}
+
+@mixin contrast($val){
+  -moz-filter: contrast($val);
+  -webkit-filter: contrast($val);
+  -o-filter: contrast($val);
+  filter: contrast($val);
+}
+
+@mixin mask($size, $url){
+  -webkit-mask-size:$size;
+  -moz-mask-size:$size;
+  -o-mask-size:$size;
+  mask-size:$size;
+  -webkit-mask-image:url($url);
+  -moz-mask-image:url($url);
+  -o-mask-image:url($url);
+  mask-image:url($url);
+  mask:url($url);
+}
+
+@mixin animation($name,$duration,$count,$timing){
+  -webkit-animation-name:$name;
+  -webkit-animation-duration:$duration;
+  -webkit-animation-iteration-count:$count;
+  -webkit-animation-timing-function:$timing;
+  -moz-animation-name:$name;
+  -moz-animation-duration:$duration;
+  -moz-animation-iteration-count:$count;
+  -moz-animation-timing-function:$timing;
+  animation-name:$name;
+  animation-duration:$duration;
+  animation-iteration-count:$count;
+  animation-timing-function:$timing;
+}
+
+@mixin animation_delay($duration){
+  -webkit-animation-delay:$duration;
+  -moz-animation-delay:$duration;
+  animation-delay:$duration;
+}
+
+@mixin transition_delay($duration){
+  -webkit-transition-delay:$duration;
+  -moz-transition-delay:$duration;
+  transition-delay:$duration;
+}
+
+@mixin transition($property,$duration,$ease) {
+  -moz-transition:$property $duration $ease;
+  -webkit-transition:$property $duration $ease;
+  -o-transition:$property $duration $ease;
+  transition:$property $duration $ease;
+}
+
+@mixin percent_width($width, $con_size) {
+  width:percentage($width/$con_size);
+}
+
+@mixin gradient_vert($bottom, $top){
+  background: $bottom; /* Old browsers */
+  background: -moz-linear-gradient(top,  $top 0%, $bottom 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$top), color-stop(100%,$bottom));
+  background: -webkit-linear-gradient(top,  $top 0%,$bottom 100%);
+  background: -o-linear-gradient(top,  $top 0%,$bottom 100%);
+  background: -ms-linear-gradient(top,  $top 0%,$bottom 100%);
+  background: linear-gradient(to bottom,  $top 0%,$bottom 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#{ie-hex-str($top)}', endColorstr='#{ie-hex-str($bottom)}');/*For IE7-8-9*/
+}
+
+@mixin gradient_vert_middle($bottom, $top){
+  background: $bottom; /* Old browsers */
+  background: -moz-linear-gradient(top,  $top 60%, $bottom 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$top), color-stop(100%,$bottom));
+  background: -webkit-linear-gradient(top,  $top 60%,$bottom 100%);
+  background: -o-linear-gradient(top,  $top 60%,$bottom 100%);
+  background: -ms-linear-gradient(top,  $top 60%,$bottom 100%);
+  background: linear-gradient(to bottom,  $top 60%,$bottom 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#{ie-hex-str($top)}', endColorstr='#{ie-hex-str($bottom)}');/*For IE7-8-9*/
+}
+
+@mixin gradient_vert_top($bottom, $top){
+  background: $bottom; /* Old browsers */
+  background: -moz-linear-gradient(top,  $top 20%, $bottom 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$top), color-stop(100%,$bottom));
+  background: -webkit-linear-gradient(top,  $top 20%,$bottom 100%);
+  background: -o-linear-gradient(top,  $top 20%,$bottom 100%);
+  background: -ms-linear-gradient(top,  $top 20%,$bottom 100%);
+  background: linear-gradient(to bottom,  $top 20%,$bottom 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#{ie-hex-str($top)}', endColorstr='#{ie-hex-str($bottom)}');/*For IE7-8-9*/
+}
+
+@mixin gradient_horz($left, $right){
+  background-image: -webkit-gradient(linear,left top,right top,color-stop(0, $left),color-stop(1, $right));
+  background-image: -o-linear-gradient(right, $left 0%, $right 100%);
+  background-image: -moz-linear-gradient(right, $left 0%, $right 100%);
+  background-image: -webkit-linear-gradient(right, $left 0%, $right 100%);
+  background-image: -ms-linear-gradient(right, $left 0%, $right 100%);
+  background-image: linear-gradient(to right, $left 0%, $right 100%);
+}
+
+@mixin columns($count, $gap){
+  column-count: $count;
+  column-gap: $gap;
+  -moz-column-count: $count;
+  -moz-column-gap: $gap;
+  -webkit-column-count: $count;
+  -webkit-column-gap: $gap;
+}
+
+@mixin flex($val){
+  -webkit-box-flex:$val;      /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex:$val;         /* OLD - Firefox 19- */
+  -webkit-flex:$val;          /* Chrome */
+  -ms-flex:$val;              /* IE 10 */
+  flex:$val;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+
+@mixin box($align, $pack){
+  -webkit-box-align:$align;
+  -webkit-box-pack:$pack;
+  -moz-box-align:$align;
+  -moz-box-pack:$pack;
+  -ms-flex-align:$align;
+  -ms-flex-pack:$pack;
+  box-align:$align;
+  box-pack:$pack;
+}
+
+@mixin box_align($align, $justify){
+  -webkit-align-items:$align;
+  -webkit-justify-content:$justify;
+  -moz-align-items:$align;
+  -moz-justify-content:$justify;
+  -ms-align-items:$align;
+  -ms-justify-content:$justify;
+  align-items:$align;
+  justify-content:$justify;
+}
+
+@mixin respond_to($media) {
+  @if $media == webkit {
+    @media screen and (-webkit-min-device-pixel-ratio:0){  @content; }
+  }
+  @else if $media == mobile-small {
+    @media only screen and (max-width: $break_small) { @content; }
+  }
+  @else if $media == mobile {
+    @media only screen and (max-width: $break_med) { @content; }
+  }
+  @else if $media == tablet-portrait {
+    @media only screen and (min-width: $break_small + 1) and (max-width: $break_med_large - 1) { @content; }
+  }
+  @else if $media == tablet {
+    @media only screen and (min-width: $break_med_large + 1) and (max-width: $break_large - 1) { @content; }
+  }
+  @else if $media == tablet-below {
+    @media only screen and (max-width: $break_large - 1) { @content; }
+  }
+  @else if $media == desktop {
+    @media only screen and (min-width: $break_large + 1) and (max-width: $break_large_extra - 1) { @content; }
+  }
+  @else if $media == desktop-above {
+   @media only screen and (min-width: $break_large) { @content; }
+  }
+  @else if $media == desktop-large {
+   @media only screen and (min-width: $break_large_extra + 1) and (max-width: $break_large_max - 1) { @content; }
+  }
+  @else if $media == desktop-max {
+    @media only screen and (min-width: $break_large_max) { @content; }
+  }
+  @else if $media == desktop-max-below {
+    @media only screen and (max-width: $break_large_max) { @content; }
+  }
+  @else if $media == retina {
+    @media only screen and (min--moz-device-pixel-ratio: 2),
+    only screen and (-o-min-device-pixel-ratio: 2/1),
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (min-device-pixel-ratio: 2) { @content; }
+  }
+  @else if $media == retina-mobile {
+    @media only screen and (min-width : $break_mobile_small) and (max-width : $break_mobile_large) and (-webkit-min-device-pixel-ratio : 1.5),
+    only screen and (min-device-pixel-ratio : 1.5) { @content; }
+  }
+}
+
+@mixin font_size($size:1.6, $line: $size * 1.5){
+  font-size:   ($size * 10) + px;
+  line-height: ($line * 10) + px;
+  font-size:   $size + rem;
+  line-height: $line + rem;
+}
+
+@mixin placeholder($color, $line_height){
+  ::-webkit-input-placeholder { 
+    // Stuff here
+    color:$color;
+    line-height:$line_height;
+    @include opacity(1);
+  }
+  :-moz-placeholder { 
+      // Stuff here
+      color:$color;
+      line-height:$line_height;
+      @include opacity(1);
+  }
+  ::-moz-placeholder { 
+      // Stuff here
+      color:$color;
+      line-height:$line_height;
+      @include opacity(1);
+  }
+  :-ms-input-placeholder {
+      // Stuff here
+      color:$color;
+      line-height:$line_height;
+      @include opacity(1);
+  }
+}
+
+@mixin clear() {
+  &:before, &:after {
+    content: "\0020";
+    display: block;
+    height: 0;
+    overflow: hidden;
+  }
+  &:after {
+    clear: both;
+  }
+}

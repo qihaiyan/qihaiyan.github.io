@@ -1,0 +1,278 @@
+/* UI - Lists, Links, Inputs, etc. */
+
+input, textarea {
+  @extend %transition;
+  &:hover, &:active, &:focus {
+    outline:none;
+  }
+}
+
+// Scrollbar
+%custom-scrollbar {
+    &::-webkit-scrollbar              {
+        @include rounded(0);
+        -webkit-appearance: none;
+        background:lighten($gray_04, 19%);
+        width:5px;
+        height:400px;
+        position:relative;
+        right:-10px;
+    }
+    &::-webkit-scrollbar-button       {
+        // @include rounded(0);
+        // background:$gray_04;
+    }
+    &::-webkit-scrollbar-track        {
+        // @include rounded(0);
+        // background:lighten($gray_04, 10%);
+    }
+    &::-webkit-scrollbar-track-piece  {
+        // background:$gray_04;
+    }
+    &::-webkit-scrollbar-thumb        {
+        // background:$gray_04;
+        @include rounded(0);
+        background:lighten($gray_04, 10%);
+    }
+    &::-webkit-scrollbar-corner       {
+        
+    }
+    &::-webkit-resizer                {
+        
+    }
+}
+
+// Link classes
+
+%link-serif {
+    font-family:$font_stack;
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+    // border-bottom:1px solid $orange;
+    &:hover {
+        // color:$orange;
+    }
+}
+
+%link-sans {
+    font-family:$font_heading;
+    color:$gray_01;
+    border:none;
+    &:hover {
+        // color:$orange;
+    }
+}
+
+.link-back-top {
+    display:none;
+    font-family:$font_heading;
+    color:$gray_04;
+    cursor:pointer;
+    &:hover {
+        color:$gray_02;
+    }
+}
+
+// Lists
+
+.list-header-social {
+    @extend %clearfix;
+    margin:0;
+    padding:0;
+    li {
+        margin:0;
+        padding:0;
+        list-style:none;
+        float:left;
+    }
+    .link-icon {
+        @extend %moz-grayscale-100;
+        @include gray_bright(1,1.6);
+        width:30px;
+        height:30px;
+        display:block;
+        margin-right:$g_pad_s / 1.5;
+        &:hover {
+            @extend %moz-grayscale-0;
+            @include gray_bright(0,1);
+        }
+    }
+    @each $social in $social-array {
+        .icon-#{$social} {
+            background:url(../img/ui/ui-icon-#{$social}.png) no-repeat;
+            @include respond_to(retina){
+                background:url(../img/ui/ui-icon-#{$social}@2x.png) no-repeat;
+                background-size:30px 30px;
+            }
+        }
+    }
+    // Facebook
+    .icon-facebook {
+        @include gray_bright(1,2.4);
+    }
+    // Twitter
+    .icon-twitter {
+        @include gray_bright(1,1.2);
+    }
+    // Linkedin
+    .icon-linkedin {
+        @include gray_bright(1,1.5);
+    }
+    // Google
+    .icon-google {
+        @include gray_bright(1,2);
+    }
+    // Subscribe list under social
+    &.in-article-footer {
+        .link-icon {
+            @include gray_bright(1,1.1);
+            margin-left:-5px;
+            margin-right:$g_pad_s - 2;
+            @include respond_to(mobile){
+                margin-left:0;
+            }
+            &:hover {
+                @include gray_bright(0,0.8);
+            }
+        }
+    }
+}
+
+// Inputs
+
+.input {
+    @extend %transition;
+    @extend %border-box;
+    @extend %heading-max;
+    @include rounded(0);
+    font-family:$font_stack;
+    font-weight:300;
+    outline:none;
+    border:none;
+    margin:0;
+    padding:0;
+    background:$white;
+    color:$gray_01;
+    width:100%;
+    border-bottom:2px solid $gray_04;
+    &:focus, &:active {
+        // border-color:$orange;
+    }
+}
+
+.firefox .input {
+    line-height:1.5;
+}
+
+.input-search-submit {
+    display:none;
+}
+
+.input-search-label {
+    @include font_size($size_h2,$size_h2);
+    font-family:$font_heading;
+    color:$gray_02;
+    display:block;
+    font-weight:300;
+    padding-top:$g_pad_s;
+    @include respond_to(mobile){
+        @include font_size($size_medium,$size_medium);
+    }
+}
+
+// Sidebar & main navigation search
+
+.sidebar-search, .nav-main-search {
+    #searchform {
+        // display:none;
+        // position:absolute;
+        // z-index:25;
+        // top:0;
+        // left:0;
+        padding-bottom:$v_pad;
+    }
+    .searchform-menu {
+        padding-bottom:$v_pad - 3;
+    }
+    .widgettitle {
+        display:none;
+    }
+    .icon-search, .icon-search-close {
+        // @extend %transition-fast;
+        @include opacity(0.3);
+        display:block;
+        width:24px;
+        height:24px;
+        position:absolute;
+        overflow:hidden;
+        top:3px;
+        @include respond_to(mobile){
+            top:5px;
+        }
+        &:hover {
+            @include opacity(1);
+        }
+        &.is-hidden {
+            @include opacity(0);
+        }
+    }
+    .icon-search {
+        z-index:1;
+        left:64px;
+        background:url('../img/bg/bg-search-sprite.png') no-repeat;
+        @include respond_to(mobile){
+            left:70px;
+        }
+        @include respond_to(retina){
+            background:url('../img/bg/bg-search-sprite@2x.png') no-repeat;
+            background-size:48px 24px;
+        }
+    }
+    .icon-search-close {
+        cursor:pointer;
+        z-index:20;
+        right:-4px;
+        background:url('../img/bg/bg-search-sprite.png') no-repeat -24px 0px;
+        @include respond_to(retina){
+            background:url('../img/bg/bg-search-sprite@2x.png') no-repeat -24px 0px;
+            background-size:48px 24px;
+        }
+    }
+    .input {
+        @include font_size($size_body,0.8);
+        position:relative;
+        z-index:10;
+        background:transparent;
+        font-family:$font_heading;
+        font-weight:500;
+        border-color:transparent;
+        padding:0 20px 6px 0;
+        // @include respond_to(mobile){
+        //     @include font_size(2,0.8);
+        // }
+        &:focus {
+            // border-color:$orange;
+        }
+    }
+    .input-search-label {
+        @include font_size($size_medium,$size_medium);
+        display:none;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

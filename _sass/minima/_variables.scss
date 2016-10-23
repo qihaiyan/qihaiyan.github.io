@@ -1,0 +1,56 @@
+ /* Variables - SCSS */
+
+// Fonts
+$font_heading               : "colfax-web", Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font_stack                 : "calluna", Cambria, "Hoefler Text", Utopia, "Liberation Serif", "Nimbus Roman No9 L Regular", Times, "Times New Roman", serif;
+
+// Colors
+$white                      : #ffffff;
+$black                      : #000000;
+$orange                     : #f78f1e;
+$gray_01                    : #303030;
+$gray_02                    : #404040;
+$gray_03                    : #919191;
+$gray_04                    : #c3c3c3;
+
+// Font Sizes
+$font_base                  : 62.5%;
+$size_max                   : 6;
+$size_h1					: 3;
+$size_h2					: 2.4;
+$size_h3					: 2;
+$size_copy                  : 2;
+$size_body					: 1.8;
+$size_medium 				: 1.4;
+$size_small 				: 1.2;
+
+// Media Queries
+$break_small                : 480px;
+$break_med                  : 600px;
+$break_med_large            : 800px;
+$break_large                : 1200px;
+$break_large_extra          : 1500px;
+$break_large_max            : 2000px;
+$break_mobile_small         : 320px;
+$break_mobile_large         : 580px;
+
+// Layout dimensions
+$wrapper_size               : 1200px;
+$container_size             : 1200px;
+$container_base             : 1200;
+
+// Vertcial Rythm
+$v_pad_l                    : 48px;
+$v_pad                      : 24px;
+$v_pad_s                    : 12px;
+
+// Layout Margins
+$g_pad_l                    : 80px;
+$g_pad                      : 40px;
+$g_pad_s			        : 20px;
+
+// Arrays
+$social_array               : 'twitter','linkedin','google','facebook','mail','rss';
+$columns                    : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
+$columns_count              : 12;
+$column_fraction            : $container_base / $columns_count; // con size / col num

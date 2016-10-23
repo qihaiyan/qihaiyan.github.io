@@ -1,0 +1,23 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+
+  <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+
+  <link rel="stylesheet" href="{{ "/css/main.css" | relative_url }}">
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ "/feed.xml" | relative_url }}">
+  
+  <style type="text/css">.tk-calluna{font-family:"calluna",serif;}.tk-colfax-web{font-family:"colfax-web",sans-serif;}</style>
+  <style type="text/css">@font-face{font-family:calluna;src:url(https://use.typekit.net/af/7af719/000000000000000000014869/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:400;font-style:normal;}@font-face{font-family:calluna;src:url(https://use.typekit.net/af/c1183a/00000000000000000001486a/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}@font-face{font-family:calluna;src:url(https://use.typekit.net/af/3b4f9b/00000000000000000001486d/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:700;font-style:normal;}@font-face{font-family:calluna;src:url(https://use.typekit.net/af/32278a/00000000000000000001486e/27/l?subset_id=2&fvd=i7) format("woff2");font-weight:700;font-style:italic;}@font-face{font-family:calluna;src:url(https://use.typekit.net/af/70a977/000000000000000000014868/27/l?subset_id=2&fvd=n3) format("woff2");font-weight:300;font-style:normal;}@font-face{font-family:colfax-web;src:url(https://use.typekit.net/af/ad0399/000000000000000000014a26/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}@font-face{font-family:colfax-web;src:url(https://use.typekit.net/af/3c6f17/000000000000000000014a24/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:400;font-style:normal;}</style>
+  
+  {% if jekyll.environment == 'production' and site.google_analytics %}
+  {% include google-analytics.html %}
+  {% endif %}
+</head>

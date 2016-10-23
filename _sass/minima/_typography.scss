@@ -1,0 +1,76 @@
+/* Typography */
+
+h1, h2, h3, h4 {
+    @extend %antialiased;
+    font-family:$font_heading;
+    font-weight:500;
+    margin:0;
+    padding:0 0 $v_pad 0;
+    color:$gray_01;
+    position:relative;
+    @include respond_to(tablet-portrait){
+        padding:0 0 $v_pad;
+    }
+    @include respond_to(mobile){
+        padding:0 0 $v_pad;
+    }
+}
+
+h1 {
+    @include font_size($size_h1,4.2);
+    margin-top:3px;
+    @include respond_to(mobile){
+        margin-top:-6px;
+        padding-bottom:$v_pad + 2;
+        @include font_size(3,3.6);
+    }
+}
+
+h2 {
+    @include font_size($size_h2,3.6);
+}
+
+.h1 {
+    @extend h1;
+}
+
+// Headings
+
+%heading-small {
+    @include font_size($size_medium,$size_medium);
+    font-family:$font_heading;
+    font-weight:500;
+    color:$gray_04;
+    padding-bottom:$v_pad;
+    @include respond_to(mobile){
+        padding-bottom:$v_pad;
+    }
+}
+
+%heading-max {
+    @include font_size($size_max,$size_max);
+    @include respond_to(mobile){
+        @include font_size(($size_max / 1.15),($size_max / 1.15));
+    }
+}
+
+%type-count {
+    @include font_size($size_medium,$size_medium);
+    font-family:$font_heading;
+    color:$gray_04;
+    font-weight:300;
+}
+
+%type-intro {
+    @include font_size($size_h2,3.6);
+    font-family:$font_heading;
+    font-weight:400;
+    a {
+        font-family:$font_heading;
+    }
+}
+
+.heading-small {
+    @extend %heading-small;
+}
+
