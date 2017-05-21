@@ -4,6 +4,16 @@ title:  "SpringBoot框架中REST接口的异常处理方法"
 date:   2017-05-21 18:28:00 +0800
 categories: oauth2
 ---
+接口异常处理的核心内容就是根据具体异常返回指定的错误信息：
+1. HTTP 状态码
+2. 返回报文体中的错误描述
+
+异常处理方式常用的有3种，建议用第3种方式进行集中的异常处理：
+1. 在异常类中定义状态码和错误信息，适用于指定异常的处理
+2. 在REST接口类中定义状态码和错误信息，适用于指定接口类的处理
+3. 通过@ControllerAdvice注解定义全局状态码和错误信息
+4. 通过SpringBoot的MessageSource来进行多语言支持的处理
+<!-- more -->
 # 一. HTTP状态码
 1. 100 到199 的状态码代表信息，描述对于请求的处理。
 2. 200 到 299 的状态码表示客户端发来的请求已经被接收并正确处理。
@@ -247,5 +257,4 @@ class GlobalControllerExceptionHandler {
 3. 通过@ControllerAdvice注解定义全局状态码和错误信息
 4. 通过SpringBoot的MessageSource来进行多语言支持的处理
 
-<!-- more -->
 
