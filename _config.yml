@@ -10,7 +10,7 @@ excerpt_separator: <!--more-->
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
 # When testing locally leave blank or use http://localhost:4000
 
-url: http://springcamp.cn
+url: //springcamp.cn
 
 # draw your top menu here
 # each item must have a title and a url.
@@ -29,7 +29,7 @@ menu:
 # Owner/author information
 owner:
   name:           海思
-  site:           http://springcamp.cn
+  site:           //springcamp.cn
   avatar:         images/avatar.jpg
   bio:            "业精于勤而荒于嬉，行成于思而毁于随"
   email:          haiyan_qi@hotmail.com
