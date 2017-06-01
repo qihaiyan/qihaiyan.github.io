@@ -1,12 +1,5 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem "minima"
-
-require 'json'
-require 'open-uri'
-versions = JSON.parse(open('https://pages.github.com/versions.json').read)
-
-gem 'github-pages', versions['github-pages']
-
-gem 'jekyll-admin', group: :jekyll_plugins
-gem 'jekyll-archives'
+gem 'octopress'
+gem 'jekyll-paginate'
+gem 'neo-hpstr-jekyll-theme'

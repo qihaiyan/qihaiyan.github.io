@@ -2,7 +2,8 @@
 layout: post
 title:  "SpringBoot框架中REST接口的异常处理方法"
 date:   2017-05-21 18:28:00 +0800
-categories: oauth2
+tags: [spring-boot]
+categories: [spring-boot]
 ---
 # 一. HTTP状态码
 1. 100 到199 的状态码代表信息，描述对于请求的处理。
@@ -12,8 +13,6 @@ categories: oauth2
 5. 500 到 599 的状态码表示服务器在处理客户端请求时发生了内部错误。
 
 在SpringBoot中，如果接口中有未处理的异常，会返回500，表示内部服务器错误。简单来说，如果后台程序没有对异常做特殊处理，只要有异常抛出，客户端收到的状态码就是500。
-
-<!-- more -->
 
 # 二. 在异常类中定义状态码
 我们可以通过使用@ResponseStatus注解在异常类中定义返回的状态码。
