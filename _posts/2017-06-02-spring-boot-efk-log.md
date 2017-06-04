@@ -13,6 +13,8 @@ categories: [spring-boot]
 
 对应的有一个示例项目在github上，地址：[fluentd-boot](https://github.com/qihaiyan/fluentd-boot)。
 
+<!--more-->
+
 2.安装docker
 
 2.1.设置yum镜像
