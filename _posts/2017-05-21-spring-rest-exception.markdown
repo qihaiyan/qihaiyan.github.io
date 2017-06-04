@@ -17,7 +17,7 @@ categories: [spring-boot]
 # 二. 在异常类中定义状态码
 我们可以通过使用@ResponseStatus注解在异常类中定义返回的状态码。
 
-<!--more-->
+<!-- more -->
 
 例如：
 
