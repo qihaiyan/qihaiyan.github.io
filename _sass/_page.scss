@@ -172,9 +172,11 @@ header .entry-meta {
 			margin: 0 auto 30px auto;
 		}
 	}
+	footer{
 	.entry-meta {
 		margin: 50px 30px 30px;
 		text-align: center;
+	}
 	}
 }
 .entry-tags {
@@ -472,7 +474,7 @@ ul.social-buttons li a:active {
 	height: 50px;
 	@media #{$medium} {
 		background-color: $header-color;
-		min-height: 300px;
+		//min-height: 250px;
 	}
 }
 .header-toggle{
@@ -496,13 +498,13 @@ ul.social-buttons li a:active {
 		text-align: center;
 	}
 	h2 {
-		color: $white;
+		color: rgba(255,255,255,0.75);
 	}
 	h1 {
 		font-weight: 700;
 		margin-bottom: 20px;
 		@include font-rem(32);
-		color: $white;
+		color: rgba(255,255,255,0.75);
 		text-shadow: 1px 1px 4px rgba($base-color, 0.6);
 		display: block;
 		a {
@@ -522,7 +524,7 @@ ul.social-buttons li a:active {
 		}
 	}
 	p {
-		color: $white;
+		color: rgba(255,255,255,0.75);
 	}
 }
 .header-menu {
