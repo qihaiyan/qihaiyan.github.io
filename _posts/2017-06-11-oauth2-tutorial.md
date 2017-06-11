@@ -1,19 +1,36 @@
-#OAuth 2.0 
+---
+layout: post
+title:  "OAuth 2.0 教程"
+date:   2017-06-11 20:22:00 +0800
+tags: [oauth2]
+categories: [oauth2]
+---
+
 （原文：http://tutorials.jenkov.com/oauth2/index.html）
 
 [demo: https://github.com/qihaiyan/ng-boot-oauth](https://github.com/qihaiyan/ng-boot-oauth)
-##OAuth 2.0 教程
+
+## OAuth 2.0 教程
+
 OAuth 2.0 是一个开放的标准协议，允许应用程序访问其它应用的用户授权的数据。例如：一个游戏可以获取Facebook中的用户信息，或者是一个地理位置程序可以获取Foursquare的用户信息等。
 这儿是一个示例图：
 ![Alt text](http://tutorials.jenkov.com/images/oauth2/introduction.png)
 首先用户进入游戏的web应用，该应用要求用户通过Facebook账户登录，并定向到Facebook的登录界面，用户登录Facebook后，会重定向到之前的游戏应用。此时该应用就获取到了用户在Facebook的用户数据以及授权信息。
-###OAuth 2.0 用例
+
+### OAuth 2.0 用例
+
+<!-- more -->
+
 OAuth 2.0既可以用于在某个应用内访问其它应用的用户信息，又可以提供用户授权服务供其它应用调用。
 OAuth 2.0是OAuth 1.0的替代，因为OAuth 1.0太复杂了，比如OAuth 1.0要求使用证书等。OAuth 2.0更加简单，不要求使用证书，仅使用SSL/TLS。
-###OAuth 2.0 规范
+
+### OAuth 2.0 规范
+
 这个教程的目的是提供一个OAuth 2.0协议的概览以帮助理解，而不是涵盖此协议的所有细节。
 如果你计划实现一个OAuth 2.0协议，最好是去阅读规范的详细内容，规范的地址：[http://tools.ietf.org/html/draft-ietf-oauth-v2-23](http://tools.ietf.org/html/draft-ietf-oauth-v2-23)
-##OAuth 2.0 概述
+
+## OAuth 2.0 概述
+
 在之前的介绍中我们提到，OAuth 2.0是一个开放标准，其允许应用程序访问其它应用的用户授权的数据。现在我们来介绍这个协议是如何工作的，以及规范中提到的各种概念。
 OAuth 2.0	提供了不同的方式去获取权限用语访问资源服务器中的资源。现在介绍其中最安全和最常用的使用方式：一个web应用如何请求访问另一个web应用的访问权限。
 下面的示例图描述了整个处理过程：
@@ -23,7 +40,9 @@ OAuth 2.0	提供了不同的方式去获取权限用语访问资源服务器中�
 第三步，认证服务器将用户重定向到客户端应用提供的URL。这个重定向URL一般会在认证服务器中进行注册，注册是由客户端应用的所有者进行的。注册完成后，认证服务器会生成一个client id和client password。重定向后的URL会有一个code参数，该参数是此次认证的一个标识。
 第四步，重定向完成后，用户会进入重定向后的页面，同时客户端应用会在后台与认证服务器进行通讯，发送client id,client password和上一步获取到的code参数到认证服务器，认证服务器返回access token给客户端应用。
 一旦客户端应用拿到了access token，就可以用这个token去访问Facebook提供的相关资源。
-##OAuth 2.0 应用角色
+
+## OAuth 2.0 应用角色
+
 OAuth 2.0定义了以下应用角色：
 
     Resource Owner （资源所有者）
@@ -38,7 +57,7 @@ Resource Server（资源服务器）是存放资源的服务，例如Facebook或
 Client Application（客户端应用）会请求访问存放在资源服务器上的资源，这些资源是属于Resource Owner（资源所有者）的。
 
 Authorization Server（认证服务器）对Client Application（客户端应用）进行授权，授权通过后客户端应用才可以访问资源服务器上的资源。认证服务器和资源服务器可以是同一个应用，也可以分开独立部署。
-##OAuth 2.0 客户端类型
+## OAuth 2.0 客户端类型
 OAuth 2.0规范定义了2种客户端类型：
 
 * 私密型
@@ -47,6 +66,7 @@ OAuth 2.0规范定义了2种客户端类型：
 私密型客户端会保存client password。认证服务器会给每一个客户端应用生成一个client password，认证服务器通过该client password来识别该客户端应用是一个注册过的应用，而不是其它的欺诈程序。一个web应用可以是私密性客户端，只有系统管理员可以登录这个应用的服务器和查看client password。
 
 公开型客户端不会保存client password。例如移动APP或桌面程序，如果client password被保存在此类应用中，就可以通过破解手段拿到client password，这是非常不安全的。
+
 ### 客户端应用表现形式
 
 *    Web Application （web应用）
@@ -54,6 +74,7 @@ OAuth 2.0规范定义了2种客户端类型：
 *    Native （原生应用）
 
 #### Web Application（web应用）
+
 web程序运行在web服务器上。web应用做认证时用到的client password是保存在服务器上的，因此是私密的。下面是一个web应用的示例图：
 
 ![Alt text](http://tutorials.jenkov.com/images/oauth2/overview-client-types-1.png)
