@@ -6,7 +6,7 @@ tags: [oauth2]
 categories: [oauth2]
 ---
 
-（原文：http://tutorials.jenkov.com/oauth2/index.html）
+（原文：/oauth2/index.html）
 
 [demo: https://github.com/qihaiyan/ng-boot-oauth](https://github.com/qihaiyan/ng-boot-oauth)
 
@@ -14,7 +14,9 @@ categories: [oauth2]
 
 OAuth 2.0 是一个开放的标准协议，允许应用程序访问其它应用的用户授权的数据。例如：一个游戏可以获取Facebook中的用户信息，或者是一个地理位置程序可以获取Foursquare的用户信息等。
 这儿是一个示例图：
-![Alt text](http://tutorials.jenkov.com/images/oauth2/introduction.png)
+
+![oauth2 introduce](/images/oauth2-intro.png)
+
 首先用户进入游戏的web应用，该应用要求用户通过Facebook账户登录，并定向到Facebook的登录界面，用户登录Facebook后，会重定向到之前的游戏应用。此时该应用就获取到了用户在Facebook的用户数据以及授权信息。
 
 ### OAuth 2.0 用例
@@ -34,7 +36,7 @@ OAuth 2.0是OAuth 1.0的替代，因为OAuth 1.0太复杂了，比如OAuth 1.0�
 在之前的介绍中我们提到，OAuth 2.0是一个开放标准，其允许应用程序访问其它应用的用户授权的数据。现在我们来介绍这个协议是如何工作的，以及规范中提到的各种概念。
 OAuth 2.0	提供了不同的方式去获取权限用语访问资源服务器中的资源。现在介绍其中最安全和最常用的使用方式：一个web应用如何请求访问另一个web应用的访问权限。
 下面的示例图描述了整个处理过程：
-![Alt text](http://tutorials.jenkov.com/images/oauth2/overview-1.png)
+![Alt text](/images/oauth2/overview-1.png)
 首先用户访问客户端应用，在这个应用中会有一个“通过Facebook登录”的按钮。
 第二步，当用户点击这个按钮时，用户被重定向到认证服务器（Facebook）。然后用户开始登录，登录成功后会被询问客户端应用是否可以使用他的用户信息。用户点击确认按钮。
 第三步，认证服务器将用户重定向到客户端应用提供的URL。这个重定向URL一般会在认证服务器中进行注册，注册是由客户端应用的所有者进行的。注册完成后，认证服务器会生成一个client id和client password。重定向后的URL会有一个code参数，该参数是此次认证的一个标识。
@@ -49,7 +51,7 @@ OAuth 2.0定义了以下应用角色：
     Resource Server （资源服务器）
     Client Application （客户端应用）
     Authorization Server （认证服务器）
-![Alt text](http://tutorials.jenkov.com/images/oauth2/overview-roles.png)
+![Alt text](/images/oauth2/overview-roles.png)
 Resrouce Owner（资源所有者）是数据的所有者。例如：Facebook或Google上的一个用户就是一个Resrouce Owner。他们所拥有的资源就是用户数据。示例图中的那个用户的图标代表的就是Resrouce Owner。Resrouce Owner也可以是一个应用程序。
 
 Resource Server（资源服务器）是存放资源的服务，例如Facebook或Google就是Resource Server。
@@ -77,15 +79,15 @@ OAuth 2.0规范定义了2种客户端类型：
 
 web程序运行在web服务器上。web应用做认证时用到的client password是保存在服务器上的，因此是私密的。下面是一个web应用的示例图：
 
-![Alt text](http://tutorials.jenkov.com/images/oauth2/overview-client-types-1.png)
+![Alt text](/images/oauth2/overview-client-types-1.png)
 #### User Agent Application（富web客户端）
 富web客户端应用是指由javascript构建的web应用，浏览器是客户端代理。这类应用的特点是，程序是存放在web服务器上的，但是运行时，浏览器下载javascript程序到本地，直接在浏览器中执行，例如那些用javascript开发的网页版游戏。下面是一个富web客户端的示例图：
 
-![Alt text](http://tutorials.jenkov.com/images/oauth2/overview-client-types-2.png)
+![Alt text](/images/oauth2/overview-client-types-2.png)
 #### Native（原生应用）
 （注：这里指没有后端服务器的应用，一次所有的数据和配置只能存放在客户端程序中）
 原生应用包括移动APP和桌面程序。原生应用直接安装在用户的设备上（电脑或手机、平板），client password会保存在用户的设备里。下面是一个原生应用的示例图：
-![Alt text](http://tutorials.jenkov.com/images/oauth2/overview-client-types-3.png)
+![Alt text](/images/oauth2/overview-client-types-3.png)
 #### Hybrid（混合应用）
 这类应用通常是将原生应用和web应用的开发技术混合在一起，也会有对应的后端服务器。OAuth 2.0规范中并没有提及此类应用，此类应用可以灵活选用上述三种认证类型中的任何一种。
 ##OAuth 2.0 认证
@@ -126,13 +128,13 @@ Authorization Code（授权码）的认证过程如下：
 7. 认证服务器对收到的数据进行校验，通过后发送access token给客户端应用。
 8. 这时客户端应用就可以用接收到的access token去资源服务器访问相关资源。下面是一个示例图：
 
-![Alt text](http://tutorials.jenkov.com/images/oauth2/authorization-auth-code.png)
+![Alt text](/images/oauth2/authorization-auth-code.png)
 #### Implicit（简化模式）
 Implicit（简化模式）与Authorization Code（授权码模式）类似，区别仅在于当用户成功登录之后，重定向到客户端应用时，access token会直接返回给客户端应用。
 这意味着access token在客户端应用中是可见的。而Authorization Code（授权码模式），access token是在web服务器中的，对客户端来说不可见。这是这两种模式的最大区别。
 并且，客户端应用只发送client id到认证服务器。如果连同client password一起发送的话，client password需要存储在客户端应用中，这会是一个安全隐患，很容易通过破解手段拿到存放在客户端应用程序中的client password。下面是一个示例图：
 
-![Alt text](http://tutorials.jenkov.com/images/oauth2/authorization-implicit.png)
+![Alt text](/images/oauth2/authorization-implicit.png)
 #### Resource Owner Password Credentials（用户密码模式）
 Resource Owner Password Credentials（密码模式）允许客户端应用直接使用用户的用户名和密码。例如用户可以直接在客户端应用中录入Twitter的用户名和密码。
 只有在充分信任客户端应用的情况下，才能使用密码模式。（因为用户名和密码是在客户端应用中录入的，因此客户端应用可以获取并保存用户的用户名和密码）。
@@ -148,7 +150,7 @@ OAuth 2.0定义了节点集合。一个节点一般是web服务器上的一个UR
 
 认证节点和Token节点在认证服务器上，重定向节点在客户端应用上。示例图如下：
 
-![Alt text](http://tutorials.jenkov.com/images/oauth2/endpoints.png)
+![Alt text](/images/oauth2/endpoints.png)
 
 OAuth 2.0规范并没有对节点的URL做出明确的定义，不同的实现会提供不同的URL。
 ### 认证节点
