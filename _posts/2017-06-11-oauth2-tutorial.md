@@ -90,7 +90,8 @@ web程序运行在web服务器上。web应用做认证时用到的client passwor
 ![Alt text](/images/oauth2/overview-client-types-3.png)
 #### Hybrid（混合应用）
 这类应用通常是将原生应用和web应用的开发技术混合在一起，也会有对应的后端服务器。OAuth 2.0规范中并没有提及此类应用，此类应用可以灵活选用上述三种认证类型中的任何一种。
-##OAuth 2.0 认证
+
+## OAuth 2.0 认证
 
 *    Client ID, Client Secret and Redirect URI
 *    Authorization Grant
