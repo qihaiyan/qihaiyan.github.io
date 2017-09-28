@@ -82,4 +82,4 @@ network.publish_host: data-ip
 
 启动步骤同主节点。
 
-主节点和数据节点都启动完成后，在主节点服务器上执行 `curl http://10.164.196.218:9200/_cat/nodes` 命令可以看到集群中节点的状态。
+主节点和数据节点都启动完成后，在主节点服务器上执行 `curl http://master-ip:9200/_cat/nodes` 命令（将命令中的master-ip修改为主节点的机器ip）可以看到集群中节点的状态。
