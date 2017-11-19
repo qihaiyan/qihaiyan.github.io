@@ -51,13 +51,13 @@ $(document).ready(function() {
 // header
 $(document).ready(function(e) {
   $(window).scroll(function(){
-    var header = $('.header-menu');
-    var scroll = $(window).scrollTop();
-    if(scroll > 300){
-      header.attr('class', 'header-menu header-menu-overflow');
-    } else {
-      header.attr('class', 'header-menu header-menu-top');
-    }
+    // var header = $('.header-menu');
+    // var scroll = $(window).scrollTop();
+    // if(scroll > 300){
+    //   header.attr('class', 'header-menu header-menu-overflow');
+    // } else {
+    //   header.attr('class', 'header-menu header-menu-top');
+    // }
   });
 });
 
