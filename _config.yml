@@ -22,7 +22,7 @@ menu:
   - title: 'Home'
     url: '/'
   - title: 'Tags'
-    url: '/tags'
+    url: '/tags/'
     ype: 'tags'
   - title: 'Categories'
     url: '/categories'
@@ -67,7 +67,7 @@ sass:
   style: compressed
 
 # https://github.com/mojombo/jekyll/wiki/Permalinks
-permalink:   https:/:categories/:title/
+permalink:   /:categories/:title/
 
 # Amount of post to show on home page
 paginate: 5
