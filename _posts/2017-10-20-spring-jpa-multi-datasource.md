@@ -2,8 +2,8 @@
 layout: post
 title:  "SpringBoot项目中的多数据源支持"
 date:   2017-10-20 10:00:00 +0800
-tags: [spring-boot]
-categories: [spring-boot]
+tags: [spring,JPA]
+categories: [spring]
 ---
 ## 1.概述
 
