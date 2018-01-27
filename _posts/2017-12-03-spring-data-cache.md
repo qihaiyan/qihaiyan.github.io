@@ -7,7 +7,7 @@ categories: [spring]
 ---
 ## 1.概述
 
-在系统中有效的利用redis缓存可以很好的提升系统性能，特别是对于查询操作，可以有效的减少数据库压力。
+在应用中有效的利用redis缓存可以很好的提升系统性能，特别是对于查询操作，可以有效的减少数据库压力。
 
 具体的代码参照该 [示例项目](https://github.com/qihaiyan/boot-multi-datasource)
 
@@ -22,6 +22,24 @@ SpringBoot会自动引入redis相关的jar包。加入该引用后，需要在�
 ## 3.通过注解启用缓存
 
 在SpringBoot中启用redis非常简单，只需要在Application主类上添加```@EnableCaching```注解，之后在需要启用缓存的查询方法上添加```@Cacheable```注解。
+
+```java
+@SpringBootApplication
+@EnableCaching
+public class DemoApplication implements CommandLineRunner{
+...
+```
+
+<!-- more -->
+
+查询接口：
+
+```java
+public interface TestRepository extends JpaRepository<Test, Integer> {
+    @Cacheable(value = "testCache")
+    public Test findOne(Integer id);
+}
+```
 
 实体类需要实现Serializable接口，否则程序会报错，因为无法把java对象序列化到redis中。SpringBoot中redis默认使用DefaultSerializer，这个用的是jdk自身的序列化方法。
 
