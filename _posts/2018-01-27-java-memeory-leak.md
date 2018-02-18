@@ -33,6 +33,8 @@ for (int i = 0; i < 1000000; i++) { list.add(random.nextDouble()); }
 
 因此需要特别注意静态成员的使用方式，避免静态成员引用大对象或集合类型的对象（如ArrayList等）。
 
+<!-- more -->
+
 #### 2.2 String的intern方法
 
 在大字符串上调用String.intern() 方法，intern()会将String放在jvm的内存池中（PermGen ），而jvm的内存池是不会被gc的。因此如果大字符串调用intern()方法后，会产生大量的无法gc的内存，导致内存泄漏。
