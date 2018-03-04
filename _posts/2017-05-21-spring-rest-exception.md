@@ -3,7 +3,7 @@ layout: post
 title:  "SpringBoot框架中REST接口的异常处理方法"
 date:   2017-05-21 18:28:00 +0800
 tags: [spring]
-categories: [spring]
+categories: [spring-boot]
 ---
 # 一. HTTP状态码
 1. 100 到199 的状态码代表信息，描述对于请求的处理。

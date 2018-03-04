@@ -3,7 +3,7 @@ layout: post
 title:  "SpringBoot应用基于docker和EFK的日志处理"
 date:   2017-06-02 22:28:00 +0800
 tags: [spring]
-categories: [spring]
+categories: [spring-boot]
 ---
 
 1.概述
