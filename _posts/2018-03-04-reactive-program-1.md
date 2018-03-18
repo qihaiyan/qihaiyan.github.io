@@ -105,4 +105,4 @@ Reactive技术的热度在不断提升，是因为该技术可以帮助我们节
 
 ## 5. 总结
 
-此文从概念上介绍了Reactive编程，在下一节中我们看一些具体的代码示例。最重要的是，我们会告诉你何时选择Reactive技术，何时选择现有的技术。
+此文从概念上介绍了Reactive编程，在[下一节](https://springcamp.cn/spring-boot/reactive-program-2)中我们看一些具体的代码示例。最重要的是，我们会告诉你何时选择Reactive技术，何时选择现有的技术。
