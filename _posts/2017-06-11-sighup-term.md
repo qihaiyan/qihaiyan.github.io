@@ -2,7 +2,7 @@
 layout: post
 title:  "程序常驻后台运行的原理和方法"
 date:   2017-06-11 21:28:00 +0800
-tags: [linux]
+tags: [linux,featured]
 categories: [linux]
 image: assets/images/sighup.png
 ---

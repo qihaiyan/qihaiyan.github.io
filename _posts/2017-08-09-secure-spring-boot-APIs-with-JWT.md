@@ -2,7 +2,7 @@
 layout: post
 title:  "用JWT技术为SpringBoot的API增加授权保护"
 date:   2017-06-11 21:28:00 +0800
-tags: [spring,jwt]
+tags: [spring,jwt,featured]
 categories: [spring-boot]
 image: assets/images/jwt.png
 ---

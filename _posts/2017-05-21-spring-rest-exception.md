@@ -2,7 +2,7 @@
 layout: post
 title:  "SpringBoot框架中REST接口的异常处理方法"
 date:   2017-05-21 18:28:00 +0800
-tags: [spring]
+tags: [spring,featured]
 categories: [spring-boot]
 ---
 # 一. HTTP状态码
