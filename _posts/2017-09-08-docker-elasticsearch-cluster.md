@@ -4,6 +4,7 @@ title:  "用docker搭建elasticsearch集群"
 date:   2017-09-08 21:00:00 +0800
 tags: [docker,elasticsearch]
 categories: [docker]
+image: assets/images/elasticsearch.png
 ---
 ## 概述
 

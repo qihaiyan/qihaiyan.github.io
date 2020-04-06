@@ -4,6 +4,7 @@ title:  "SpringBoot项目中使用redis缓存"
 date:   2017-12-03 15:15:00 +0800
 tags: [spring,redis]
 categories: [spring-boot]
+image: assets/images/cache.png
 ---
 ## 1.概述
 

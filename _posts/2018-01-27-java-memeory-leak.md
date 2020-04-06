@@ -4,6 +4,7 @@ title:  "如何避免java程序内存泄漏"
 date:   2018-1-27 19:28:00 +0800
 tags: [java]
 categories: [java]
+image: assets/images/memoryleak.png
 ---
 虽然jvm有垃圾回收机制，如果程序编写不注意某些特定规则，仍然会导致java程序内存泄漏，最终可能出现OutOfMemory异常。
 
