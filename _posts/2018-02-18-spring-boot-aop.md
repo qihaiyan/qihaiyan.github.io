@@ -3,7 +3,7 @@ layout: post
 title:  "SpringBoot项目中使用AOP"
 date:   2018-2-18 21:31:00 +0800
 tags: [spring]
-categories: [spring-boot]
+categories: [spring boot]
 image: assets/images/aop.png
 ---
 ## 1.概述

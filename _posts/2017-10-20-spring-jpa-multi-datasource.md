@@ -3,7 +3,7 @@ layout: post
 title:  "SpringBoot项目中的多数据源支持"
 date:   2017-10-20 10:00:00 +0800
 tags: [spring,featured]
-categories: [spring-boot]
+categories: [spring boot]
 image: assets/images/datasource.jpg
 ---
 ## 1.概述
