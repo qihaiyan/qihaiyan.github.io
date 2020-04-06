@@ -2,8 +2,9 @@
 layout: post
 title:  "程序常驻后台运行的原理和方法"
 date:   2017-06-11 21:28:00 +0800
-tags: [linux]
+tags: [linux,sticky]
 categories: [linux]
+image: assets/images/sighup.png
 ---
 
 linux中进程组织结构为session包含一个前台进程组及一个或多个后台进程组，一个进程组包含多个进程。

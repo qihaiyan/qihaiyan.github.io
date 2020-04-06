@@ -1,91 +1,55 @@
-title:            springcamp
-description:      Describe your website here.
+# Site
+name: '海思'
+description: 'my technical blog.'
+logo: 'assets/images/logo.png'
+favicon: 'assets/images/favicon.ico'
+baseurl: ''
+email: 'haiyan_qi@hotmail.com'
 
-# put your disqus here
-disqus_shortname:
-# netease_shortname: hiease
-reading_time:     true # if true, shows the estimated reading time for a post
-words_per_minute: 20
-logo:             images/logo.png # logo visible in the topbar
-excerpt_separator: <!-- more -->
-# Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
-# When testing locally leave blank or use http://localhost:4000
+include: ["_pages"]
+permalink: /:title/
 
-url: https://springcamp.cn
+# Plugins
+plugins: 
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-paginate
+  - jekyll-seo-tag
+  
+authors:
+    qihaiyan:
+      name:           qihaiyan
+      site:           https://springcamp.cn
+      avatar:         assets/images/avatar1.jpg
+      bio:            "业精于勤而荒于嬉，行成于思而毁于随"
+      email:          haiyan_qi@hotmail.com
+      github:         https://github.com/qihaiyan
+ 
+# Defaults
+defaults:
 
-# draw your top menu here
-# each item must have a title and a url.
-#   To list post categories. use type: 'categories'
-#   To create sub categories. add a submenu item
-# See the example
-menu:
-  - title: 'Home'
-    url: '/'
-  - title: 'Tags'
-    url: '/tags/'
-    ype: 'tags'
-  - title: 'Categories'
-    url: '/categories/'
-    type: 'categories'
-
-# Owner/author information
-owner:
-  name:           海思
-  site:           https://springcamp.cn
-  avatar:         images/avatar.jpg
-  bio:            "业精于勤而荒于嬉，行成于思而毁于随"
-  email:          haiyan_qi@hotmail.com
-  # GitHub nick for use in follow button in author block.
-  github: qihaiyan
-
-# Twitter account associated with the site if different from owner/author twitter account.
-# Used in Twitter cards.
-twitter: 
-
-# Social networking links used in author block underneath posts. Update and remove as you like.
-social:
-  - title: "github"
-    url: "https://github.com/qihaiyan"
-
-# Background image to be tiled on all pages
-background:
-
-# Analytics and webmaster tools stuff goes here
-google_analytics: false
-google_verify: false
-# https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
-bing_verify:
-
-# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone:    Asia/Shanghai
-locale:      zh_CN
-future:      true
+  # all posts
+  - scope:
+      path: "_posts"
+    values:
+      layout: post
+      author: qihaiyan
+      avatar: /assets/images/avatar1.jpg
+      
+  # all pages
+  - scope:
+      path: "_pages"
+    values:
+      layout: page
+      
+# Syntax
+markdown: kramdown
 highlighter: rouge
-markdown:    kramdown
-sass:
-  sass_dir: _sass
-  style: compressed
 
-# https://github.com/mojombo/jekyll/wiki/Permalinks
-permalink:   /:categories/:title/
+# Paginate
+paginate: 10
 
-# Amount of post to show on home page
-paginate: 5
 
-# if true, shows the floatting share buttons
-float_share: false
 
-# Octopress
-# Default extensions
-post_ext: md
-page_ext: md
-# Found in _templates/
-post_layout: post
-page_layout: page
-# Format titles with titlecase?
-titlecase: true
-
-include: [".htaccess"]
-exclude: ["demo/*", "lib", "config.rb", "Capfile", "config", "Gemfile", "Gemfile.lock", "README.md", "LICENSE", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules"]
-gems: [jekyll-paginate]
-#theme: neo-hpstr-jekyll-theme
+# Exclude metadata and development time dependencies (like Grunt plugins)
+exclude: [README.markdown, package.json, grunt.js, Gruntfile.js, Gruntfile.coffee, node_modules]

@@ -3,7 +3,8 @@ layout: post
 title:  "Reactive编程（一）:Reactive编程的背景"
 date:   2018-3-4 14:38:00 +0800
 tags: [spring,java]
-categories: [spring-boot]
+categories: [spring boot]
+image: assets/images/background.jpg
 ---
 
 Reactive编程很有趣，现在也有各种各样的讨论，概念上不是很容易理解。本文会以具体的形式介绍相关的概念。Reactive编程跟并发和高性能在概念上有一些重合，但在原理上完全不同。Reactive编程跟函数式编程是非常类似的。一些人认为Reactive编程并不是什么新概念，他们在日常工作中经常使用（例如javascript）。另一些人认为这是微软做出的新发明（Reactive这个名字最早来源于C#）。在java编程中最近也有了类似的技术（参见[Reactive Streams initiative](http://www.reactive-streams.org/)）。在何时和何处使用Reactive编程这个问题上很容易犯错误。

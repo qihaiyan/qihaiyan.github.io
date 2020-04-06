@@ -3,7 +3,8 @@ layout: post
 title:  "Reactive编程（二）:代码演示"
 date:   2018-3-18 14:38:00 +0800
 tags: [spring,java]
-categories: [spring-boot]
+categories: [spring boot]
+image: assets/images/code.jpg
 ---
 
 书接上文 [Reactive编程](https://springcamp.cn/spring-boot/reactive-program-1/) ，我们继续用真实的代码来解释一些概念。我们会更进一步理解Reactive的与众不同以及它的功能。这些例子很抽象，但能够让我们更进一步理解用到的API和编程风格，真实的感受它的与众不同。我们将会看到Reactive的核心元素，学习如何控制数据流，如果需要的话还会用到后台线程进行处理。
