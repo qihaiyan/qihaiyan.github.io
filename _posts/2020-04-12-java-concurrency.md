@@ -8,6 +8,7 @@ image: assets/images/java-concurrency.jpg
 ---
 
 常用的java并发编程技术。
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-currency](https://github.com/qihaiyan/springcamp/tree/master/spring-currency)
 
 ## 一、概述
 
@@ -414,4 +415,4 @@ ist<Long> prices2 = Stream.of("1", "2", "3")
                 .collect(Collectors.toList());
 ```
 
-这样写看上去更简洁，但是存在严重的问题。因为对于每一个元素，在第一个map生成Completable后，会立即执行join阻塞操作，相当于变成了串行。
+这样写看上去更简洁，但是存在严重的问题。因为对于每一个元素，在第一个map生成CompletableFuture后，会立即执行join阻塞操作，相当于变成了串行。
