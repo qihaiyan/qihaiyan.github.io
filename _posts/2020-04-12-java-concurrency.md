@@ -318,7 +318,7 @@ public static Long getPrice(String prod) {
     }
 ```
 
-1. supplyAsync：该方法用于创建一个异步任务
+### 1. supplyAsync：该方法用于创建一个异步任务
 
 ```java
 ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -328,7 +328,7 @@ CompletableFuture<Long> future = CompletableFuture.supplyAsync(() -> getPrice("a
 
 supplyAsync是一个工厂方法，该方法会返回一个CompletableFuture对象，入参是 Supplier 或者 Runnable 的实现类，可以用Lambda表达式来表示。同时指定了executor作为执行用的线程池。
 
-2. thenAcceptAsync：该方法接收CompletableFuture的执行结果，将结果作为输入执行指定的方法
+### 2. thenAcceptAsync：该方法接收CompletableFuture的执行结果，将结果作为输入执行指定的方法
 
 ```java
 future.thenAccept(p -> {
@@ -338,7 +338,7 @@ future.thenAccept(p -> {
 
 将第一步中的返回结果（getPrice的返回值）作为输入执行操作。
 
-3. thenApply：该方法接收CompletableFuture的执行结果进行计算，返回一个新的CompletableFuture，类似于stream的map操作。
+### 3. thenApply：该方法接收CompletableFuture的执行结果进行计算，返回一个新的CompletableFuture，类似于stream的map操作。
 
 ```java
 CompletableFuture<String> result = future.thenApply(p -> p + "1");
@@ -346,7 +346,7 @@ CompletableFuture<String> result = future.thenApply(p -> p + "1");
 
 该步操作将第一步中的```CompletableFuture<Long>``` 转换为了 ```CompletableFuture<String>```。
 
-4. thenCompose：用于组合2个CompletableFuture，第一个的计算结果作为第二个的输入。
+### 4. thenCompose：用于组合2个CompletableFuture，第一个的计算结果作为第二个的输入。
 
 ```java
 CompletableFuture<Long> future1 = CompletableFuture
@@ -359,7 +359,7 @@ CompletableFuture<String> result = future1.thenCompose(
 );
 ```
 
-5. thenCombine： 将两个CompletableFuture的计算结果做进一步的计算
+### 5. thenCombine： 将两个CompletableFuture的计算结果做进一步的计算
 
 ```java
 CompletableFuture<Long> future1 = CompletableFuture.supplyAsync(() -> getPrice("combine1"));
@@ -369,7 +369,7 @@ CompletableFuture<Long> result = future1.thenCombine(future2, (f1, f2) -> f1 + f
 
 这段代码会在future1和future2都计算完成后，把两个future的计算结果进行相加，返回新的CompletableFuture。
 
-6. exceptionally： 异常处理
+### 6. exceptionally： 异常处理
 
 exceptionally是CompletableFuture最简便的一种异常处理方法。该方法会在异常发生后返回一个默认值。
 
@@ -393,7 +393,7 @@ try {
 }
 ```
 
-7. 并行执行CompletableFuture
+### 7. 并行执行CompletableFuture
 
 假设我们有一个数组，数组中的每一项都需要调用getPrice方法获取价格，可以采用stream和CompletableFuture组合使用的方式。
 
