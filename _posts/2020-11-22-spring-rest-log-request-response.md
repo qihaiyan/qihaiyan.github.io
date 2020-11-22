@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "spring打印接口请求和响应"
+title:  "spring打印http接口请求和响应"
 date:   2020-11-22 11:50:00 +0800
 tags: [spring,java]
 categories: [spring boot]
