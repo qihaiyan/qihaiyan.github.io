@@ -7,156 +7,98 @@ categories: [spring boot]
 image: assets/images/threadblock.jpg
 ---
 
-在程序日志中打印出接口请求和响应的内容是一个基本的技术需求。如果在每个接口中实现请求响应的日志打印，程序编写会很繁琐，我们可以利用spring提供的机制，集中处理接口请求响应的日志打印。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-rest-log-request-response](https://github.com/qihaiyan/springcamp/tree/master/spring-rest-log-request-response)
+Spring自带线程池使用很方便，不过在相对复杂的并发编程场景中，使用时还是需要根据使用场景仔细考虑配置，否则可能会遇到本文中提及的坑。
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-taskexecutor-block](https://github.com/qihaiyan/springcamp/tree/master/spring-taskexecutor-block)
 
 ## 一、概述
 
-基于spring提供的机制，有3种方法可以实现接口请求响应日志的打印，分别是CommonsRequestLoggingFilter、HandlerInterceptor、RequestBodyAdviceAdapter。
+spring自带线程池有2个核心配置，一个是线程池的大小，一个是队列的大小。
+ThredPoolTaskExcutor的处理流程：
+新建线程并处理请求，直到线程数大小等于corePoolSize
+将请求放入workQueue中，线程池中的空闲线程去workQueue中取任务并处理
+当workQueue满时，就新建线程并处理请求，当线程池子大小大小等于maximumPoolSize时，会用RejectedExecutionHandler来做拒绝处理
+
+Reject策略有四种：
+(1)AbortPolicy策略，是默认的策略，拒绝请求并抛出异常RejectedExecutionException。
+(2)CallerRunsPolicy策略 ,由调用线程执行任务.
+(3)DiscardPolicy策略，拒绝请求但不抛出异常.
+(4)DiscardOldestPolicy策略，丢弃最早进入队列的任务.
 
 <!-- more -->
 
-## 二、修改日志级别打印请求参数
+## 二、多个异步处理共用同一个线程池的异常情况
 
-通过设置 web 的日志级别为 DEBUG，spring会自己打印请求参数。该方法打印的内容覆盖了后面介绍的所有方法中日志的内容，如果不需要做定制打印，并且不介意打印的日志级别是DEBUG，那就足够用了。
-
-``` yml
-logging:
-  level:
-    root: INFO
-    web: DEBUG
-```
-
-## 三、使用 CommonsRequestLoggingFilter 打印请求参数
-
-CommonsRequestLoggingFilter的使用比较简单，只需要实现一个logFilter的bean即可。
-只不过logFilter的日志级别是debug，需要在日志配置文件中，将CommonsRequestLoggingFilter类的日志级别设置为debug级别。
-同时在生产环境的日志文件中打印debug日志不符合规范。
+模拟一个耗时的操作，该操作通过Async注解设置为异步执行。Async会默认使用名为taskExecutor的线程池。该操作返回一个CompletableFuture，后续的处理中会等待该异步操作执行完成。
 
 ``` java
-@Bean
-public CommonsRequestLoggingFilter logFilter() {
-    CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
-
-    loggingFilter.setIncludeQueryString(true);
-    loggingFilter.setIncludePayload(true);
-    loggingFilter.setMaxPayloadLength(2048);
-
-    return loggingFilter;
-}
-```
-
-## 四、使用 HandlerInterceptor 打印请求参数
-
-HandlerInterceptor 可以获取到接口执行过程中的 HttpServletRequest 和 HttpServletResponse 信息，因此能够打印出接口请求响应内容。
-
-```java
-@Component
-public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
-
-    @Override
-    public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) {
-
-        ServletRequest servletRequest = new ContentCachingRequestWrapper(request);
-        Map<String, String[]> params = servletRequest.getParameterMap();
-
-        // 从 request 中读取请求参数并打印
-        params.forEach((key, value) -> log.info("logInterceptor " + key + "=" + Arrays.toString(value)));
-        // 避免从 inputStream 中读取body并打印
-
-        return true;
-    }
-}
-```
-
-这种方式有个缺陷，对于 application/json 这种请求参数放在body中的方式，需要通过InputStream读取内容，而InputStream只能被读取一次，
-一旦在 HandlerInterceptor 中进行了 InputStream 的读取操作，后续的处理就读取不到InputStream中的内容，这是一个很严重的问题。
-因此 HandlerInterceptor 不能用于打印请求中的body，可以改造一下该方法，只打印get请求参数，post的请求参数用下面介绍的 RequestBodyAdviceAdapter 方法打印。
-
-```java
-@Slf4j
-@Component
-public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
-
-    @Override
-    public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) {
-        if (DispatcherType.REQUEST.name().equals(request.getDispatcherType().name())
-                && request.getMethod().equals(HttpMethod.GET.name())) {
-
-            ServletRequest servletRequest = new ContentCachingRequestWrapper(request);
-            Map<String, String[]> params = servletRequest.getParameterMap();
-
-            // 从 request 中读取请求参数并打印
-            params.forEach((key, value) -> log.info("logInterceptor " + key + "=" + Arrays.toString(value)));
-            // 避免从 inputStream 中读取body并打印
-
+@Service
+public class DelayService {
+    @Async
+    public CompletableFuture<String> delayFoo(String v) {
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return true;
+        System.out.println(v + " runs in thread: " + Thread.currentThread().getName());
+        return CompletableFuture.completedFuture(v);
     }
 }
 ```
 
-## 五、使用 RequestBodyAdviceAdapter 打印请求参数
+设置线程池，将线程池大小设置为2，队列设置为一个比线程池大的值，此处为10。当队列大小大于等于线程池大小时，就会出现本文遇到的程序阻塞的问题。
 
-RequestBodyAdviceAdapter 封装了 afterBodyRead 方法，在这个方法中可以通过 Object body 参数获取到body的内容。
-
-```java
-@ControllerAdvice
-public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
-
-    @Autowired
-    HttpServletRequest httpServletRequest;
-
-    @Override
-    public boolean supports(MethodParameter methodParameter, Type type, 
-                            Class<? extends HttpMessageConverter<?>> aClass) {
-        return true;
-    }
-
-    @Override
-    public Object afterBodyRead(Object body, HttpInputMessage inputMessage,
-                                MethodParameter parameter, Type targetType,
-            Class<? extends HttpMessageConverter<?>> converterType) {
-
-        // 打印body内容
-
-        return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
+``` java
+    @Bean
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("taskExecutor-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.initialize();
+        return executor;
     }
 }
 ```
 
-## 六、使用 ResponseBodyAdvice 打印响应内容
+并发处理：
 
-ResponseBodyAdvice 和 RequestBodyAdviceAdapter 同属于 ControllerAdvice。ResponseBodyAdvice 封装了 beforeBodyWrite 方法，可以获取到响应报文。
-
-```java
-@ControllerAdvice
-public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object> {
-
-    @Override
-    public boolean supports(MethodParameter methodParameter,
-                            Class<? extends HttpMessageConverter<?>> aClass) {
-        return true;
-    }
-
-    @Override
-    public Object beforeBodyWrite(Object body,
-                                  MethodParameter methodParameter,
-                                  MediaType mediaType,
-                                  Class<? extends HttpMessageConverter<?>> aClass,
-                                  ServerHttpRequest serverHttpRequest,
-                                  ServerHttpResponse serverHttpResponse) {
-
-        if (serverHttpRequest instanceof ServletServerHttpRequest &&
-                serverHttpResponse instanceof ServletServerHttpResponse) {
-            // 打印响应body
+``` java
+    while (true) {
+        try {
+            CompletableFuture.runAsync(
+                () -> CompletableFuture.allOf(Stream.of("1", "2", "3")
+                .map(v -> delayService.delayFoo(v))
+                .toArray(CompletableFuture[]::new)) // 将数组中的任务提交到线程池中
+                .join(), taskExecutor); // 通过join方法等待任务完成
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
-        return body;
-    }
-}
 ```
+
+## 三、问题分析
+
+程序启动后，很快就会阻塞，通过jstack查看线程状态，发现taskExecutor-1、taskExecutor-2、main三个线程都处在WAITING状态，等待CompletableFuture.join方法执行完成。
+
+``` java
+priority:5 - threadId:0x00007f7f8eb36800 - nativeId:0x3e03 - nativeId (decimal):15875 - state:WAITING
+stackTrace:
+java.lang.Thread.State: WAITING (parking)
+at sun.misc.Unsafe.park(Native Method)
+- parking to wait for <0x00000007961fe548> (a java.util.concurrent.CompletableFuture$Signaller)
+at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+at java.util.concurrent.CompletableFuture$Signaller.block(CompletableFuture.java:1693)
+at java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3323)
+at java.util.concurrent.CompletableFuture.waitingGet(CompletableFuture.java:1729)
+at java.util.concurrent.CompletableFuture.join(CompletableFuture.java:1934)
+```
+
+通过分析程序的执行过程，不难发现阻塞的原因。CompletableFuture.join方法用于无法执行完成。
+由于线程池设置的Queue的大小大于线程池的大小，当线程池满时，delayFoo方法会处在队列中，随着程序的执行，总会出现线程池中都是CompletableFuture.join方法，队列中都是delayFoo方法的情况。
+这时候线程中的join方法在等待队列中的delayFoo方法执行完成，而队列中的delayFoo方法由于等不到可用线程，又没办法正常执行，整个程序就陷入了死锁状态。
+
+解决的方法也很简单，就是将队列的大小设置为小于线程数的大小，这样队列中的方法就有机会拿到线程，从而不会因为线程占满而进入死锁状态。
