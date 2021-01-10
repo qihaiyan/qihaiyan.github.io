@@ -104,6 +104,6 @@ at java.util.concurrent.CompletableFuture.join(CompletableFuture.java:1934)
 通过分析程序的执行过程，不难发现阻塞的原因。
 由于线程池设置的Queue的大小大于线程池的大小，当线程池满时，delayFoo方法会处在队列中，随着程序的执行，总会出现线程池中都是CompletableFuture.join方法，队列中都是delayFoo方法的情况。
 
-这时候线程中的join方法在等待队列中的delayFoo方法执行完成，而队列中的delayFoo方法由于等不到可用线程而执行，整个程序就陷入了死锁状态。
+这时候线程中的join方法在等待队列中的delayFoo方法执行完成，而队列中的delayFoo方法由于等不到可用线程而无法执行，整个程序就陷入了死锁状态。
 
 解决的方法也很简单，就是将队列的大小设置为小于线程数的大小，这样队列中的方法就有机会拿到线程，从而不会因为线程占满而进入死锁状态。
