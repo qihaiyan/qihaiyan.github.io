@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "spring并发编程CompletableFuture使用不当导致的死锁问题"
+title:  "spring自带线程池使用不当导致的死锁问题"
 date:   2021-01-10 18:50:00 +0800
 tags: [spring,java]
 categories: [spring boot]
@@ -14,14 +14,18 @@ Spring自带线程池使用很方便，不过在相对复杂的并发编程场�
 
 spring自带线程池有2个核心配置，一个是线程池的大小，一个是队列的大小。
 ThredPoolTaskExcutor的处理流程：
-新建线程并处理请求，直到线程数大小等于corePoolSize
-将请求放入workQueue中，线程池中的空闲线程去workQueue中取任务并处理
-当workQueue满时，就新建线程并处理请求，当线程池子大小大小等于maximumPoolSize时，会用RejectedExecutionHandler来做拒绝处理
+新建线程并处理请求，直到线程数大小等于corePoolSize；
+将请求放入workQueue中，线程池中的空闲线程去workQueue中取任务并处理；
+当workQueue满时，就新建线程并处理请求，当线程池子大小大小等于maximumPoolSize时，会用RejectedExecutionHandler来做拒绝处理。
 
 Reject策略有四种：
+
 (1)AbortPolicy策略，是默认的策略，拒绝请求并抛出异常RejectedExecutionException。
+
 (2)CallerRunsPolicy策略 ,由调用线程执行任务.
+
 (3)DiscardPolicy策略，拒绝请求但不抛出异常.
+
 (4)DiscardOldestPolicy策略，丢弃最早进入队列的任务.
 
 <!-- more -->
@@ -97,8 +101,9 @@ at java.util.concurrent.CompletableFuture.waitingGet(CompletableFuture.java:1729
 at java.util.concurrent.CompletableFuture.join(CompletableFuture.java:1934)
 ```
 
-通过分析程序的执行过程，不难发现阻塞的原因。CompletableFuture.join方法用于无法执行完成。
+通过分析程序的执行过程，不难发现阻塞的原因。
 由于线程池设置的Queue的大小大于线程池的大小，当线程池满时，delayFoo方法会处在队列中，随着程序的执行，总会出现线程池中都是CompletableFuture.join方法，队列中都是delayFoo方法的情况。
-这时候线程中的join方法在等待队列中的delayFoo方法执行完成，而队列中的delayFoo方法由于等不到可用线程，又没办法正常执行，整个程序就陷入了死锁状态。
+
+这时候线程中的join方法在等待队列中的delayFoo方法执行完成，而队列中的delayFoo方法由于等不到可用线程而执行，整个程序就陷入了死锁状态。
 
 解决的方法也很简单，就是将队列的大小设置为小于线程数的大小，这样队列中的方法就有机会拿到线程，从而不会因为线程占满而进入死锁状态。
