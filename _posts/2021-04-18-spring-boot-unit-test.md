@@ -4,7 +4,7 @@ title:  "springboot单元测试技术"
 date:   2021-04-18 17:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]
-image: assets/images/threadblock.jpg
+image: assets/images/ut.jpg
 ---
 
 整个软件交付过程中，单元测试阶段是一个能够最早发现问题，并且可以重复回归问题的阶段，在单元测试阶段做的测试越充分，软件质量就越能得到保证。
