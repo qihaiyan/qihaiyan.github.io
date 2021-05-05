@@ -63,8 +63,10 @@ class MyServiceImpl implements MyService {
 ```
 
 以上xml代码声明了myServiceXml这个bean，```script-source```指定了这个bean的来源是```classpath:MyServiceImpl.groovy```这个脚本文件。将classpath替换为file，可以指定任一位置的脚本文件。
+
 ```refresh-check-delay```定义了脚本的刷新间隔，当脚本内容发生变化后，可以自动刷新脚本的内容。
-```lang:property```这个标签可以对bean的属性进行初始化赋值。我们分别用xml和groovy两种声明bean的方式给myProp这个属性赋值不同的初始值，在后续的演示代码中可以看到。
+
+lang:property这个标签可以对bean的属性进行初始化赋值。我们分别用xml和groovy两种声明bean的方式给myProp这个属性赋值不同的初始值，在后续的演示代码中可以看到。
 
 ### 2.2、通过groovy配置的方式声明groovy中实现的bean
 
