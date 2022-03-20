@@ -78,7 +78,64 @@ spring:
     password:
 ```
 
-这样，当我们的单元测试程序中调用```http://someservice/foo```接口时，就会固定返回```{"code": 200}```这个返回值，而不是真正的去访问这个第三方接口。
+单元测试程序中可以直接进行数据库操作：
+
+``` java
+MyDomain myDomain = new MyDomain();
+myDomain.setName("test");
+myDomain = myDomainRepository.save(myDomain);
+```
+
+当我们调用接口查询数据库中的记录时，能够正确查询到结果：
+
+``` java
+MyDomain resp = testRestTemplate.getForObject("/db?id=" + myDomain.getId(), MyDomain.class);
+System.out.println("db result : " + resp);
+assertThat(resp.getName(), is("test"));
+```
+
+当接口返回Page分页数据时，需要做一点特殊处理，否则会报json序列化错误。
+
+定义自己的Page类：
+
+``` java
+    public class TestRestResponsePage<T> extends PageImpl<T> {
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public TestRestResponsePage(@JsonProperty("content") List<T> content,
+                                @JsonProperty("number") int number,
+                                @JsonProperty("size") int size,
+                                @JsonProperty("pageable") JsonNode pageable,
+                                @JsonProperty("empty") boolean empty,
+                                @JsonProperty("sort") JsonNode sort,
+                                @JsonProperty("first") boolean first,
+                                @JsonProperty("totalElements") long totalElements,
+                                @JsonProperty("totalPages") int totalPages,
+                                @JsonProperty("numberOfElements") int numberOfElements) {
+
+        super(content, PageRequest.of(number, size), totalElements);
+    }
+
+    public TestRestResponsePage(List<T> content) {
+        super(content);
+    }
+
+    public TestRestResponsePage() {
+        super(new ArrayList<>());
+    }
+}
+```
+
+调用接口返回自定义的Page类：
+
+``` java
+RequestEntity<Void> requestEntity = RequestEntity.get("/dbpage").build();
+ResponseEntity<TestRestResponsePage<MyDomain>> pageResp = testRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<TestRestResponsePage<MyDomain>>() {
+    });
+System.out.println("dbpage result : " + pageResp);
+assertThat(pageResp.getBody().getTotalElements(), is(1L));
+```
+
+由于返回结果是泛型，所以需要使用```testRestTemplate.exchange```方法，get方法不支持返回泛型。
 
 ## 五、redis的依赖
 
@@ -88,7 +145,7 @@ spring:
 已gradle配置为例：
 
 ``` groovy
-testImplementation 'com.github.fppt:jedis-mock:0.1.16'
+testImplementation 'com.github.fppt:jedis-mock:1.0.1'
 ```
 
 单元测试配置文件中的数据库连接使用redis mockserver:
