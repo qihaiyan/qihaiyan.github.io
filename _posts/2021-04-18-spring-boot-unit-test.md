@@ -184,7 +184,7 @@ public class TestRedisConfiguration {
 
 spring提供了一个kafka的测试组件，可以在单元测试期间启动一个嵌入式的kafka服务EmbeddedKafka，模拟真实的kafka操作。
 
-已gradle配置为例：
+以gradle配置为例：
 
 ``` groovy
 testImplementation "org.springframework.kafka:spring-kafka-test"
@@ -228,4 +228,28 @@ cloud.stream.bindings:
     handle-out-0.destination: testEmbeddedOut
     handle-in-0.destination: testEmbeddedIn
     handle-in-0.group: embeddedKafkaApplication
+```
+
+## 七、测试时修改配置属性
+
+执行测试逻辑时，会遇到需要临时修改一个配置项的值，但是配置文件的内容无法在单元测试执行期间修改，这种情况可以通过 ReflectionTestUtils 处理。
+
+正式代码中有一个配置项：
+
+``` yaml
+common:
+  value: origin
+```
+
+该配置项在MyService中通过属性 originValue 进行引用：
+
+``` java
+@Value("${common.value}")
+    private String originValue;
+```
+
+在执行某个单元测试时期望将该配置项属性修改为 test:
+
+``` java
+ReflectionTestUtils.setField(myService, "originValue", "test");
 ```
