@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Spring Boot 3的AOT（GraalVM Native Image）应用开发"
-date:   2022-04-17 17:50:00 +0800
+date:   2022-11-26 17:50:00 +0800
 tags: [spring,GraalVM Native]
 categories: [spring boot]
 image: assets/images/spring-native.jpg
