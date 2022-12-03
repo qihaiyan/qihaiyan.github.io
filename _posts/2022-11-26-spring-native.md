@@ -117,7 +117,7 @@ Spring Boot 编译 Native Image 支持2种方式，一种通过Docker进行编�
 ### 3.1 安装编译环境
 
 需要安装 GraalVM 和 Visual Studio 两个编译工具。
-GraalVM可以直接下载安装，下载地址 https://www.graalvm.org/downloads/ ，也可以通过 [Scoop](https://scoop.sh/) 进行安装。
+GraalVM可以直接下载安装，[下载地址](https://www.graalvm.org/downloads/) ，也可以通过 [Scoop](https://scoop.sh/) 进行安装。
 Visual Studio 需要下载安装，由于Visual Studio体积比较大，也可以只安装 [Visual Studio Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
 ### 3.2 执行编译命令
@@ -130,8 +130,21 @@ Visual Studio 需要下载安装，由于Visual Studio体积比较大，也可�
 gradle nativeCompile
 ```
 
-编译生成的可执行程序在当前工程目录的 build\native\nativeTestCompile 目录中，可以看到一个与工程名相同的以exe后缀结尾的文件。
+编译生成的可执行程序在当前工程目录的 ```build\native\nativeCompile``` 目录中，可以看到一个与工程名相同的以exe后缀结尾的文件。
 直接运行该文件，就能体验到java程序的启动速度竟然能如此之快。
+
+传统应用启动速度：
+```
+cn.springcamp.springnative.Application   : Started Application in 2.927 seconds (process running for 3.642)
+```
+
+native应用启动速度：
+```
+cn.springcamp.springnative.Application   : Started Application in 0.134 seconds (process running for 0.141)
+```
+
+启动速度从 3.642 提升到了 0.141 秒。
+
 启动速度虽然快了，但是编译耗时也多了不少，这是一个缺点。
 
 ## 四、单元测试
