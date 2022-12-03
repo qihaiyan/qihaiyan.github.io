@@ -24,9 +24,9 @@ Spring Boot 3.0 仍然支持传统的开发方式，既编译生成jar包，通�
 
 在项目的gradle中增加依赖关系。
 
-Gradle:
+build.gradle:
 
-``` gradle
+``` groovy
 plugins {
     id 'org.springframework.boot' version '3.0.0'
     id 'io.spring.dependency-management' version '1.1.0'
