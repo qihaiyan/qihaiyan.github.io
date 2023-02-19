@@ -109,18 +109,18 @@ public class DbService {
 
 由于程序中没有使用反射，所以代码跟传统程序没有什么区别。
 
-## 三、编译 Native Image
+## 四、编译 Native Image
 
 Spring Boot 编译 Native Image 支持2种方式，一种通过Docker进行编译，需要本地安装Docker。另外一种是用本地的编译环境进行编译，需要安装Visual Studio。
 由于第一种方式比较简单，除了要安装Docker外没有很复杂的操作，本文只介绍第二种方式。
 
-### 3.1 安装编译环境
+### 4.1 安装编译环境
 
 需要安装 GraalVM 和 Visual Studio 两个编译工具。
 GraalVM可以直接下载安装，[下载地址](https://www.graalvm.org/downloads/) ，也可以通过 [Scoop](https://scoop.sh/) 进行安装。
 Visual Studio 需要下载安装，由于Visual Studio体积比较大，也可以只安装 [Visual Studio Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
-### 3.2 执行编译命令
+### 4.2 执行编译命令
 
 由于windows命令行工具有命令长度限制，因此编译命令不能在windows命令行工具中直接执行（包括powershell和cmd），需要在安装好的Visual Studio命令行工具（x64 Native Tools Command Prompt for VS 2022）中执行。
 
@@ -147,7 +147,7 @@ cn.springcamp.springnative.Application   : Started Application in 0.134 seconds 
 
 启动速度虽然快了，但是编译耗时也多了不少，这是一个缺点。
 
-## 四、单元测试
+## 五、单元测试
 
 传统的Spring Boot单元测试技术仍然可以使用。 [Spring Boot单元测试技术](https://springcamp.cn/spring-boot-unit-test/)在这篇文章中有专门介绍。
 需要注意的是 Spring Native不支持JUnit4，需要使用JUnit5。
