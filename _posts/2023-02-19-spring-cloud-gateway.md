@@ -108,7 +108,7 @@ spring:
 
 后端服务地址配置了一个无意的地址: ```uri: no://op``` ，因为我们的处理逻辑会通过从数据库中读取配置来动态替换后端服务地址。
 
-## 三、动态路由数据存储格式
+## 四、动态路由数据存储格式
 
 我们通过 ```ROUTE_FILTER_ENTITY``` 这个数据库表来存储接口后端服务配置数据。表结构为：
 
@@ -128,7 +128,7 @@ CREATE TABLE "ROUTE_FILTER_ENTITY"
 
 我们已经读取到了后端服务地址，还需要将请求转发到这个地址，下面介绍转发的方法。
 
-## 四、后端服务动态转发
+## 五、后端服务动态转发
 
 动态转发通过自定义 filter 的方式实现，自定义 filter 代码如下：
 
@@ -199,7 +199,7 @@ public class UriHostPlaceholderFilter extends AbstractGatewayFilterFactory<UriHo
 
 拿到后端服务地址后， 通过调用 ```exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newUri);``` 将请求转发到对应的地址。
 
-## 四、单元测试
+## 六、单元测试
 
 在单元测试代码中，我们预置了一条后端服务动态配置数据：
 ```sql
