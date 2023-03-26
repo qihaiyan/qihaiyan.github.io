@@ -4,7 +4,7 @@ title:  "简易规则引擎 easy-rules"
 date:   2023-03-26 17:50:00 +0800
 tags: [spring]
 categories: [spring boot]
-image: assets/images/rule_engine.jpg
+image: assets/images/rule_engine.png
 ---
 
 合理的使用规则引擎可以极大的减少代码复杂度，提升代码可维护性。业界知名的开源规则引擎有Drools，功能丰富，但也比较庞大。在一些简单的场景中，我们只需要简易的规则引擎就能满足要求。
