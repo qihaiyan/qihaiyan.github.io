@@ -1,5 +1,6 @@
 # Site
 name: '海思'
+title: '海思'
 description: 'my technical blog.'
 logo: 'assets/images/logo.png'
 favicon: 'assets/images/favicon.ico'
@@ -11,7 +12,6 @@ permalink: /:title/
 
 # Plugins
 plugins: 
-  - jekyll-feed
   - jekyll-sitemap
   - jekyll-paginate
   - jekyll-seo-tag

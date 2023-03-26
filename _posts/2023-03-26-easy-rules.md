@@ -8,9 +8,7 @@ image: assets/images/rule_engine.png
 ---
 
 合理的使用规则引擎可以极大的减少代码复杂度，提升代码可维护性。业界知名的开源规则引擎有Drools，功能丰富，但也比较庞大。在一些简单的场景中，我们只需要简易的规则引擎就能满足要求。
-
 本文介绍一个小巧的规则引擎 [easy-rules](https://github.com/j-easy/easy-rules)，作为一个lib库提供，支持spring的SPEL表达式，可以很好的集成在spring项目中。
-
 具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-easy-rule](https://github.com/qihaiyan/springcamp/tree/master/spring-easy-rule)
 
 ## 一、概述
