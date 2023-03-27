@@ -2,13 +2,14 @@
 layout: post
 title:  "简易规则引擎 easy-rules"
 date:   2023-03-26 17:50:00 +0800
-tags: [spring]
+tags: [spring,java]
 categories: [spring boot]
 image: assets/images/rule_engine.png
 ---
 
 合理的使用规则引擎可以极大的减少代码复杂度，提升代码可维护性。业界知名的开源规则引擎有Drools，功能丰富，但也比较庞大。在一些简单的场景中，我们只需要简易的规则引擎就能满足要求。
 本文介绍一个小巧的规则引擎 [easy-rules](https://github.com/j-easy/easy-rules)，作为一个lib库提供，支持spring的SPEL表达式，可以很好的集成在spring项目中。
+
 具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-easy-rule](https://github.com/qihaiyan/springcamp/tree/master/spring-easy-rule)
 
 ## 一、概述
@@ -79,7 +80,7 @@ description: ""
 priority: 1
 condition: "#person.getAdult() == false"
 actions:
-  - "T(java.lang.System).out.println(\"Shop: Sorry, you are not allowed to buy alcohol\")"
+  - "T(java.lang.System).out.println(\"Shop: Sorry, you are not allowed\")"
   - "#person.setAdult(true)"
   - "#person.setAge(18)"
 ---
@@ -88,7 +89,7 @@ description: ""
 priority: 1
 condition: "#person.getAdult() == true"
 actions:
-  - "T(java.lang.System).out.println(\"Shop: you are now allowed to buy alcohol\")"
+  - "T(java.lang.System).out.println(\"Shop: you are now allowed\")"
 ```
 
 配置文件中的规则通过 condition 进行配置，当满足规则时，会调用 actions 中配置的动作。
@@ -229,4 +230,4 @@ public class Application implements CommandLineRunner {
 }
 ```
 
-程序执行后可以看到控制台里打印了 ```Shop: Sorry, you are not allowed to buy alcohol```，这个内容对应的是我们在规则文件中的actions中配置的 ```"T(java.lang.System).out.println(\"Shop: Sorry, you are not allowed to buy alcohol\")"``` ，说明规则成功执行了。
+程序执行后可以看到控制台里打印了 ```Shop: Sorry, you are not allowed```，这个内容对应的是我们在规则文件中的actions中配置的 ```"T(java.lang.System).out.println(\"Shop: Sorry, you are not allowed\")"``` ，说明规则成功执行了。
