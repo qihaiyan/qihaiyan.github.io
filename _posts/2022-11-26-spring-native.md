@@ -9,7 +9,7 @@ image: assets/images/spring-native.jpg
 
 GraalVM Native Images是一个利用AOT(Ahead-of-Time)技术把java程序直接编译成可执行程序的编译工具，编译出来的程序在运行时不再依赖JRE，同时启动速度快，资源消耗低，这对传统java程序来说都是极大的优势。同时云原生应用来说，GraalVM Native Images编译生成的程序体积很小，非常适合云原生环境，目前由于传统java程序生成的镜像中需要包含一个体积很大的JRE或JDK而经常被人诟病。
 Spring Boot从3.0版本开始支持AOT技术。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/spring-native](https://github.com/qihaiyan/spring-native)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-native](https://github.com/qihaiyan/springcamp/tree/master/spring-native)
 
 ## 一、概述
 
@@ -30,7 +30,7 @@ build.gradle:
 plugins {
     id 'org.springframework.boot' version '3.0.0'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.graalvm.buildtools.native' version '0.9.18'
+    id 'org.graalvm.buildtools.native' version '0.9.22'
     id 'java'
 }
 
@@ -66,6 +66,19 @@ test {
 ```
 
 与传统Spring Boot应用相比，gradle文件中增加了 org.graalvm.buildtools.native 这个plugin，其它的没有区别。
+
+由于 org.graalvm.buildtools.native 这个plugin没有发布到 Gradle Plugin Portal 中，因此需要在 settings.gradle 指定仓库地址：
+
+settings.gradle
+
+```groovy
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+```
 
 ## 三、主要程序代码
 
