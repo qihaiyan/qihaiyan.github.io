@@ -67,7 +67,7 @@ test {
 
 与传统Spring Boot应用相比，gradle文件中增加了 org.graalvm.buildtools.native 这个plugin，其它的没有区别。
 
-由于 org.graalvm.buildtools.native 这个plugin没有发布到 Gradle Plugin Portal 中，因此需要在 settings.gradle 指定仓库地址：
+由于 org.graalvm.buildtools.native 这个plugin没有发布到 Gradle Plugin Portal 中，[参照 https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)，因此需要在 settings.gradle 指定仓库地址：
 
 settings.gradle
 
