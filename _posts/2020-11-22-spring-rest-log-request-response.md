@@ -160,3 +160,38 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
     }
 }
 ```
+
+## 七、使用 filter 打印请求和响应
+
+通过继承spring的 ```OncePerRequestFilter``` 实现自定义filter。在filter中读取请求和响应的body需要做一下特殊处理，因为流只能被读取一次，在filter中被读取了，后续的处理就无法再次读取流的内容了。
+
+spring提供了 ```ContentCachingRequestWrapper``` 和 ```ContentCachingResponseWrapper``` 两个类来解决这个问题。
+
+```java
+@Slf4j
+@Component
+public class AccessLogFilter extends OncePerRequestFilter {
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        ContentCachingRequestWrapper req = new ContentCachingRequestWrapper(request);
+        ContentCachingResponseWrapper resp = new ContentCachingResponseWrapper(response);
+
+        try {
+            // Execution request chain
+            filterChain.doFilter(req, resp);
+            // Get body
+            byte[] requestBody = req.getContentAsByteArray();
+            byte[] responseBody = resp.getContentAsByteArray();
+        
+            log.info("request body = {}", new String(requestBody, StandardCharsets.UTF_8));
+            log.info("response body = {}", new String(responseBody, StandardCharsets.UTF_8));
+        } finally {
+        // Finally remember to respond to the client with the cached data.
+            resp.copyBodyToResponse();
+        }    
+    }
+}
+```
