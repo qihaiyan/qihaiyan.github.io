@@ -7,7 +7,7 @@ categories: [spring boot]
 image: assets/images/jdbc-client.jpg
 ---
 
-SpringBoot 3.2引入了新的 JdbcClient 用户数据库操作，JdbcClient对JdbcTemplate进行了封装，采用了 fluent API 的风格，可以进行链式调用。
+SpringBoot 3.2引入了新的 JdbcClient 用于数据库操作，JdbcClient对JdbcTemplate进行了封装，采用了 fluent API 的风格，可以进行链式调用。
 
 自此，spring自带的数据库操作有了4种方式：JdbcTemplate、JdbcClient、SpringDataJdbc、SpringDataJpa。
 
