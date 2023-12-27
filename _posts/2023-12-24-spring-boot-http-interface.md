@@ -13,7 +13,7 @@ SpringBoot 3.2引入了新的 HTTP interface 用于http接口调用，采用了�
 
 ## 一、概述
 
-HTTP Interface 是一个类似于 openfeign 的的同步接口调用，采用 Java interfaces 声明远程接口调用的方法，理念上类似于SpringDataRepository，可以很大程度精简代码。
+HTTP Interface 是一个类似于 openfeign 的同步接口调用方法，采用 Java interfaces 声明远程接口调用的方法，理念上类似于SpringDataRepository，可以很大程度精简代码。
 
 要使远程调用的接口可以执行，还需要通过 HttpServiceProxyFactory 指定底层的http接口调用库，支持 RestTemplate、WebClient、RestClient三种。
 
