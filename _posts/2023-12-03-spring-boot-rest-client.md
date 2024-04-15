@@ -9,7 +9,7 @@ image: assets/images/rest-client.jpg
 
 SpringBoot 3.2引入了新的 RestClient 用于http接口调用，采用了 fluent API 的风格，可以进行链式调用。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-jdbc-client](https://github.com/qihaiyan/springcamp/tree/master/spring-jdbc-client)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-data-jdbc-client](https://github.com/qihaiyan/springcamp/tree/master/spring-data-jdbc-client)
 
 ## 一、概述
 
