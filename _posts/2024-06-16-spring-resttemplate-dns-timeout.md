@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "spring RestTemplate配置DNS解析超时"
+title:  "Spring RestTemplate配置DNS解析超时"
 date:   2024-06-16 15:30:00 +0800
 tags: [spring,java]
 categories: [spring boot]
