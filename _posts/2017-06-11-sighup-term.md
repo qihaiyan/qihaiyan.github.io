@@ -90,7 +90,7 @@ sigtest是提交的job，根据上面提到的第1种情况，sigtest会收到SI
 
 3、写一个shell，内容为
 
-sigtest &
+sigtest back > tt.txt &
 
 执行该shell
 
