@@ -21,7 +21,7 @@ SpringSecurity的高级用法，包括自定义loginUrl携带参数，自定义�
 
 ## 二、自定义loginUrl携带参数
 
-SpringSecurity在跳转login页面时，虽然可以指定login的url，但是无法让url中携带动态参数，不如跳转到login?param=foo，其中foo需要根据特定条件动态变化，要实现这种效果，我们需要通过exceptionHandling指定自定义LoginUrlAuthenticationEntryPoint。
+SpringSecurity在跳转login页面时，虽然可以指定login的url，但是无法让url中携带动态参数，比如跳转到login?param=foo，其中foo需要根据特定条件动态变化，要实现这种效果，我们需要通过exceptionHandling指定自定义LoginUrlAuthenticationEntryPoint。
 
 ``` java
 public class CustomLoginUrlAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {

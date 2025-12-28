@@ -1,11 +1,11 @@
  // alertbar later
     $(document).scroll(function () {
         var y = $(this).scrollTop();
-        if (y > 280) {
-            $('.alertbar').fadeIn();
-        } else {
-            $('.alertbar').fadeOut();
-        }
+        // if (y > 280) {
+        //     $('.alertbar').fadeIn();
+        // } else {
+        //     $('.alertbar').fadeOut();
+        // }
     });
 
 
