@@ -62,7 +62,7 @@ const authClient = createOAuthClient({
 在main.ts中初始化`authClient`，提供三个核心参数：
 1. url: 认证服务的根路径url，authClient会通过该根路径调用认证服务的相关接口，比如会首先调用`http://localhost:9000/.well-known/openid-configuration`接口来获取任务服务的完整接口列表。
 2. clientId: 任务服务设置的clientId，便于演示方便，authserver中写死了几个client，其中`public-client`是用于对vue程序提供认证服务的client。
-3. scopes: 用户数据范围，这个范围列表也是在，authserver中写死的。
+3. scopes: 用户数据范围，这个范围列表也是在`authserver`中写死的。
 
 ## 四、authserver端的核心配置
 

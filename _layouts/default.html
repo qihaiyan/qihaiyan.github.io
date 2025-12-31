@@ -25,6 +25,8 @@
 
     <script src="{{site.baseurl}}/assets/js/theme.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
     {% include tracking-header.html %}
 
 
@@ -79,6 +81,14 @@
         </div>
         </div>
     </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+    </script>
 
     {% include tracking-footer.html %}
 
