@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "Vue对接Spring Authrization Server"
+title:  "Vue对接Spring Authorization Server"
 date:   2025-12-31 15:30:00 +0800
-tags: [spring,java,vue]
+tags: [spring,java]
 categories: [spring boot]
-image: assets/images/spring-oauth-vue.png
+image: assets/images/spring-security.png
 ---
 
-通过Spring Authrization Server对vue应用进行授权防护。 
+通过Spring Authorization Server对vue应用进行授权防护。 
 
 [示例项目 https://github.com/qihaiyan/ng-boot-oauth](https://github.com/qihaiyan/ng-boot-oauth)
 
@@ -17,7 +17,7 @@ image: assets/images/spring-oauth-vue.png
 
 ## 一、概述
 
-vue对接oauth进行认证防护的介绍已经很多了，但是跟Spring Authrization Server集成的示例比较少，并且很多还都是vue2的代码，本文主要是介绍vue3跟Spring Authrization Server集成的方法和示例。
+vue对接oauth进行认证防护的介绍已经很多了，但是跟Spring Authorization Server集成的示例比较少，并且很多还都是vue2的代码，本文主要是介绍vue3跟Spring Authorization Server集成的方法和示例。
 
 ## 二、核心交互流程
 
@@ -60,13 +60,13 @@ const authClient = createOAuthClient({
 ```
 
 在main.ts中初始化`authClient`，提供三个核心参数：
-1. url: 认证服务的根路径url，authClient会通过该根路径调用认证服务的相关接口，比如会首先调用`http://localhost:9000/.well-known/openid-configuration`接口来获取任务服务的完整接口列表。
-2. clientId: 任务服务设置的clientId，便于演示方便，authserver中写死了几个client，其中`public-client`是用于对vue程序提供认证服务的client。
+1. url: 认证服务的根路径url，authClient会通过该根路径调用认证服务的相关接口，比如会首先调用`http://localhost:9000/.well-known/openid-configuration`接口来获取认证服务的完整接口列表。
+2. clientId: 认证服务设置的clientId，便于演示方便，authserver中写死了几个client，其中`public-client`是用于对vue程序提供认证服务的client。
 3. scopes: 用户数据范围，这个范围列表也是在`authserver`中写死的。
 
 ## 四、authserver端的核心配置
 
-authserver端使用了Spring的Authrization Server，该框架提供的完整的oauth2认证服务功能，不过是一个开发库，不是开箱即用的服务，需要自己编写服务继承这个库。文档只介绍比较关键的client的配置，其它完整配置可以看示例代码。
+authserver端使用了Spring的Authorization Server，该框架提供的完整的oauth2认证服务功能，不过是一个开发库，不是开箱即用的服务，需要自己编写服务集成这个库。文档只介绍比较关键的client的配置，其它完整配置可以看示例代码。
 
 ``` java
 RegisteredClient publicClient = RegisteredClient.withId(UUID.randomUUID().toString())
