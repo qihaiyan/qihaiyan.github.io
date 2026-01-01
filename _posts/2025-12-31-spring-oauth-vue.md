@@ -2,9 +2,9 @@
 layout: post
 title:  "Vue对接Spring Authorization Server"
 date:   2025-12-31 15:30:00 +0800
-tags: [spring,java]
+tags: [spring,java,vue]
 categories: [spring boot]
-image: assets/images/spring-security.png
+image: assets/images/spring-oauth-vue.png
 ---
 
 通过Spring Authorization Server对vue应用进行授权防护。 
