@@ -15,7 +15,7 @@ image: assets/images/data-audit.jpg
 
 本文介绍支持有条件变动纪录的保存和查询的方法。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-data-envers-conditional](https://github.com/qihaiyan/springcamp/tree/master/spring-data-envers-conditional)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-data-envers-conditional](https://github.com/qihaiyan/springcamp/tree/main/spring-data-envers-conditional)
 
 ## 一、概述
 

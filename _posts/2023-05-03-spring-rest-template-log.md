@@ -10,7 +10,7 @@ image: assets/images/rest-log.png
 系统中经常需要调用第三方接口实现业务功能，为了方便调试和定位问题，我们通常需要将接口调用参数和返回结果打印到日志文件中。在Spring项目中一般会用RestTemplate来调用第三方接口。
 通过在RestTemplate调用过程中统一打印日志，可以保持代码的整洁，也可以统一日志格式，比在业务逻辑中到处打印接口调用日志要方便的多。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-rest-template-log](https://github.com/qihaiyan/springcamp/tree/master/spring-rest-template-log)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log](https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log)
 
 ## 一、概述
 

@@ -9,7 +9,7 @@ image: assets/images/spring-security.png
 
 SpringSecurity的高级用法，包括自定义loginUrl携带参数，自定义认证校验逻辑，自定义权限校验逻辑。 
 
-[示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-advanced-security](https://github.com/qihaiyan/springcamp/tree/master/spring-advanced-security)
+[示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-advanced-security](https://github.com/qihaiyan/springcamp/tree/main/spring-advanced-security)
 
  [完整独立示例工程可查看 https://github.com/qihaiyan/ng-boot-oauth，带有vue/react/angular三个前端登录实现 ](https://github.com/qihaiyan/ng-boot-oauth)
 

@@ -9,7 +9,7 @@ image: assets/images/data-flex-query.jpg
 
 在页面中展示列表数据时，通常需要根据用户输入的不同的查询条件返回不同的查询结果，传统的方式往往采用手动编写原始sql拼接where条件的方式，这种方式并不安全，容易存在sql注入漏洞。
 
-本文介绍用SpringDataJpa实现灵活查询的方式，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-data-flex-query](https://github.com/qihaiyan/springcamp/tree/master/spring-data-flex-query)
+本文介绍用SpringDataJpa实现灵活查询的方式，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-data-flex-query](https://github.com/qihaiyan/springcamp/tree/main/spring-data-flex-query)
 
 ## 一、概述
 

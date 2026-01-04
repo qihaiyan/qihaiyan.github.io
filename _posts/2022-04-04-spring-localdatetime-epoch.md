@@ -8,7 +8,7 @@ image: assets/images/epoch.jpg
 ---
 
 本文介绍spring-rest接口中的LocalDateTime日期类型转时间戳的方法。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-localdatetime-epoch](https://github.com/qihaiyan/springcamp/tree/master/spring-redis-spring-localdatetime-epoch)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch](https://github.com/qihaiyan/springcamp/tree/main/spring-redis-spring-localdatetime-epoch)
 
 ## 一、概述
 

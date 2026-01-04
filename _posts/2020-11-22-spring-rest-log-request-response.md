@@ -8,7 +8,7 @@ image: assets/images/log.png
 ---
 
 在程序日志中打印出接口请求和响应的内容是一个基本的技术需求。如果在每个接口中实现请求响应的日志打印，程序编写会很繁琐，我们可以利用spring提供的机制，集中处理接口请求响应的日志打印。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-rest-log-request-response](https://github.com/qihaiyan/springcamp/tree/master/spring-rest-log-request-response)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-rest-log-request-response](https://github.com/qihaiyan/springcamp/tree/main/spring-rest-log-request-response)
 
 ## 一、概述
 

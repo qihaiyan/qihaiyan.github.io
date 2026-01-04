@@ -8,7 +8,7 @@ image: assets/images/dynamic-datasource.png
 ---
 
 在实际的业务场景中，我们经常会遇到需要动态配置数据源的情况，只需要修改配置，就能增加新的数据源的接入，而不需要修改程序代码，通过动态数据源技术可以实现这个目标。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-dynamic-datasource](https://github.com/qihaiyan/springcamp/tree/master/spring-dynamic-datasource)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-dynamic-datasource](https://github.com/qihaiyan/springcamp/tree/main/spring-dynamic-datasource)
 
 ## 一、概述
 

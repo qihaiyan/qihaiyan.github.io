@@ -9,7 +9,7 @@ image: assets/images/groovy.jpeg
 
 在我们的应用中引入脚本能力，可以很好的提升灵活性，我们的核心开发工作可以集中在核心平台能力的开发上，具体场景的功能可以通过脚本来实现，例如jenkins就可以通过groovy脚本来编写pipeline，可以很灵活的定制构建过程。
 spring本身提供了groovy集成的机制，分为两种方式，一种是用groovy开发程序，跟用java开发类似，需要经过编译。一种是将groovy作为脚本来执行，不需要编译。在此我们介绍的是第二种方式，将groovy作为脚本来使用。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-groovy](https://github.com/qihaiyan/springcamp/tree/master/spring-groovy)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-groovy](https://github.com/qihaiyan/springcamp/tree/main/spring-groovy)
 
 ## 一、概述
 

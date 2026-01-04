@@ -8,7 +8,7 @@ image: assets/images/spring-kafka.jpeg
 ---
 
 本文介绍spring中使用Kafka的三种方式，其中container方式最灵活，但是开发相对较复杂，stream方式使用最简便，listener方式由于提供的最早，使用的较普遍。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-kafka](https://github.com/qihaiyan/springcamp/tree/master/spring-kafka)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-kafka](https://github.com/qihaiyan/springcamp/tree/main/spring-kafka)
 
 ## 一、概述
 

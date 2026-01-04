@@ -9,7 +9,7 @@ image: assets/images/elasticsearch-intro.png
 
 ElasticSearch在7.17版本之前使用的java客户端是Java REST Client，但是从7.17版本开始，官方将Java REST Client标记为弃用（deprecated），推荐使用新版Java Client。
 本文介绍新版ElasticSearch Java Client的基本用法。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/elasticsearch-javaclient](https://github.com/qihaiyan/springcamp/tree/master/elasticsearch-javaclient)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/elasticsearch-javaclient](https://github.com/qihaiyan/springcamp/tree/main/elasticsearch-javaclient)
 
 ## 一、概述
 

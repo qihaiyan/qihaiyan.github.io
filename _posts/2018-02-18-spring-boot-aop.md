@@ -10,7 +10,7 @@ image: assets/images/aop.png
 
 将通用的逻辑用AOP技术实现可以极大的简化程序的编写，例如验签、鉴权等。Spring的声明式事务也是通过AOP技术实现的。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-aop](https://github.com/qihaiyan/springcamp/tree/master/spring-aop)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-aop](https://github.com/qihaiyan/springcamp/tree/main/spring-aop)
 
 Spring的AOP技术主要有4个核心概念：
 

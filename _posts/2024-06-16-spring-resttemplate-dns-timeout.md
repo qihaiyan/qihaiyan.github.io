@@ -7,7 +7,7 @@ categories: [spring boot]
 image: assets/images/dns-timeout.jpg
 ---
 
-RestTemplate 常用的超时设置方法可以设置连接超时、接口请求超时、接口响应超时，但是对于DNS解析超时往往没有简单的方法可以设置。本文介绍设置DNS解析超时时间的方法，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-rest-template-log](https://github.com/qihaiyan/springcamp/tree/master/spring-rest-template-log)
+RestTemplate 常用的超时设置方法可以设置连接超时、接口请求超时、接口响应超时，但是对于DNS解析超时往往没有简单的方法可以设置。本文介绍设置DNS解析超时时间的方法，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log](https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log)
 
 ## 一、概述
 

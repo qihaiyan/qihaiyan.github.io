@@ -7,7 +7,7 @@ categories: [spring boot]
 image: assets/images/rest-controller-advice.png
 ---
 
-我们编写RestController时，有可能多个接口使用了相同的RequestBody，在一些场景下需求修改传入的RequestBody的值，如果是每个controller中都去修改，代码会比较繁琐，最好的方式是在一个地方统一修改，比如将header中的某个值赋值给RequestBody对象的某个属性。 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-modify-request-body](https://github.com/qihaiyan/springcamp/tree/master/spring-modify-request-body)
+我们编写RestController时，有可能多个接口使用了相同的RequestBody，在一些场景下需求修改传入的RequestBody的值，如果是每个controller中都去修改，代码会比较繁琐，最好的方式是在一个地方统一修改，比如将header中的某个值赋值给RequestBody对象的某个属性。 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-modify-request-body](https://github.com/qihaiyan/springcamp/tree/main/spring-modify-request-body)
 
 ## 一、概述
 

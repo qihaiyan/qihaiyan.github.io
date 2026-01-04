@@ -11,7 +11,7 @@ API网关的核心功能是统一流量入口，实现路由转发，SpringCloud
 简单的路由转发可以通过SpringCloudGateway的配置文件实现，在一些业务场景种，会需要动态替换路由配置中的后端服务地址，单纯靠配置文件无法满足这种需求。
 本文介绍一种将路由配置保存到数据库中，可以根据接口请求的特定条件，从数据库中动态读取后端服务地址，实现灵活转发。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-cloud-gateway](https://github.com/qihaiyan/springcamp/tree/master/spring-cloud-gateway)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-cloud-gateway](https://github.com/qihaiyan/springcamp/tree/main/spring-cloud-gateway)
 
 ## 一、概述
 

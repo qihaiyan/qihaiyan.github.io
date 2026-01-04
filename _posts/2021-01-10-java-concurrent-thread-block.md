@@ -8,7 +8,7 @@ image: assets/images/threadblock.jpg
 ---
 
 Spring自带线程池使用很方便，不过在相对复杂的并发编程场景中，使用时还是需要根据使用场景仔细考虑配置，否则可能会遇到本文中提及的坑。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-taskexecutor-block](https://github.com/qihaiyan/springcamp/tree/master/spring-taskexecutor-block)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-taskexecutor-block](https://github.com/qihaiyan/springcamp/tree/main/spring-taskexecutor-block)
 
 ## 一、概述
 

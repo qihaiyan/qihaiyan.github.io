@@ -9,7 +9,7 @@ image: assets/images/scheduler.jpg
 
 在spring框架中，对于简单的定时任务，可以使用 @Scheduled 注解实现，在实际项目中，经常需要动态的控制定时任务，比如通过接口增加、启动、停止、删除定时任务，动态的改变定时任务的执行时间等。
 
-我们可以通过编码的方式动态控制定时任务，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-dynamic-scheduler](https://github.com/qihaiyan/springcamp/tree/master/spring-dynamic-scheduler)
+我们可以通过编码的方式动态控制定时任务，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-dynamic-scheduler](https://github.com/qihaiyan/springcamp/tree/main/spring-dynamic-scheduler)
 
 ## 一、概述
 

@@ -8,7 +8,7 @@ image: assets/images/redis-resolver.jpg
 ---
 
 本文介绍spring中自定义缓存resolver，通过自定义resolver，可以在spring的cache注解中增加附加处理。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-redis-resolver](https://github.com/qihaiyan/springcamp/tree/master/spring-redis-resolver)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-redis-resolver](https://github.com/qihaiyan/springcamp/tree/main/spring-redis-resolver)
 
 ## 一、概述
 

@@ -13,7 +13,7 @@ SpringBoot 3.2引入了新的 JdbcClient 用于数据库操作，JdbcClient对Jd
 
 对于不适合使用复杂的ORM框架，或者需要编写复杂的SQL的场景，可以使用JdbcClient自己编写SQL来操作数据库。不过JdbcClient不支持数据的批量操作和存储过程调用，对于这种情况就需要使用JdbcTemplate。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-data-jdbc-client](https://github.com/qihaiyan/springcamp/tree/master/spring-data-jdbc-client)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-data-jdbc-client](https://github.com/qihaiyan/springcamp/tree/main/spring-data-jdbc-client)
 
 ## 一、概述
 

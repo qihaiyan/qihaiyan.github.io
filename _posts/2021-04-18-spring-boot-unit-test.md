@@ -8,7 +8,7 @@ image: assets/images/ut.jpg
 ---
 
 整个软件交付过程中，单元测试阶段是一个能够最早发现问题，并且可以重复回归问题的阶段，在单元测试阶段做的测试越充分，软件质量就越能得到保证。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-unit-test](https://github.com/qihaiyan/springcamp/tree/master/spring-unit-test)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-unit-test](https://github.com/qihaiyan/springcamp/tree/main/spring-unit-test)
 
 ## 一、概述
 

@@ -9,7 +9,7 @@ image: assets/images/http-interface.jpg
 
 SpringBoot 3.2引入了新的 HTTP interface 用于http接口调用，采用了类似 openfeign 的风格。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/master/spring-http-interface](https://github.com/qihaiyan/springcamp/tree/master/spring-http-interface)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-http-interface](https://github.com/qihaiyan/springcamp/tree/main/spring-http-interface)
 
 ## 一、概述
 
