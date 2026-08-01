@@ -10,6 +10,11 @@ ruby RUBY_VERSION
 
 # If you have any plugins, put them here!
 gem 'wdm', '>= 0.1.0' if Gem.win_platform?
+
+# Pin to the github-pages gem so the local build uses the same
+# Jekyll version (3.10.x) and plugin set as GitHub Pages production.
+gem 'github-pages', group: :jekyll_plugins
+
 group :jekyll_plugins do
     gem 'jekyll-feed'
     gem 'jekyll-sitemap'
