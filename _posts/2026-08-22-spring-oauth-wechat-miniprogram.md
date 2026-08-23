@@ -9,7 +9,7 @@ image: assets/images/spring-oauth-wechat-miniprogram.jpg
 
 微信小程序是一种典型的原生客户端应用：没有浏览器地址栏，无法完成 OAuth2 授权码流程所依赖的重定向交互；代码包可以被反编译，客户端没有安全存放密钥的地方，标准的授权码流程并不能直接套用。本文介绍如何利用 Spring Authorization Server 的扩展授权类型（Extension Grant）机制，为小程序定制一个 `wechat-code` 授权模式，用 `wx.login()` 产生的 code 换取标准的 OAuth2 令牌，实现对后端资源的统一授权防护。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-oauth-wechat-miniprogram](https://github.com/qihaiyan/springcamp/tree/main/spring-oauth-wechat-miniprogram)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/ng-boot-oauth](https://github.com/qihaiyan/ng-boot-oauth)
 
 ## 一、概述
 
