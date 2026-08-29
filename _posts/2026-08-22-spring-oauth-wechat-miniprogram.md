@@ -11,6 +11,12 @@ image: assets/images/spring-oauth-wechat-miniprogram.jpg
 
 具体的代码参照 [示例项目 https://github.com/qihaiyan/ng-boot-oauth](https://github.com/qihaiyan/ng-boot-oauth)
 
+网页端微信登录：[小记](https://xj.hiease.cn)
+
+对应的小程序demo可以扫码查看
+
+![gh_fdd613f3b7e0_258.jpg](../assets/images/gh_fdd613f3b7e0_258.jpg)
+
 ## 一、概述
 
 微信小程序的授权防护面临几个特殊问题：
