@@ -5,6 +5,7 @@ description: 'my technical blog.'
 logo: 'assets/images/logo.png'
 favicon: 'assets/images/favicon.ico'
 baseurl: ''
+url: 'https://springcamp.cn'
 email: 'haiyan_qi@hotmail.com'
 
 include: ["_pages"]
