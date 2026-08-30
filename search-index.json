@@ -3,18 +3,20 @@ layout: null
 sitemap: false
 permalink: /search-index.json
 ---
-{%- capture _bs -%}\{%- endcapture -%}{%- capture _bs2 -%}\\{%- endcapture -%}
-{% assign counter = 0 %}[
-{% for page in site.pages %}{% unless page.url contains '.xml' or page.url contains 'assets' or page.url contains 'search-index' %}{
+{%- assign counter = 0 -%}[
+{%- for page in site.pages -%}{%- unless page.url contains '.xml' or page.url contains 'assets' or page.url contains 'search-index' -%}
+{
     "id": {{ counter }},
-    "url": "{{ site.url }}{{site.baseurl}}{{ page.url }}",
-    "title": "{{ page.title | normalize_whitespace | replace: '"', ' ' | replace: _bs, _bs2 }}",
-    "body": "{{ page.content | markdownify | replace: '.', '. ' | replace: '</h2>', ': ' | replace: '</h3>', ': ' | replace: '</h4>', ': ' | replace: '</p>', ' ' | strip_html | normalize_whitespace | replace: '"', ' ' | replace: _bs, _bs2 }}"{% assign counter = counter | plus: 1 %}
+    "url": {{ page.url | prepend: site.baseurl | prepend: site.url | jsonify }},
+    "title": {{ page.title | normalize_whitespace | jsonify }},
+    "body": {% capture _b %}{{ page.content | markdownify | replace: '.', '. ' | replace: '</h2>', ': ' | replace: '</h3>', ': ' | replace: '</h4>', ': ' | replace: '</p>', ' ' | strip_html | normalize_whitespace }}{% endcapture %}{{ _b | jsonify }}{% assign counter = counter | plus: 1 %}
     },
-{% endunless %}{% endfor %}{% for post in site.posts %}{
+{%- endunless -%}{%- endfor -%}
+{%- for post in site.posts -%}
+{
     "id": {{ counter }},
-    "url": "{{ site.url }}{{site.baseurl}}{{ post.url }}",
-    "title": "{{ post.title | normalize_whitespace | replace: '"', ' ' | replace: _bs, _bs2 }}",
-    "body": "{{ post.date | date: "%Y/%m/%d" }} - {{ post.content | markdownify | replace: '.', '. ' | replace: '</h2>', ': ' | replace: '</h3>', ': ' | replace: '</h4>', ': ' | replace: '</p>', ' ' | strip_html | normalize_whitespace | replace: '"', ' ' | replace: _bs, _bs2 }}"{% assign counter = counter | plus: 1 %}
+    "url": {{ post.url | prepend: site.baseurl | prepend: site.url | jsonify }},
+    "title": {{ post.title | normalize_whitespace | jsonify }},
+    "body": {% capture _b %}{{ post.date | date: '%Y/%m/%d' }} - {{ post.content | markdownify | replace: '.', '. ' | replace: '</h2>', ': ' | replace: '</h3>', ': ' | replace: '</h4>', ': ' | replace: '</p>', ' ' | strip_html | normalize_whitespace }}{% endcapture %}{{ _b | jsonify }}{% assign counter = counter | plus: 1 %}
     }{% if forloop.last %}{% else %},{% endif %}
-{% endfor %}]
+{%- endfor -%}]
