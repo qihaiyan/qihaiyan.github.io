@@ -804,3 +804,9 @@ div.a2a_full_footer {display:none;}
 	 }
  }
  
+/* 图片懒加载场景下保持纵横比,防止 width/height 属性与 w-100 冲突导致拉伸 */
+.main-loop-card img,
+.article-post img,
+.col-md-4 img.w-100 {
+    height: auto;
+}
