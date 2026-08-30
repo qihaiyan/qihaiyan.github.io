@@ -21,7 +21,7 @@
 	<div class="col-md-3 pr-0 text-right">
 	<a href="{{site.baseurl}}{{post.url}}">
 	{%- assign imgname = post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-	<img class="w-100" src="{% if post.image contains "://" %}{{ post.image }}{% else %}{{ site.baseurl }}/{{ post.image }}{% endif %}" alt="{{ post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+	<img class="w-100" src="{% if post.image contains "://" %}{{ post.image }}{% elsif imgdims.t %}{{ site.baseurl }}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{ site.baseurl }}/{{ post.image }}{% endif %}" alt="{{ post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
 	</a>
 	</div>
 {% endif %}

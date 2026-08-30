@@ -32,18 +32,22 @@ function _getSearchIndex() {
     return _idxPromise;
 }
 
-$(function() {
-    $("#lunrsearchresults").on('click', '#btnx', function () {
-        $('#lunrsearchresults').hide( 1000 );
-        $( "body" ).removeClass( "modal-open" );
+// 弹窗内按钮是动态注入的,用事件委托;关闭时隐藏容器
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('lunrsearchresults').addEventListener('click', function (e) {
+        if (e.target.closest('#btnx')) {
+            this.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
     });
 });
 
 function lunr_search(term) {
-    $('#lunrsearchresults').show( 1000 );
-    $( "body" ).addClass( "modal-open" );
+    var box = document.getElementById('lunrsearchresults');
+    box.style.display = 'block';
+    document.body.classList.add( "modal-open" );
 
-    document.getElementById('lunrsearchresults').innerHTML = '<div id="resultsmodal" class="modal fade show d-block"  tabindex="-1" role="dialog" aria-labelledby="resultsmodal"> <div class="modal-dialog shadow-lg" role="document"> <div class="modal-content"> <div class="modal-header" id="modtit"> <button type="button" class="close" id="btnx" data-dismiss="modal" aria-label="Close"> &times; </button> </div> <div class="modal-body"> <ul class="mb-0"> </ul>    </div> <div class="modal-footer"><button id="btnx" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button></div></div> </div></div>';
+    box.innerHTML = '<div id="resultsmodal" class="modal fade show d-block"  tabindex="-1" role="dialog" aria-labelledby="resultsmodal"> <div class="modal-dialog shadow-lg" role="document"> <div class="modal-content"> <div class="modal-header" id="modtit"> <button type="button" class="close" id="btnx" data-dismiss="modal" aria-label="Close"> &times; </button> </div> <div class="modal-body"> <ul class="mb-0"> </ul>    </div> <div class="modal-footer"><button id="btnx" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button></div></div> </div></div>';
     if(term) {
         document.getElementById('modtit').innerHTML = "<h5 class='modal-title'>Search results for '" + term + "'</h5>" + document.getElementById('modtit').innerHTML;
         var ul = document.querySelectorAll('#lunrsearchresults ul')[0];

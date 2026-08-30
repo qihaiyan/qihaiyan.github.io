@@ -18,10 +18,11 @@ description: "my technical blog."
     
     <!-- latest post -->
     {% assign latest_post = site.posts[0] %}
+    {%- assign lname = latest_post.image | split: "/" | last -%}{%- assign ldims = site.data.image_dims[lname] -%}
     <div class="col-md-6">
-    <div class="card border-0 mb-4 box-shadow">   
+    <div class="card border-0 mb-4 box-shadow">
     <a href="{{site.baseurl}}{{latest_post.url}}">
-    <div class="topfirstimage" style="background-image: url({% if latest_post.image contains "://" %}{{ latest_post.image }}{% else %} {{site.baseurl}}/{{ latest_post.image}}{% endif %}); height: 200px;    background-size: cover;    background-repeat: no-repeat;"></div>     
+    <div class="topfirstimage" style="background-image: url({% if latest_post.image contains "://" %}{{ latest_post.image }}{% elsif ldims.t %}{{site.baseurl}}/assets/images/thumbs/{{ lname | split: "." | first }}.webp{% else %} {{site.baseurl}}/{{ latest_post.image}}{% endif %}); height: 200px;    background-size: cover;    background-repeat: no-repeat;"></div>     
     </a>
     <div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
     <h2 class="h4 font-weight-bold">
@@ -55,7 +56,7 @@ description: "my technical blog."
                 <div class="col-md-4">
                 <a href="{{site.baseurl}}{{second_post.url}}">
                  {%- assign imgname = second_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-                 <img class="w-100" src="{% if second_post.image contains "://" %}{{ second_post.image }}{% else %}{{ second_post.image | absolute_url }}{% endif %}" alt="{{ second_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                 <img class="w-100" src="{% if second_post.image contains "://" %}{{ second_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{ second_post.image | absolute_url }}{% endif %}" alt="{{ second_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
                 </a>
                 </div>
                 {% endif %}                
@@ -83,7 +84,7 @@ description: "my technical blog."
                 <div class="col-md-4">
                 <a href="{{site.baseurl}}{{third_post.url}}">
                  {%- assign imgname = third_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-                 <img class="w-100" src="{% if third_post.image contains "://" %}{{ third_post.image }}{% else %}{{site.baseurl}}/{{ third_post.image }}{% endif %}" alt="{{ third_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                 <img class="w-100" src="{% if third_post.image contains "://" %}{{ third_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ third_post.image }}{% endif %}" alt="{{ third_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
                 </a>
                 </div>
                 {% endif %}                
@@ -111,7 +112,7 @@ description: "my technical blog."
                 <div class="col-md-4">
                 <a href="{{site.baseurl}}{{fourth_post.url}}">
                 {%- assign imgname = fourth_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-                <img class="w-100" src="{% if fourth_post.image contains "://" %}{{ fourth_post.image }}{% else %}{{site.baseurl}}/{{ fourth_post.image }}{% endif %}" alt="{{ fourth_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                <img class="w-100" src="{% if fourth_post.image contains "://" %}{{ fourth_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ fourth_post.image }}{% endif %}" alt="{{ fourth_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
                 </a>
                 </div>
                 {% endif %}                

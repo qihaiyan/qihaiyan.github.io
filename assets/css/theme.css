@@ -810,3 +810,11 @@ div.a2a_full_footer {display:none;}
 .col-md-4 img.w-100 {
     height: auto;
 }
+
+/* 原jQuery实现的锚点平滑滚动与导航收起过渡,改由CSS承担 */
+html {
+    scroll-behavior: smooth;
+}
+nav.topnav {
+    transition: top .25s ease;
+}
