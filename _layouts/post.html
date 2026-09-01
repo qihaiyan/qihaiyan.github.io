@@ -123,14 +123,14 @@ layout: default
 			{% if page.previous.url %}{% assign pimg = page.previous.image %}{% assign pimgname = pimg | split: "/" | last %}{% assign pimgdims = site.data.image_dims[pimgname] %}
 			<div class="col-md-6 rightborder pl-0">
 				<a class="text-dark" href="{{ site.baseurl }}{{ page.previous.url }}">{% if pimg %} <img
-						height="30px" class="mr-1" src="{% if pimgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ pimgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{pimg}}{% endif %}"> {% endif %}
+						height="30px" class="mr-1" alt="{{ page.previous.title }}" src="{% if pimgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ pimgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{pimg}}{% endif %}"> {% endif %}
 					{{page.previous.title}}</a>
 			</div>
 			{% endif %}
 			{% if page.next.url %}{% assign nimg = page.next.image %}{% assign nimgname = nimg | split: "/" | last %}{% assign nimgdims = site.data.image_dims[nimgname] %}
 			<div class="col-md-6 text-right pr-0">
 				<a class="text-dark" href="{{ site.baseurl }}{{ page.next.url }}"> {{page.next.title}} {% if nimg %}
-					<img height="30px" class="ml-1" src="{% if nimgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ nimgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{page.next.image}}{% endif %}"> {% endif %}</a>
+					<img height="30px" class="ml-1" alt="{{ page.next.title }}" src="{% if nimgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ nimgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{page.next.image}}{% endif %}"> {% endif %}</a>
 			</div>
 			{% endif %}
 		</div>
