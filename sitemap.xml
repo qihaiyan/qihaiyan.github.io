@@ -6,7 +6,7 @@ layout: null
 {%- for post in site.posts %}
 <url>
 <loc>{{ post.url | absolute_url }}</loc>
-<lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
+<lastmod>{{ post.last_modified_at | default: post.date | date_to_xmlschema }}</lastmod>
 </url>
 {%- endfor %}
 {%- assign keep_pages = "/,/about.html,/contact.html" | split: "," %}
@@ -14,6 +14,7 @@ layout: null
 {%- if keep_pages contains page.url %}
 <url>
 <loc>{{ page.url | absolute_url }}</loc>
+<lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
 </url>
 {%- endif %}
 {%- endfor %}
