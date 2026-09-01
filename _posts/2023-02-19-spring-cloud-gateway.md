@@ -2,7 +2,7 @@
 layout: post
 title:  "SpringCloudGateway 动态转发后端服务"
 date:   2023-02-19 17:50:00 +0800
-tags: [spring,SpringCloudGateway]
+tags: [spring,SpringCloudGateway,featured]
 categories: [spring boot]
 image: assets/images/springcloudgateway.jpg
 ---

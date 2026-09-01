@@ -2,7 +2,7 @@
 layout: post
 title:  "Spring AI集成DeepSeek大模型"
 date:   2026-08-01 15:30:00 +0800
-tags: [spring,java]
+tags: [spring,java,featured]
 categories: [spring boot]
 image: assets/images/spring-ai-deepseek.jpg
 ---

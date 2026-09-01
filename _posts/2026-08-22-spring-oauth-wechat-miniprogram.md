@@ -2,7 +2,7 @@
 layout: post
 title:  "通过Spring Authorization Server对微信小程序应用进行授权防护"
 date:   2026-08-22 15:30:00 +0800
-tags: [spring,java,oauth2,wechat]
+tags: [spring,java,oauth2,wechat,featured]
 categories: [spring boot]
 image: assets/images/spring-oauth-wechat-miniprogram.jpg
 ---

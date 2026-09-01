@@ -2,7 +2,7 @@
 layout: post
 title:  "Spring AI实现MCP Server"
 date:   2026-08-29 15:30:00 +0800
-tags: [spring,java,ai,mcp]
+tags: [spring,java,ai,mcp,featured]
 categories: [spring boot]
 image: assets/images/spring-mcp.jpg
 ---

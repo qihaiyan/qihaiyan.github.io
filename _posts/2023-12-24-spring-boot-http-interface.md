@@ -2,7 +2,7 @@
 layout: post
 title:  "Spring Boot 3.2 新特性之 HTTP Interface"
 date:   2023-12-24 16:20:00 +0800
-tags: [spring,java]
+tags: [spring,java,featured]
 categories: [spring boot]
 image: assets/images/http-interface.jpg
 ---
