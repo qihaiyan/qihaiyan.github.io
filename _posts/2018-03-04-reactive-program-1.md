@@ -56,7 +56,7 @@ Event-Machine是一个并发编程的抽象。可以让Ruby用一个单线程�
 
 ### Actor Model
 
-与面向对象编程类似，Actor Model是计算机科学的一个重要研究方向，早在七十年代就有了。Actor是计算的一个抽象，可以用于并发系统。Actor之间相互发送消息，因此在某种意义上也是反应式的。Actor和Reactive在概念上有很高的重合度。区别往往在实现层面（例如[Akka](doc.akka.io/docs/akka/current/java.html)可以用于进程间通信，是这个框架的显著特点）。
+与面向对象编程类似，Actor Model是计算机科学的一个重要研究方向，早在七十年代就有了。Actor是计算的一个抽象，可以用于并发系统。Actor之间相互发送消息，因此在某种意义上也是反应式的。Actor和Reactive在概念上有很高的重合度。区别往往在实现层面（例如[Akka](https://doc.akka.io/docs/akka/current/java.html)可以用于进程间通信，是这个框架的显著特点）。
 
 ### Deferred results (Futures)
 
