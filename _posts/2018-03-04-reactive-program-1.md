@@ -1,6 +1,9 @@
 ---
 layout: post
 title:  "Reactive编程（一）:Reactive编程的背景"
+redirect_from:
+  - /spring-boot/reactive-program-1/
+  - /reactive-program-1/doc.akka.io/docs/akka/current/java.html
 date:   2018-3-4 14:38:00 +0800
 tags: [spring,java]
 categories: [spring boot]

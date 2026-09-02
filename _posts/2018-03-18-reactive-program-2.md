@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "Reactive编程（二）:代码演示"
+redirect_from:
+  - /spring-boot/reactive-program-2/
 date:   2018-3-18 14:38:00 +0800
 tags: [spring,java]
 categories: [spring boot]
