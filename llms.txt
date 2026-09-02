@@ -1,0 +1,19 @@
+---
+layout: null
+sitemap: false
+permalink: /llms.txt
+---
+# {{ site.name }} ({{ site.url }})
+
+> Spring Boot / Spring 生态实战技术博客。每篇文章配套一个可独立运行的示例项目,仓库:https://github.com/qihaiyan/springcamp
+
+## 文章
+
+{%- for post in site.posts %}
+- [{{ post.title }}]({{ site.url }}{{ post.url }}): {{ post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 120 }}({{ post.date | date: '%Y-%m-%d' }})
+{%- endfor %}
+
+## 其他页面
+
+- [About]({{ site.url }}/about.html): 站点说明与 SpringCamp 示例项目全列表
+- [GitHub 示例仓库](https://github.com/qihaiyan/springcamp): 30+ 个可独立运行的 Spring Boot 实战示例,覆盖 Spring AI、Security/OAuth2、Cloud、Data、消息、缓存等

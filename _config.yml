@@ -12,9 +12,10 @@ include: ["_pages"]
 permalink: /:title/
 
 # Plugins
-plugins: 
+plugins:
   - jekyll-paginate
   - jekyll-seo-tag
+  - jekyll-feed
   
 authors:
     qihaiyan:
