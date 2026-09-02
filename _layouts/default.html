@@ -49,7 +49,7 @@
 
     <!-- Content -->
     <main role="main" class="site-content">
-        {{ content | replace: '<img', '<img loading="lazy" decoding="async"' }}
+        {{ content | replace_first: '<img', '@@EAGERIMG@@' | replace: '<img', '<img loading="lazy" decoding="async"' | replace: '@@EAGERIMG@@', '<img loading="eager" fetchpriority="high" decoding="async"' }}
     </main>
 
 
