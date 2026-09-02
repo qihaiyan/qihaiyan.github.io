@@ -27,6 +27,11 @@ def main():
     md = urllib.request.urlopen(SRC, timeout=30).read().decode("utf-8")
     # 仓库内相对链接(如模块目录)改写为GitHub绝对路径,避免在博客上404
     md = re.sub(r"\]\(([^)\s]+)\)", fix_relative_link, md)
+    # 博客页不展示贡献统计图和 Supported by 段
+    md = "\n".join(l for l in md.splitlines() if "repobeats.axiom.co" not in l)
+    idx = md.find("### Supported by")
+    if idx != -1:
+        md = md[:idx]
     # 用 raw 包裹,防止 README 里将来出现 {{ }} 或 {% %} 被Liquid误解析
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
