@@ -7,7 +7,7 @@ categories: [spring boot]
 image: assets/images/reactivehttp.png
 ---
 
-书接上文 [Reactive编程](https://springcamp.cn/spring-boot/reactive-program-2/) ，我们已经了解了基础的API，现在我们开始编写实际的应用。Reactive对并发编程进行了很好的抽象，也有很多底层的特性需要我们去关注。当使用这些特性时，我们可以对之前隐藏在容器、平台、框架中的细节进行控制。
+书接上文 [Reactive编程](https://springcamp.cn/reactive-program-2/) ，我们已经了解了基础的API，现在我们开始编写实际的应用。Reactive对并发编程进行了很好的抽象，也有很多底层的特性需要我们去关注。当使用这些特性时，我们可以对之前隐藏在容器、平台、框架中的细节进行控制。
 
 ## Spring MVC由阻塞转向Reactive
 

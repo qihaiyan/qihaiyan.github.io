@@ -12,7 +12,7 @@ image: assets/images/java-concurrency.jpg
 
 ## 一、概述
 
-传统的java并发能力依靠的是多线程，相比于现代的方法是Reactive编程，本文介绍多线程的实现，Reactive编程方法的介绍可参见[Reactive编程](https://springcamp.cn/spring-boot/reactive-program-1/)。
+传统的java并发能力依靠的是多线程，相比于现代的方法是Reactive编程，本文介绍多线程的实现，Reactive编程方法的介绍可参见[Reactive编程](https://springcamp.cn/reactive-program-1/)。
 
 多线程并发编程有2个核心概念，原子性和可见性。原子性的介绍随处可见，简单来说就是一组操作要么全部成功，要么全部失败，不存在中间状态。
 
