@@ -818,3 +818,12 @@ html {
 nav.topnav {
     transition: top .25s ease;
 }
+
+/* 文章内英文摘要块:视觉弱化,中文读者可直接跳过 */
+.en-abstract {
+    font-size: 0.85em;
+    color: #6c757d;
+    border-left: 3px solid #dee2e6;
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+}

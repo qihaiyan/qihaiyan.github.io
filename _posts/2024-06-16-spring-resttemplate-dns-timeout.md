@@ -9,6 +9,10 @@ image: assets/images/dns-timeout.jpg
 
 RestTemplate 常用的超时设置方法可以设置连接超时、接口请求超时、接口响应超时，但是对于DNS解析超时往往没有简单的方法可以设置。本文介绍设置DNS解析超时时间的方法，具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log](https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log)
 
+<blockquote class="en-abstract">
+RestTemplate's built-in timeout settings cover connect, request and response timeouts, but offer no direct way to set a DNS resolution timeout. This post shows how to add one by implementing a custom <code>DnsResolver</code> on top of Apache HttpClient, with a runnable example at <a href="https://github.com/qihaiyan/springcamp/tree/main/spring-rest-template-log">springcamp/spring-rest-template-log</a>.
+</blockquote>
+
 ## 一、概述
 
 在spring中使用RestTemplate调用远程接口时往往需要设置超时时间，否则当对方接口过慢时，很容易把自己系统堵死。连接超时、发送请求超时、接收响应超时都有直接的方法可以进行调用设置，设置DNS解析超时需要通过相对复杂的方法进行处理。
