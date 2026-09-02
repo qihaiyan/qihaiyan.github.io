@@ -56,7 +56,7 @@ description: "my technical blog."
                 <div class="col-md-4">
                 <a href="{{site.baseurl}}{{second_post.url}}">
                  {%- assign imgname = second_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-                 <img class="w-100" src="{% if second_post.image contains "://" %}{{ second_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{ second_post.image | absolute_url }}{% endif %}" alt="{{ second_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                 <img class="w-100" src="{% if second_post.image contains "://" %}{{ second_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{ second_post.image | absolute_url }}{% endif %}" alt="{{ second_post.title }}" loading="eager" decoding="async" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
                 </a>
                 </div>
                 {% endif %}                
@@ -84,7 +84,7 @@ description: "my technical blog."
                 <div class="col-md-4">
                 <a href="{{site.baseurl}}{{third_post.url}}">
                  {%- assign imgname = third_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-                 <img class="w-100" src="{% if third_post.image contains "://" %}{{ third_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ third_post.image }}{% endif %}" alt="{{ third_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                 <img class="w-100" src="{% if third_post.image contains "://" %}{{ third_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ third_post.image }}{% endif %}" alt="{{ third_post.title }}" loading="lazy" decoding="async" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
                 </a>
                 </div>
                 {% endif %}                
@@ -112,7 +112,7 @@ description: "my technical blog."
                 <div class="col-md-4">
                 <a href="{{site.baseurl}}{{fourth_post.url}}">
                 {%- assign imgname = fourth_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
-                <img class="w-100" src="{% if fourth_post.image contains "://" %}{{ fourth_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ fourth_post.image }}{% endif %}" alt="{{ fourth_post.title }}" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                <img class="w-100" src="{% if fourth_post.image contains "://" %}{{ fourth_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ fourth_post.image }}{% endif %}" alt="{{ fourth_post.title }}" loading="lazy" decoding="async" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
                 </a>
                 </div>
                 {% endif %}                
