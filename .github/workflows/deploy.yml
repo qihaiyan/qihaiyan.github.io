@@ -30,11 +30,11 @@ jobs:
     # thumbs 失败时不重复部署(push 触发的那次已部署过文章本身)
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # workflow_run 触发时用 thumbs 推送后的最新提交
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
@@ -44,12 +44,12 @@ jobs:
       # 后续步骤以 runner 用户运行,不 chown 无法写入(见 tools/gen-md.py)
       - name: Fix _site ownership
         run: sudo chown -R "$(id -u):$(id -g)" _site
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Generate markdown for agents
         run: python tools/gen-md.py _site
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -61,4 +61,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
