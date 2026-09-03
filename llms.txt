@@ -6,11 +6,12 @@ permalink: /llms.txt
 # {{ site.name }} ({{ site.url }})
 
 > Spring Boot / Spring 生态实战技术博客。每篇文章配套一个可独立运行的示例项目,仓库:https://github.com/qihaiyan/springcamp
+> 本站支持 Accept: text/markdown 内容协商,直接以该头部请求任一文章 URL 即得纯 Markdown;链接后的 [md] 为 .md 纯文本直链。
 
 ## 文章
 
 {%- for post in site.posts %}
-- [{{ post.title }}]({{ site.url }}{{ post.url }}): {{ post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 120 }}({{ post.date | date: '%Y-%m-%d' }})
+- [{{ post.title }}]({{ site.url }}{{ post.url }}) [md]({{ site.url }}/{{ post.url | remove: '/' }}.md): {{ post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 120 }}({{ post.date | date: '%Y-%m-%d' }})
 {%- endfor %}
 
 ## 其他页面
