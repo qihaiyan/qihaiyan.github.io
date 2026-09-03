@@ -35,7 +35,7 @@ compile 'io.projectreactor:reactor-core:3.0.0.RC2'
 
 ## 工作原理
 
-Reactive由一系列事件以及发布和订阅这些事件的2个参与方组成的一个序列。我们也可以称之为stream。如果需要，我们使用streams这个名词，但是java8有一个java.util.Stream库，与我们在这儿要讲的概念是不同的，不要将这2个概念混淆。我们尽量集中阐述publisher和subscriber（Reactive Streams的行为）。
+Reactive由一系列事件以及发布和订阅这些事件的2个参与方组成的一个序列。我们也可以称之为stream。如果需要，我们使用streams这个名词，但是java8有一个java.util.Stream库，与我们在这儿要讲的概念是不同的，不要将这2个概念混淆。我们尽量集中阐述publisher和subscriber（Reactive Streams的行为）。
 
 我们会使用```Reactor```库，把publisher称为 ```Flux```（实现了Reactive Streams的```Publisher```接口），在RxJava库中的名称是```Observable``` ，代表的是类似的概念。(Reactor2.0中的名称为Stream，很容易跟Java 8 的 Streams混淆，因此我们只使用Reactor 3.0中的新定义)。
 
@@ -54,7 +54,7 @@ Flux<String> flux = Flux.just("red", "white", "blue");
 
 ## 单值序列
 
-我们经常遇到的序列往往只有一个元素，或者是没有元素，例如通过id查找记录。在Reactor中Mono表示单值Flux或空Flux。Mono的API与Flux类似，但是更简洁，因为不是所有的操作对单值序列有意义。RxJava中类似的类型叫Single，空序列叫Completable。在Reactor中空序列是```Mono<Void>```。
+我们经常遇到的序列往往只有一个元素，或者是没有元素，例如通过id查找记录。在Reactor中Mono表示单值Flux或空Flux。Mono的API与Flux类似，但是更简洁，因为不是所有的操作对单值序列有意义。RxJava中类似的类型叫Single，空序列叫Completable。在Reactor中空序列是```Mono<Void>```。
 
 ## 操作符
 
@@ -71,7 +71,7 @@ Flux<String> upper = flux
 
 ```
 
-这段代码将输入的字符串转换成大写，非常简单明了。同时很有意思的一点是（时刻注意，虽然刚开始不太习惯），数据并没有开始处理。什么都不会显示，因为什么都没有发生（可以自己运行一下代码），调用Flux的操作符仅仅是建立了一个执行计划。操作符实现的逻辑只有当数据开始流动时才会执行，当某一方订阅这个Flux的时候。
+这段代码将输入的字符串转换成大写，非常简单明了。同时很有意思的一点是（时刻注意，虽然刚开始不太习惯），数据并没有开始处理。什么都不会显示，因为什么都没有发生（可以自己运行一下代码），调用Flux的操作符仅仅是建立了一个执行计划。操作符实现的逻辑只有当数据开始流动时才会执行，当某一方订阅这个Flux的时候。
 
 Java 8 的 Streams 也有类似的处理数据流的方式：
 
@@ -84,7 +84,7 @@ Stream<String> upper = stream.map(value -> {
 });
 
 ```
-但是Flux 和 Stream有非常大的差异，Stream的API不适用于Reactive。
+但是Flux 和 Stream有非常大的差异，Stream的API不适用于Reactive。
 
 ## 订阅
 
@@ -114,9 +114,9 @@ Flux.just("red", "white", "blue")
 
 ```
 
-可以看到当subscribe()没有参数时，会请求 publisher 发送所有的数据 - 只有一个request并且是 "unbounded"。我们还可以看到发布的每一项的回调(onNext())，结束的回调(onComplete())，以及原始订阅的回调(onSubscribe())。如果需要，我们还可以用Flux的doOn*()方法来监听这些事件的回调。
+可以看到当subscribe()没有参数时，会请求 publisher 发送所有的数据 - 只有一个request并且是 "unbounded"。我们还可以看到发布的每一项的回调(onNext())，结束的回调(onComplete())，以及原始订阅的回调(onSubscribe())。如果需要，我们还可以用Flux的doOn*()方法来监听这些事件的回调。
 
-subscribe()方法是重载的，有很多变体。其中一个重要且常用的形式是带回调参数。第一个参数是 Consumer ，用于每一个数据项的回调，还可以增加一个可选的 Consumer 用于错误处理，以及一个序列完成后执行的 Runnable 。
+subscribe()方法是重载的，有很多变体。其中一个重要且常用的形式是带回调参数。第一个参数是 Consumer ，用于每一个数据项的回调，还可以增加一个可选的 Consumer 用于错误处理，以及一个序列完成后执行的 Runnable 。
 
 例如，为每一个数据项增加回调：
 
@@ -145,7 +145,7 @@ BLUE
 
 ```
 
-我们可以通过多种方法控制数据流使它变成 "bounded" 。用于控制的内部接口是从 Subscriber 获取到的 Subscription 。与前面简单调用 subscribe() 等价的复杂形式是：
+我们可以通过多种方法控制数据流使它变成 "bounded" 。用于控制的内部接口是从 Subscriber 获取到的 Subscription 。与前面简单调用 subscribe() 等价的复杂形式是：
 
 ``` java
 
@@ -238,9 +238,9 @@ Flux.just("red", "white", "blue")
 
 ## 线程、调度和后台处理
 
-上面的示例中有一个有趣的特点是所有的log方法都是在主线程中执行的，即 subscribe() 调用者的线程。这是一个关键点：Reactor以尽可能少的线程来实现高性能。过去5年我们习惯于使用多线程、线程池和异步处理来提升系统性能。对于这种新的思路可能会比较诧异。但是事实是：即使是JVM这种专门对线程处理做过优化的技术，线程切换的成本也是很高的。在单个线程上进行计算总是要快的多。Reactor给了我们进行异步编程的方法，并且假设我们知道我们在做什么。
+上面的示例中有一个有趣的特点是所有的log方法都是在主线程中执行的，即 subscribe() 调用者的线程。这是一个关键点：Reactor以尽可能少的线程来实现高性能。过去5年我们习惯于使用多线程、线程池和异步处理来提升系统性能。对于这种新的思路可能会比较诧异。但是事实是：即使是JVM这种专门对线程处理做过优化的技术，线程切换的成本也是很高的。在单个线程上进行计算总是要快的多。Reactor给了我们进行异步编程的方法，并且假设我们知道我们在做什么。
 
-Flux提供了一些方法来控制线程的边界。例如，可以使用 ```Flux.subscribeOn()``` 配置一个订阅在后台线程中进行处理:
+Flux提供了一些方法来控制线程的边界。例如，可以使用 ```Flux.subscribeOn()``` 配置一个订阅在后台线程中进行处理:
 
 ``` java
 
@@ -282,7 +282,7 @@ Flux.just("red", "white", "blue")
 
 ```
 
-注意 ```flatMap()``` 把数据项放入一个子 publisher ，这样可以控制每个子项的订阅而不是整个序列的订阅。Reactor内部的默认行为可以尽可能长的挂起在一个线程上，因此如果需要特定的数据项在后台线程中处理，必须要明确的指明。事实上这是一系列强制进行并行计算的方法中的一种。
+注意 ```flatMap()``` 把数据项放入一个子 publisher ，这样可以控制每个子项的订阅而不是整个序列的订阅。Reactor内部的默认行为可以尽可能长的挂起在一个线程上，因此如果需要特定的数据项在后台线程中处理，必须要明确的指明。事实上这是一系列强制进行并行计算的方法中的一种。
 
 输出内容：
 
@@ -301,9 +301,9 @@ Flux.just("red", "white", "blue")
 
 ```
 
-现在是多个线程在进行处理，并且 flatMap() 中的批量参数保证只要可能每次都会处理2个数据项。Reactor会让自己尽可能的聪明，预先从 Publisher 中提取数据项，并且估算订阅方的等待时间。
+现在是多个线程在进行处理，并且 flatMap() 中的批量参数保证只要可能每次都会处理2个数据项。Reactor会让自己尽可能的聪明，预先从 Publisher 中提取数据项，并且估算订阅方的等待时间。
 
-Flux 还有一个 publishOn() 方法的作用类似，只不过控制的是发布方的行为：
+Flux 还有一个 publishOn() 方法的作用类似，只不过控制的是发布方的行为：
 
 ``` java
 
@@ -335,7 +335,7 @@ Flux.just("red", "white", "blue")
 
 ```
 
-注意订阅方的回调（内容为 "Consumed: …​"）执行在发布方线程 ```pub-1-1``` 上。如果把 subscribeOn() 方法去掉，会发现所有的数据项的处理都在线程 ```pub-1-1``` 上。这再一次说明 Reactor 使用尽可能少的线程 - 如果没有明确的指定要切换线程，下一个调用会在当前调用的线程上执行。
+注意订阅方的回调（内容为 "Consumed: …​"）执行在发布方线程 ```pub-1-1``` 上。如果把 subscribeOn() 方法去掉，会发现所有的数据项的处理都在线程 ```pub-1-1``` 上。这再一次说明 Reactor 使用尽可能少的线程 - 如果没有明确的指定要切换线程，下一个调用会在当前调用的线程上执行。
 
 ## 提取器：有副作用的订阅者
 
@@ -344,7 +344,7 @@ Flux.just("red", "white", "blue")
 警告：
 一个黄金规则是“永远不要调用提取器”。当然有一些例外，例如在测试程序中需要能够通过阻塞来汇总结果。
 
-这些方法用于将 Reactive 转换为阻塞模式，当我们需要适配一个老式的API，例如Spring MVC的时候。在调用 Mono.block() 的时候，我们放弃了 Reactive Streams 所有优势。这是 Reactive Streams 和 Java 8 Streams 的关键区别 - Java Stream只有 "all or nothing" 的订阅模式，等同于 Mono.block()。当然 subscribe() 也会阻塞调用线程，因此与转换方法一样危险，但是有足够的控制手段 - 可以用 subscribeOn() 防止阻塞，也可以通过背压来将数据项进行溢出并且定时的决定是否继续处理。
+这些方法用于将 Reactive 转换为阻塞模式，当我们需要适配一个老式的API，例如Spring MVC的时候。在调用 Mono.block() 的时候，我们放弃了 Reactive Streams 所有优势。这是 Reactive Streams 和 Java 8 Streams 的关键区别 - Java Stream只有 "all or nothing" 的订阅模式，等同于 Mono.block()。当然 subscribe() 也会阻塞调用线程，因此与转换方法一样危险，但是有足够的控制手段 - 可以用 subscribeOn() 防止阻塞，也可以通过背压来将数据项进行溢出并且定时的决定是否继续处理。
 
 ## 总结
 

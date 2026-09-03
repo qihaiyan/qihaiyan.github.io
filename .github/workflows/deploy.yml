@@ -1,0 +1,60 @@
+name: build-deploy
+
+# Actions 构建部署,替代 Pages 原生分支构建,
+# 目的:构建产物里追加每篇文章的 .md 版本(tools/gen-md.py),
+# 供 Cloudflare Worker 做 Accept: text/markdown 内容协商。
+# 首次使用需在 Settings -> Pages 把 Source 从分支切换为 GitHub Actions。
+#
+# 另: gen-thumbs 工作流用 GITHUB_TOKEN 推送的提交不会触发任何 on:push,
+# 所以额外监听它跑完后重新部署,否则缩略图提交会漏部署。
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["generate-thumbnails"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # thumbs 失败时不重复部署(push 触发的那次已部署过文章本身)
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # workflow_run 触发时用 thumbs 推送后的最新提交
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate markdown for agents
+        run: python tools/gen-md.py _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
