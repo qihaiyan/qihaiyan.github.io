@@ -40,6 +40,10 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      # jekyll-build-pages 是 docker action,_site 属主为 root,
+      # 后续步骤以 runner 用户运行,不 chown 无法写入(见 tools/gen-md.py)
+      - name: Fix _site ownership
+        run: sudo chown -R "$(id -u):$(id -g)" _site
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
