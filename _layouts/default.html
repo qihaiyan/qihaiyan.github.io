@@ -18,6 +18,9 @@
 
     <script src="{{site.baseurl}}/assets/js/theme.js" defer></script>
 
+    <!-- Cloudflare AI Search 组件 -->
+    <script type="module" src="https://ai.springcamp.cn/assets/v0.0.40/search-snippet.es.js"></script>
+
     {% include tracking-header.html %}
 
 
@@ -37,16 +40,11 @@
                {% include menu-header.html %}
             </ul>
             <ul class="navbar-nav ml-auto d-flex align-items-center">
-                {% include search-lunr.html %}
+                {% include ai-search.html %}
             </ul>
         </div>
     </div>
     </nav>
-
-    <!-- Search Results -->
-    <div id="lunrsearchresults">
-        <ul class="mb-0"></ul>
-    </div>
 
     <!-- Content -->
     <main role="main" class="site-content">
@@ -69,6 +67,8 @@
         </div>
         </div>
     </footer>
+
+    {% include ai-chat.html %}
 
     {% include tracking-footer.html %}
 

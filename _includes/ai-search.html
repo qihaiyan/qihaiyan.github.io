@@ -1,0 +1,23 @@
+<!-- Cloudflare AI Search: 导航栏 AI 搜索框,替代原 lunr 关键词搜索 -->
+<search-bar-snippet
+    api-url="https://ai.springcamp.cn/"
+    placeholder="AI 搜索本站…"
+    max-results="8"
+    max-render-results="8"
+    show-url="true"
+    show-date="true"
+    theme="light">
+</search-bar-snippet>
+
+<style>
+    /* 组件 :host 自带 min-width:320px,需清掉才能自定义宽度 */
+    #MagicMenu search-bar-snippet {
+        display: block;
+        width: 240px;
+        min-width: 0;
+        --search-snippet-border-radius: .25rem;
+    }
+    @media (max-width: 575.98px) {
+        #MagicMenu search-bar-snippet { width: 100%; }
+    }
+</style>
