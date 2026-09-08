@@ -10,14 +10,13 @@
 </search-bar-snippet>
 
 <style>
-    /* 组件 :host 自带 min-width:320px,需清掉才能自定义宽度 */
+    /* 组件内部布局最小约 320px,压缩宽度会导致按钮溢出裁切,保持默认宽度 */
     #MagicMenu search-bar-snippet {
         display: block;
-        width: 240px;
-        min-width: 0;
         --search-snippet-border-radius: .25rem;
     }
-    @media (max-width: 575.98px) {
-        #MagicMenu search-bar-snippet { width: 100%; }
+    /* 窄屏导航放不下,隐藏(与原 lunr 搜索框 hidden-sm-down 行为一致) */
+    @media (max-width: 767.98px) {
+        #MagicMenu search-bar-snippet { display: none; }
     }
 </style>
