@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "java并发编程"
+title:  "java并发编程：多线程、原子性与可见性"
 date:   2020-4-12 21:30:00 +0800
 tags: [spring,java]
 categories: [spring boot]

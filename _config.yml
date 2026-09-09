@@ -1,7 +1,7 @@
 # Site
 name: '海思'
-title: '海思'
-description: 'my technical blog.'
+title: '海思 · Java 后端技术博客'
+description: '海思的技术博客，专注 Java 后端与 Spring 生态实战，原创文章涵盖 Spring Boot、Spring Cloud、Security/OAuth2、Redis、Kafka、Elasticsearch、Spring AI 等主题，每篇文章配套 GitHub 开源项目中的完整可运行示例代码。'
 logo: 'assets/images/logo.png'
 favicon: 'assets/images/favicon.ico'
 baseurl: ''

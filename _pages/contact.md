@@ -1,6 +1,7 @@
 ---
-title: "Contact"
+title: "联系海思：技术交流与合作联系方式"
 permalink: "/contact.html"
+description: "联系海思：可通过本页表单或邮件 haiyan_qi@hotmail.com，就 Spring Boot、Java 后端开发、SpringCamp 示例项目等话题交流问题、提出建议或洽谈合作，收到消息后会尽快回复。"
 ---
 
 <form action="https://formspree.io/{{site.email}}" method="POST">    

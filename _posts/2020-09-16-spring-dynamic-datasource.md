@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "spring动态数据源"
+title:  "spring动态数据源：只改配置即可接入新数据源"
 date:   2020-9-16 15:30:00 +0800
 tags: [spring,java]
 categories: [spring boot]

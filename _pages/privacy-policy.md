@@ -1,6 +1,7 @@
 ---
-title: "Privacy Policy"
+title: "隐私政策：访客信息与 Cookie 使用说明"
 permalink: "/privacy-policy.html"
+description: "海思技术博客的隐私政策：说明本站如何收集与使用访客的常规信息（如 IP 地址、浏览器类型、访问时间、来源页面）、Cookie 的用途以及第三方统计服务对数据的处理方式，帮助您了解个人数据的具体保护措施。"
 ---
 
 "{{site.name}}" takes your privacy seriously. To better protect your privacy we provide this privacy policy notice explaining the way your personal information is collected and used.

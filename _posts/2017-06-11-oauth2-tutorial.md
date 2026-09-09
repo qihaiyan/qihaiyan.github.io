@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "OAuth 2.0 教程"
+title:  "OAuth 2.0 教程：开放授权协议原理与授权流程详解"
 date:   2017-06-11 20:22:00 +0800
 tags: [oauth2]
 categories: [oauth2]
