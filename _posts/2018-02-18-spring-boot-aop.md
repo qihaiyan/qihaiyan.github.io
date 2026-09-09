@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "SpringBoot项目中使用AOP"
+description: "介绍 Spring AOP 的核心概念与实战用法，包括 Pointcut 切点的 execution 与 @annotation 定义方式、Advice 通知类型，以及通过切面统一实现验签、鉴权等通用逻辑。"
 date:   2018-2-18 21:31:00 +0800
 tags: [spring]
 categories: [spring boot]

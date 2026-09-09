@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Reactive编程（二）:代码演示"
+description: "Reactive 编程系列第二篇，通过 Reactor 库的具体代码理解响应式编程的核心元素，学习如何控制数据流、使用后台线程处理任务，深入体会 Reactive API 与编程风格的独特之处。"
 redirect_from:
   - /spring-boot/reactive-program-2/
 date:   2018-3-18 14:38:00 +0800

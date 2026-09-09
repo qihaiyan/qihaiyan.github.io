@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "ElasticSearch新版JavaClient使用简介"
+description: "介绍 Elasticsearch 7.17 后推荐的新版 Java API Client 的基本用法，包括强类型的同步与异步调用、流式构建请求等特性，并给出与旧版 Java REST Client 迁移对比的示例。"
 date:   2022-04-17 17:50:00 +0800
 tags: [spring,ElasticSearch]
 categories: [spring boot]

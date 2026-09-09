@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "spring缓存自定义resolver"
+description: "介绍 Spring 自定义缓存 resolver 的实现方法，通过自定义 RedisCacheManager 相关组件，在 cache 注解中增加附加处理逻辑，完善 cache-aside 模式下的缓存一致性处理。"
 date:   2022-03-13 22:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]

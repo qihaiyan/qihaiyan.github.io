@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "spring动态数据源：只改配置即可接入新数据源"
+description: "介绍 Spring Boot 动态数据源的实现方法，通过扩展配置机制，做到只修改配置文件就能完成新数据源的接入，无需修改程序代码，提升系统灵活性与开发效率，附完整示例。"
 date:   2020-9-16 15:30:00 +0800
 tags: [spring,java]
 categories: [spring boot]

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "spring使用kafka的三种方式（listener、container、stream）"
+description: "介绍 Spring 中使用 Kafka 的 listener、container、stream 三种方式，@KafkaListener 开发简单、container 最灵活、stream 最简便，对比各自特点帮助选择合适的接入方案。"
 date:   2021-10-31 16:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]

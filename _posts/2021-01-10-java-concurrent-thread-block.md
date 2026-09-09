@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "spring自带线程池使用不当导致的死锁问题"
+description: "分析 Spring 自带线程池 ThreadPoolTaskExecutor 的核心配置与处理流程，讲解队列与拒绝策略配置不当导致请求阻塞的典型场景，帮助在并发编程中避开线程池使用的坑。"
 date:   2021-01-10 18:50:00 +0800
 tags: [spring,java]
 categories: [spring boot]

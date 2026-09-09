@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "SpringBoot项目中的多数据源支持"
+description: "介绍在 Spring Boot 项目中利用 Spring Data JPA 支持多数据源的方法，通过分包配置各自的 EntityManagerFactory 与事务管理器，实现多个数据库的访问与查询，附示例项目。"
 date:   2017-10-20 10:00:00 +0800
 tags: [spring]
 categories: [spring boot]

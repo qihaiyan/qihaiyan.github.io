@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "SpringBoot框架中REST接口的异常处理方法"
+description: "介绍 Spring Boot 中 REST 接口异常处理的方法，包括 @ResponseStatus 注解定义状态码、自定义异常类与 @ControllerAdvice 全局异常处理，让接口返回准确的 HTTP 状态码。"
 date:   2017-05-21 18:28:00 +0800
 tags: [spring]
 categories: [spring boot]

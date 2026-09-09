@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "用JWT技术为SpringBoot的API增加授权保护"
+description: "介绍如何在 Spring Boot 中利用 JWT 为 RESTful API 增加授权保护，从创建工程、集成 Spring Security 与 JJWT，到自定义过滤器完成令牌校验，附完整可运行的示例项目。"
 date:   2017-06-11 21:28:00 +0800
 tags: [spring,jwt]
 categories: [spring boot]

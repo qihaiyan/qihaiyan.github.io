@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Spring统一修改RequestBody"
+description: "介绍通过 RequestBodyAdviceAdapter 统一修改 RestController 请求参数的方法，例如将 header 中的值自动赋给 RequestBody 属性，避免在多个接口中重复编写修改逻辑。"
 date:   2024-07-06 15:30:00 +0800
 tags: [spring,java]
 categories: [spring boot]

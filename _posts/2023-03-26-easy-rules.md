@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "简易规则引擎 easy-rules"
+description: "介绍轻量级规则引擎 easy-rules 在 Spring 项目中的使用方法，通过将业务规则配置化并支持 SPEL 表达式，实现规则修改无需改代码，有效降低代码复杂度、提升可维护性。"
 date:   2023-03-26 17:50:00 +0800
 tags: [spring,java]
 categories: [spring boot]

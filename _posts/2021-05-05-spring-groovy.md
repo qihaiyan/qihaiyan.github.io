@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "springboot集成groovy脚本"
+description: "介绍 Spring 中集成 Groovy 脚本的两种方式：在脚本中定义 Bean 融入 Spring 体系，以及在程序中直接调用脚本逻辑，为应用引入脚本能力、提升业务灵活性，附示例项目。"
 date:   2021-05-05 16:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]

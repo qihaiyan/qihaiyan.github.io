@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Spring RestTemplate 怎么设置 DNS 解析超时"
+description: "介绍 RestTemplate 设置 DNS 解析超时的方法，通过自定义 DnsResolver 并注入 Apache HttpClient 的连接池，补齐连接、请求、响应超时之外的最后一块短板，附示例项目。"
 date:   2024-06-16 15:30:00 +0800
 tags: [spring,java]
 categories: [spring boot]

@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "用docker搭建elasticsearch集群"
+description: "介绍如何使用 Docker 与 docker-compose 部署 Elasticsearch 集群，包括主节点与数据节点的 elasticsearch.yml 关键配置、单播发现等注意事项，并附完整示例项目。"
 date:   2017-09-08 21:00:00 +0800
 tags: [docker,elasticsearch]
 categories: [docker]

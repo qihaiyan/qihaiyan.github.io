@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "spring-rest接口LocalDateTime转时间戳"
+description: "介绍 Spring REST 接口中 LocalDateTime 日期类型统一转换为 UTC 时间戳（Epoch）的方法，通过 Jackson2ObjectMapperBuilderCustomizer 全局配置，业务代码无需感知转换。"
 date:   2022-04-04 17:50:00 +0800
 tags: [spring,java]
 categories: [spring boot]

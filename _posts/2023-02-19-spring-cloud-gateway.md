@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "SpringCloudGateway 动态转发后端服务"
+description: "介绍基于 Spring Cloud Gateway 实现动态路由的方法，将路由规则保存到数据库中，根据请求 header 等特定条件动态选择后端服务地址，实现灵活的 API 网关流量转发。"
 date:   2023-02-19 17:50:00 +0800
 tags: [spring,SpringCloudGateway,featured]
 categories: [spring boot]

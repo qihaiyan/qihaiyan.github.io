@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "SpringBoot项目中使用redis缓存"
+description: "介绍在 Spring Boot 中通过 Spring Data Redis 与 @Cacheable 等注解启用 Redis 缓存的方法，有效减少数据库压力、提升查询性能，并讲解缓存的序列化配置等细节。"
 date:   2017-12-03 15:15:00 +0800
 tags: [spring,redis]
 categories: [spring boot]

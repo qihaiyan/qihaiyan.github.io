@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Spring Boot 3的AOT（GraalVM Native Image）应用开发"
+description: "介绍 Spring Boot 3 的 AOT 与 GraalVM Native Image 技术，讲解反射、动态代理等资源的 Hint 配置，将 Java 程序编译为启动快、体积小的原生可执行程序，适配云原生场景。"
 date:   2022-11-26 17:50:00 +0800
 tags: [spring,GraalVM Native]
 categories: [spring boot]

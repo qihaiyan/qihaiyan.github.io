@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Reactive编程（一）:Reactive编程的背景"
+description: "Reactive 编程系列第一篇，用具体例子解释响应式编程的核心概念，澄清它与并发编程、函数式编程的关系，介绍 Reactor 与 Reactive Streams 的基本用法与适用场景。"
 redirect_from:
   - /spring-boot/reactive-program-1/
   - /reactive-program-1/doc.akka.io/docs/akka/current/java.html

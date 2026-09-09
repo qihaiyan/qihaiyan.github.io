@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "springboot单元测试技术"
+description: "介绍 Spring Boot 单元测试的完整实践，涵盖 testRestTemplate 接口测试、Mockito 模拟外部依赖、嵌入组件替代数据库与 kafka 等，实现不依赖外部服务的全链路功能测试。"
 date:   2021-04-18 17:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]

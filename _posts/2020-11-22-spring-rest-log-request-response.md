@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "spring打印http接口请求和响应"
+description: "介绍集中打印 REST 接口请求与响应日志的三种方式：CommonsRequestLoggingFilter、HandlerInterceptor 与 RequestBodyAdviceAdapter，对比各自特点，无需在每个接口中重复实现。"
 date:   2020-11-22 11:50:00 +0800
 tags: [spring,java]
 categories: [spring boot]
