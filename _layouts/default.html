@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    {% if paginator and paginator.page > 1 %}
+    <title>{{ page.title }} | {{ site.title }}</title>
+    {% seo title=false %}
+    {% else %}
     {% seo %}
+    {% endif %}
     {% feed_meta %}
 
     <link rel="shortcut icon" type="image/x-icon" href="{{site.baseurl}}/{{site.favicon}}">
