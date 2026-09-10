@@ -61,6 +61,7 @@ rule_engine.png: {w: 682, h: 462, t: true}
 scheduler.jpg: {w: 2500, h: 1600, t: true}
 sighup.png: {w: 659, h: 412, t: true}
 spring-ai-deepseek.jpg: {w: 1024, h: 571, t: true}
+spring-ai-htmx-chat.jpg: {w: 1920, h: 1080, t: true}
 spring-boot-starter-jwt.png: {w: 1253, h: 577}
 spring-kafka.jpeg: {w: 1344, h: 756, t: true}
 spring-mcp.jpg: {w: 1920, h: 1080, t: true}
