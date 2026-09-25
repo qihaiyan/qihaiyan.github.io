@@ -21,7 +21,7 @@ Spring的AOP技术主要有4个核心概念：
 
 3. Aspect: 切面，把Pointcut和Advice组合在一起形成一个切面
 
-4. Join Point: 在执行时Pointcut的一个实例
+4. Join Point: 在执行时Pointcut的一个实例
 
 5. Weaver: 实现AOP的框架，例如 AspectJ 或 Spring AOP
 

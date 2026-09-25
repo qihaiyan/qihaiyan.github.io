@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "通过Spring Authorization Server对微信小程序应用进行授权防护"
+title:  "通过Spring Authorization Server对微信小程序进行授权防护"
 description: "介绍利用 Spring Authorization Server 的扩展授权类型机制，为微信小程序定制 wechat-code 授权模式，用 wx.login 的 code 换取标准 OAuth2 令牌，实现后端资源统一授权防护。"
 date:   2026-08-22 15:30:00 +0800
 tags: [spring,java,oauth2,wechat,featured]
