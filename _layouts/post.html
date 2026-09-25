@@ -16,6 +16,12 @@ layout: default
 							{% endfor %}
 						</span>
 					</p>
+					{% include lang-alternate.html %}
+					{% if is_en %}
+					<p class="text-uppercase font-weight-bold"><a class="sscroll text-danger" href="{{ alt_url | prepend: site.baseurl }}" onclick="try{sessionStorage.setItem('langChoice','zh')}catch(e){}">中文版</a></p>
+					{% elsif alt_url != '' %}
+					<p class="text-uppercase font-weight-bold"><a class="sscroll text-danger" href="{{ alt_url | prepend: site.baseurl }}" onclick="try{sessionStorage.setItem('langChoice','en')}catch(e){}">English</a></p>
+					{% endif %}
 					<h1 class="display-4 mb-4 article-headline">{{ page.title }}</h1>
 					<div class="d-flex align-items-center">
 						{% if author.avatar %}

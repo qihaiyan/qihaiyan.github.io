@@ -6,7 +6,7 @@ pagination:
 description: "海思技术博客首页，专注 Java 后端与 Spring 生态的原创实战教程，持续更新 Spring Boot、Spring Cloud、Redis、Kafka、Elasticsearch、OAuth2、Spring AI 等主题文章，每篇均配套完整可运行的示例代码。"
 ---
 
-
+{% assign zh_posts = site.posts | where_exp: "post", "post.lang != 'en'" %}
 <div class="container">
     
 {% if page.url == "/" %}
@@ -17,7 +17,7 @@ description: "海思技术博客首页，专注 Java 后端与 Spring 生态的�
 <div class="row remove-site-content-margin">
     
     <!-- latest post -->
-    {% assign latest_post = site.posts[0] %}
+    {% assign latest_post = zh_posts[0] %}
     {%- assign lname = latest_post.image | split: "/" | last -%}{%- assign ldims = site.data.image_dims[lname] -%}
     <div class="col-md-6">
     <div class="card border-0 mb-4 box-shadow">
@@ -50,7 +50,7 @@ description: "海思技术博客首页，专注 Java 后端与 Spring 生态的�
     <div class="col-md-6">
         
         <!-- second latest post -->
-        {%- assign second_post = site.posts[1] -%}        
+        {%- assign second_post = zh_posts[1] -%}
         <div class="mb-3 d-flex align-items-center">                
                 {% if second_post.image %}
                 <div class="col-md-4">
@@ -78,7 +78,7 @@ description: "海思技术博客首页，专注 Java 后端与 Spring 生态的�
             </div>
         
         <!-- third latest post -->
-        {%- assign third_post = site.posts[2] -%}        
+        {%- assign third_post = zh_posts[2] -%}
         <div class="mb-3 d-flex align-items-center">                
                 {% if third_post.image %}
                 <div class="col-md-4">
@@ -106,7 +106,7 @@ description: "海思技术博客首页，专注 Java 后端与 Spring 生态的�
             </div>
         
         <!-- fourth latest post -->
-        {%- assign fourth_post = site.posts[3] -%}        
+        {%- assign fourth_post = zh_posts[3] -%}
         <div class="mb-3 d-flex align-items-center">                
                 {% if fourth_post.image %}
                 <div class="col-md-4">
@@ -138,7 +138,7 @@ description: "海思技术博客首页，专注 Java 后端与 Spring 生态的�
 </div>
     
 <!-- Sticky - add sticky tag to the post you want to highlight here - tags: [sticky] -->
-{% for post in site.posts %} 
+{% for post in zh_posts %} 
 {% if post.tags contains "sticky" %}
 <div class="jumbotron jumbotron-fluid jumbotron-home pt-0 pb-0 mt-3 mb-2rem bg-lightblue position-relative">
     <div class="pl-4 pr-0 h-100 tofront">
@@ -176,9 +176,9 @@ description: "海思技术博客首页，专注 Java 后端与 Spring 生态的�
         
 
         {% for post in paginator.posts %}
-        
+            {% unless post.lang == 'en' %}
             {% include main-loop-card.html %}
-        
+            {% endunless %}
         {% endfor %}
         
         <div class="mt-5">

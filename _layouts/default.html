@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{% if page.lang == 'en' %}en{% else %}zh-CN{% endif %}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,6 +12,26 @@
     {% seo %}
     {% endif %}
     {% feed_meta %}
+
+    {% include lang-alternate.html %}
+    {% if is_en %}
+    <link rel="alternate" hreflang="en" href="{{ site.url }}{{ page.url }}">
+    <link rel="alternate" hreflang="zh" href="{{ site.url }}{{ alt_url }}">
+    {% elsif alt_url != '' %}
+    <link rel="alternate" hreflang="zh" href="{{ site.url }}{{ page.url }}">
+    <link rel="alternate" hreflang="en" href="{{ site.url }}{{ alt_url }}">
+    <script>
+        // 非中文浏览器自动切换到英文版；用户点过“中文版”后本次会话不再跳转
+        (function () {
+            try {
+                var nav = (navigator.language || navigator.userLanguage || 'zh').toLowerCase();
+                if (nav.indexOf('zh') !== 0 && sessionStorage.getItem('langChoice') !== 'zh') {
+                    location.replace('{{ alt_url | prepend: site.baseurl }}');
+                }
+            } catch (e) { }
+        })();
+    </script>
+    {% endif %}
 
     <link rel="shortcut icon" type="image/x-icon" href="{{site.baseurl}}/{{site.favicon}}">
 
