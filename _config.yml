@@ -41,6 +41,15 @@ defaults:
       author: qihaiyan
       avatar: /assets/images/avatar1.jpg
       
+  # 英文版 collection 文档
+  - scope:
+      path: "_en"
+      type: "en"
+    values:
+      layout: post
+      author: qihaiyan
+      avatar: /assets/images/avatar1.jpg
+
   # all pages
   - scope:
       path: "_pages"
@@ -53,6 +62,12 @@ highlighter: rouge
 
 # Paginate
 paginate: 10
+
+# 英文版文章 collection：不进入 site.posts（分页/RSS/标签只针对中文文章）
+collections:
+  en:
+    output: true
+    permalink: /:name/
 
 
 

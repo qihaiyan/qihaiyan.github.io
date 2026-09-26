@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "HTMX实现AI流式聊天界面"
+title:  "SpringAI+DeepSeek+HTMX实现AI Agent"
 date:   2026-09-09 15:30:00 +0800
 tags: [spring,java,ai,htmx]
 categories: [spring boot]
 image: assets/images/spring-ai-htmx-chat.jpg
 ---
 
-实现一个AI聊天界面，常见的做法是前端用React或Vue搭建工程，通过npm构建打包，再对接后端的流式接口。其实借助htmx和Thymeleaf，不写前端框架、不做npm构建，纯服务端渲染HTML片段也能实现类ChatGPT的逐字打字效果。本文介绍如何用Spring AI结合HTMX和Alpine.js实现一个带多轮对话记忆的流式聊天界面。
+实现一个AI Agent界面，常见的做法是前端用React或Vue搭建工程，通过npm构建打包，再对接后端的流式接口。其实借助htmx和Thymeleaf，不写前端框架、不做npm构建，纯服务端渲染HTML片段也能实现类ChatGPT的逐字打字效果。本文介绍如何用Spring AI结合HTMX和Alpine.js实现一个带多轮对话记忆的流式聊天界面。
 
 具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-ai-htmx-chat](https://github.com/qihaiyan/springcamp/tree/main/spring-ai-htmx-chat)
 

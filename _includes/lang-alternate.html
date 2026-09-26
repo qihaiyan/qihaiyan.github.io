@@ -1,6 +1,6 @@
 {% comment %}
   计算 alt_url / is_en：
-  - 中文文章存在英文翻译（lang: en 且 slug_zh 与当前 slug 相同）时，alt_url = 英文版 URL
+  - 中文文章存在英文翻译（_en collection 中 slug_zh 与当前 slug 相同）时，alt_url = 英文版 URL
   - 英文文章（lang: en）时，alt_url = 对应中文版 URL
   - 其余页面 alt_url 为空
 {% endcomment %}
@@ -11,8 +11,8 @@
   {% assign alt_url = page.url | replace: '/', '' | remove_last: '-en' | prepend: '/' %}
 {% else %}
   {% assign page_slug = page.url | replace: '/', '' %}
-  {% for p in site.posts %}
-    {% if p.lang == 'en' and p.slug_zh == page_slug %}
+  {% for p in site.en %}
+    {% if p.slug_zh == page_slug %}
       {% assign alt_url = p.url %}
       {% break %}
     {% endif %}
