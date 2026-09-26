@@ -2,11 +2,24 @@
 layout: null
 ---
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 {%- for post in site.posts %}
+{%- assign en_doc = null %}
+{%- for doc in site.en %}{% if doc.slug_zh == post.slug %}{% assign en_doc = doc %}{% break %}{% endif %}{% endfor %}
 <url>
 <loc>{{ post.url | absolute_url }}</loc>
 <lastmod>{{ post.last_modified_at | default: post.date | date_to_xmlschema }}</lastmod>
+{%- if en_doc %}
+<xhtml:link rel="alternate" hreflang="zh" href="{{ post.url | absolute_url }}"/>
+<xhtml:link rel="alternate" hreflang="en" href="{{ en_doc.url | absolute_url }}"/>
+<xhtml:link rel="alternate" hreflang="x-default" href="{{ post.url | absolute_url }}"/>
+{%- endif %}
+</url>
+{%- endfor %}
+{%- for doc in site.en %}
+<url>
+<loc>{{ doc.url | absolute_url }}</loc>
+<lastmod>{{ doc.last_modified_at | default: doc.date | date_to_xmlschema }}</lastmod>
 </url>
 {%- endfor %}
 {%- assign keep_pages = "/,/about.html,/contact.html" | split: "," %}
