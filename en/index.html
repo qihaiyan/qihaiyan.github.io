@@ -141,7 +141,7 @@ description: "English edition of the blog: hands-on tutorials on Spring Boot, Sp
 
         <h4 class="font-weight-bold spanborder"><span>All Stories</span></h4>
 
-        {% for post in en_posts %}
+        {% for post in en_posts offset:4 %}
             {% include main-loop-card.html %}
         {% endfor %}
 
