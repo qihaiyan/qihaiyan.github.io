@@ -1,0 +1,33 @@
+---
+title: "Categories"
+layout: default
+lang: en
+description: "Category index of all English articles. Browse hands-on tutorials by topic: spring boot, docker, oauth2 and more."
+---
+
+{% assign en_posts = site.en | sort: 'date' | reverse %}
+{% assign all_categories = en_posts | map: 'categories' | join: ',' | split: ',' | uniq | sort %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+        <h1 class="font-weight-bold title h6 text-uppercase mb-4">Categories</h1>
+
+        {% for c in all_categories %}
+        <h4 class="font-weight-bold spanborder text-capitalize" id="{{ c | downcase }}"><span>{{ c }}</span></h4>
+
+        {% assign cat_posts = en_posts | where_exp: "post", "post.categories contains c" %}
+        {% for post in cat_posts %}
+            {% include main-loop-card.html %}
+        {% endfor %}
+
+        {% endfor %}
+
+        </div>
+
+        <div class="col-md-4">
+        {% include sidebar-featured-en.html %}
+    </div>
+
+    </div>
+</div>

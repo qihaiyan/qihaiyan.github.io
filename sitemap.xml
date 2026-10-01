@@ -22,12 +22,17 @@ layout: null
 <lastmod>{{ doc.last_modified_at | default: doc.date | date_to_xmlschema }}</lastmod>
 </url>
 {%- endfor %}
-{%- assign keep_pages = "/,/about.html,/contact.html" | split: "," %}
+{%- assign keep_pages = "/,/en/,/about.html,/contact.html" | split: "," %}
 {%- for page in site.pages %}
 {%- if keep_pages contains page.url %}
 <url>
 <loc>{{ page.url | absolute_url }}</loc>
 <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+{%- if page.url == '/' %}
+<xhtml:link rel="alternate" hreflang="zh" href="{{ page.url | absolute_url }}"/>
+<xhtml:link rel="alternate" hreflang="en" href="{{ '/en/' | absolute_url }}"/>
+<xhtml:link rel="alternate" hreflang="x-default" href="{{ page.url | absolute_url }}"/>
+{%- endif %}
 </url>
 {%- endif %}
 {%- endfor %}

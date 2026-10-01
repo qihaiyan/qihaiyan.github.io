@@ -1,20 +1,40 @@
 {% comment %}
   计算 alt_url / is_en：
-  - 中文文章存在英文翻译（_en collection 中 slug_zh 与当前 slug 相同）时，alt_url = 英文版 URL
-  - 英文文章（lang: en）时，alt_url = 对应中文版 URL
+  - 英文页面（lang: en）时，alt_url = 对应中文版 URL（文章按 slug 去掉 -en 反查，
+    首页 /en/ 与 /en/tags.html、/en/categories.html 为固定配对）
+  - 中文文章在 _en collection 中存在英文翻译（slug_zh 相同）时，alt_url = 英文版 URL
+  - 首页与 tags/categories 聚合页为固定配对
   - 其余页面 alt_url 为空
 {% endcomment %}
 {% assign is_en = false %}
 {% assign alt_url = '' %}
 {% if page.lang == 'en' %}
   {% assign is_en = true %}
-  {% assign alt_url = page.url | replace: '/', '' | remove_last: '-en' | prepend: '/' %}
+  {% case page.url %}
+  {% when '/en/' %}
+    {% assign alt_url = '/' %}
+  {% when '/en/tags.html' %}
+    {% assign alt_url = '/tags.html' %}
+  {% when '/en/categories.html' %}
+    {% assign alt_url = '/categories.html' %}
+  {% else %}
+    {% assign alt_url = page.url | replace: '/', '' | remove_last: '-en' | prepend: '/' %}
+  {% endcase %}
 {% else %}
-  {% assign page_slug = page.url | replace: '/', '' %}
-  {% for p in site.en %}
-    {% if p.slug_zh == page_slug %}
-      {% assign alt_url = p.url %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
+  {% case page.url %}
+  {% when '/' %}
+    {% assign alt_url = '/en/' %}
+  {% when '/tags.html' %}
+    {% assign alt_url = '/en/tags.html' %}
+  {% when '/categories.html' %}
+    {% assign alt_url = '/en/categories.html' %}
+  {% else %}
+    {% assign page_slug = page.url | replace: '/', '' %}
+    {% for p in site.en %}
+      {% if p.slug_zh == page_slug %}
+        {% assign alt_url = p.url %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endcase %}
 {% endif %}

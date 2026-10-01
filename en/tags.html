@@ -1,0 +1,33 @@
+---
+title: "Tags"
+layout: default
+lang: en
+description: "Tag index of all English articles: spring, java, redis, kafka, elasticsearch, oauth2, ai and more. Click any tag to browse the related hands-on tutorials."
+---
+
+{% assign en_posts = site.en | sort: 'date' | reverse %}
+{% assign all_tags = en_posts | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+        <h1 class="font-weight-bold title h6 text-uppercase mb-4">Tags</h1>
+
+        {% for t in all_tags %}
+        <h4 class="font-weight-bold spanborder text-capitalize" id="{{ t | downcase }}"><span>{{ t }}</span></h4>
+
+        {% assign tag_posts = en_posts | where_exp: "post", "post.tags contains t" %}
+        {% for post in tag_posts %}
+            {% include main-loop-card.html %}
+        {% endfor %}
+
+        {% endfor %}
+
+        </div>
+
+        <div class="col-md-4">
+        {% include sidebar-featured-en.html %}
+    </div>
+
+    </div>
+</div>

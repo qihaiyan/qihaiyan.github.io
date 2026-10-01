@@ -66,6 +66,11 @@
             </ul>
             <ul class="navbar-nav ml-auto d-flex align-items-center">
                 {% include ai-search.html %}
+                {% if alt_url != '' %}
+                <li class="nav-item ml-2">
+                    <a class="nav-link font-weight-bold" href="{{ alt_url | prepend: site.baseurl }}" onclick="try{sessionStorage.setItem('langChoice','{% if is_en %}zh{% else %}en{% endif %}')}catch(e){}">{% if is_en %}中文{% else %}English{% endif %}</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>

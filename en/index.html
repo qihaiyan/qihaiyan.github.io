@@ -1,0 +1,156 @@
+---
+title: "Spring Boot and Spring AI Practical Tutorials"
+layout: default
+lang: en
+description: "English edition of the blog: hands-on tutorials on Spring Boot, Spring Cloud, Redis, Kafka, Elasticsearch, OAuth2 and Spring AI, each with a complete runnable example project."
+---
+
+{% assign en_posts = site.en | sort: 'date' | reverse %}
+
+<div class="container">
+
+<!-- Begin post excerpts, let's highlight the first 4 posts on top -->
+<div class="row remove-site-content-margin">
+
+    <!-- latest post -->
+    {% assign latest_post = en_posts[0] %}
+    {%- assign lname = latest_post.image | split: "/" | last -%}{%- assign ldims = site.data.image_dims[lname] -%}
+    <div class="col-md-6">
+    <div class="card border-0 mb-4 box-shadow">
+    <a href="{{site.baseurl}}{{latest_post.url}}">
+    <div class="topfirstimage" style="background-image: url({% if latest_post.image contains "://" %}{{ latest_post.image }}{% elsif ldims.t %}{{site.baseurl}}/assets/images/thumbs/{{ lname | split: "." | first }}.webp{% else %} {{site.baseurl}}/{{ latest_post.image}}{% endif %}); height: 200px;    background-size: cover;    background-repeat: no-repeat;"></div>
+    </a>
+    <div class="card-body px-0 pb-0 d-flex flex-column align-items-start">
+    <h2 class="h4 font-weight-bold">
+    <a class="text-dark" href="{{site.baseurl}}{{latest_post.url}}">{{ latest_post.title }}</a>
+    </h2>
+    <p class="excerpt">
+        {{ latest_post.excerpt | strip_html | strip_newlines | truncate: 136 }}
+    </p>
+    <div>
+        <small class="d-block text-muted">
+            In <span class="catlist">
+                {% for category in latest_post.categories %}
+                <a class="text-capitalize text-muted smoothscroll" href="{{site.baseurl}}/en/categories.html#{{ category | downcase }}">{{ category }}</a><span class="sep">, </span>
+                {% endfor %}
+                </span>
+        </small>
+        <small class="text-muted">
+            {{ latest_post.date | date: '%b %d, %Y' }}
+        </small>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <div class="col-md-6">
+
+        <!-- second latest post -->
+        {%- assign second_post = en_posts[1] -%}
+        <div class="mb-3 d-flex align-items-center">
+                {% if second_post.image %}
+                <div class="col-md-4">
+                <a href="{{site.baseurl}}{{second_post.url}}">
+                 {%- assign imgname = second_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
+                 <img class="w-100" src="{% if second_post.image contains "://" %}{{ second_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{ second_post.image | absolute_url }}{% endif %}" alt="{{ second_post.title }}" loading="eager" decoding="async" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                </a>
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="mb-2 h6 font-weight-bold">
+                    <a class="text-dark" href="{{site.baseurl}}{{second_post.url}}">{{ second_post.title }}</a>
+                    </h2>
+                    <small class="d-block text-muted">
+                        In <span class="catlist">
+                        {% for category in second_post.categories %}
+                        <a class="text-capitalize text-muted smoothscroll" href="{{site.baseurl}}/en/categories.html#{{ category | downcase }}">{{ category }}</a><span class="sep">, </span>
+                        {% endfor %}
+                        </span>
+                    </small>
+                    <small class="text-muted">
+                        {{ second_post.date | date: '%b %d, %Y' }}
+                    </small>
+                </div>
+            </div>
+
+        <!-- third latest post -->
+        {%- assign third_post = en_posts[2] -%}
+        <div class="mb-3 d-flex align-items-center">
+                {% if third_post.image %}
+                <div class="col-md-4">
+                <a href="{{site.baseurl}}{{third_post.url}}">
+                 {%- assign imgname = third_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
+                 <img class="w-100" src="{% if third_post.image contains "://" %}{{ third_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ third_post.image }}{% endif %}" alt="{{ third_post.title }}" loading="lazy" decoding="async" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                </a>
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="mb-2 h6 font-weight-bold">
+                    <a class="text-dark" href="{{site.baseurl}}{{third_post.url}}">{{ third_post.title }}</a>
+                    </h2>
+                    <small class="d-block text-muted">
+                        In <span class="catlist">
+                        {% for category in third_post.categories %}
+                        <a class="text-capitalize text-muted smoothscroll" href="{{site.baseurl}}/en/categories.html#{{ category | downcase }}">{{ category }}</a><span class="sep">, </span>
+                        {% endfor %}
+                        </span>
+                    </small>
+                    <small class="text-muted">
+                        {{ third_post.date | date: '%b %d, %Y' }}
+                    </small>
+                </div>
+            </div>
+
+        <!-- fourth latest post -->
+        {%- assign fourth_post = en_posts[3] -%}
+        <div class="mb-3 d-flex align-items-center">
+                {% if fourth_post.image %}
+                <div class="col-md-4">
+                <a href="{{site.baseurl}}{{fourth_post.url}}">
+                 {%- assign imgname = fourth_post.image | split: "/" | last -%}{%- assign imgdims = site.data.image_dims[imgname] -%}
+                 <img class="w-100" src="{% if fourth_post.image contains "://" %}{{ fourth_post.image }}{% elsif imgdims.t %}{{site.baseurl}}/assets/images/thumbs/{{ imgname | split: "." | first }}.webp{% else %}{{site.baseurl}}/{{ fourth_post.image }}{% endif %}" alt="{{ fourth_post.title }}" loading="lazy" decoding="async" {% if imgdims %}width="{{ imgdims.w }}" height="{{ imgdims.h }}"{% endif %}>
+                </a>
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="mb-2 h6 font-weight-bold">
+                    <a class="text-dark" href="{{site.baseurl}}{{fourth_post.url}}">{{ fourth_post.title }}</a>
+                    </h2>
+                    <small class="d-block text-muted">
+                        In <span class="catlist">
+                        {% for category in fourth_post.categories %}
+                        <a class="text-capitalize text-muted smoothscroll" href="{{site.baseurl}}/en/categories.html#{{ category | downcase }}">{{ category }}</a><span class="sep">, </span>
+                        {% endfor %}
+                        </span>
+                    </small>
+                    <small class="text-muted">
+                        {{ fourth_post.date | date: '%b %d, %Y' }}
+                    </small>
+                </div>
+            </div>
+
+    </div>
+
+</div>
+
+<!-- Now all the English stories (no paginator on this page) -->
+
+<div class="row mt-3">
+
+    <div class="col-md-8 main-loop">
+
+        <h4 class="font-weight-bold spanborder"><span>All Stories</span></h4>
+
+        {% for post in en_posts %}
+            {% include main-loop-card.html %}
+        {% endfor %}
+
+    </div>
+
+    <div class="col-md-4">
+        {% include sidebar-featured-en.html %}
+    </div>
+
+</div>
+
+</div>
