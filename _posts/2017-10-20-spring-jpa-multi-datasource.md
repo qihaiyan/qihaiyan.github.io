@@ -11,7 +11,7 @@ image: assets/images/datasource.jpg
 
 项目中经常会遇到一个应用需要访问多个数据源的情况，本文介绍在SpringBoot项目中利用SpringDataJpa技术如何支持多个数据库的数据源。
 
-具体的代码参照该 [示例项目](https://github.com/qihaiyan/boot-multi-datasource)
+具体的代码参照该 [示例项目](https://github.com/qihaiyan/springcamp/tree/main/spring-data-jpa-multisource)
 
 ## 2.建立实体类（Entity）
 

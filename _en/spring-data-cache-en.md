@@ -7,30 +7,42 @@ slug_zh: spring-data-cache
 tags: [spring,redis]
 categories: [spring boot]
 image: assets/images/cache.png
-description: "How to enable Redis caching in Spring Boot with @Cacheable to reduce database load and improve query performance, including serialization configuration."
+description: "How to enable Redis caching in Spring Boot with @Cacheable to reduce database load and improve query performance, including readable cache keys, JSON serialization and TTL configuration. Updated for Spring Boot 3.x / 4.x."
 ---
 ## 1. Overview
 
 Using the Redis cache effectively in an application can greatly improve system performance; for queries in particular, it can effectively reduce the load on the database.
 
-The complete code is available in the example project [https://github.com/qihaiyan/boot-multi-datasource](https://github.com/qihaiyan/boot-multi-datasource).
+This article was originally written in 2017 (the Spring Boot 1.x era) and has been fully updated for Spring Boot 3.x / 4.x. The ```RedisCacheManager``` configuration code in the old version no longer compiles on current releases, so if you found the old content through a search engine, please follow this version instead.
+
+The complete code is available in the [example project](https://github.com/qihaiyan/springcamp), in the ```spring-cache``` module.
 
 ## 2. Adding the Dependency
 
-Add the following to build.gradle
+Add the following to build.gradle:
+
+```groovy
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}
 ```
-compile('org.springframework.boot:spring-boot-starter-data-redis')
+
+Spring Boot automatically pulls in the Redis-related dependencies, with Lettuce as the default client. Before running the application, you need a Redis server, for example via Docker:
+
 ```
-Spring Boot automatically pulls in the Redis-related jars. After adding this dependency, you need to install and start Redis locally, otherwise the application reports an error at startup.
+docker run -d --name redis -p 6379:6379 redis
+```
+
+Otherwise reading from or writing to the cache fails with a connection error.
 
 ## 3. Enabling Caching with Annotations
 
-Enabling Redis in Spring Boot is very simple: just add the ```@EnableCaching``` annotation to the main Application class, then add the ```@Cacheable``` annotation to the query methods that should use the cache.
+Enabling Redis caching in Spring Boot is very simple: just add the ```@EnableCaching``` annotation to the main Application class, then add the ```@Cacheable``` annotation to the query methods that should use the cache.
 
 ```java
 @SpringBootApplication
 @EnableCaching
-public class DemoApplication implements CommandLineRunner{
+public class DemoApplication {
 ...
 ```
 
@@ -40,79 +52,86 @@ The query interface:
 
 ```java
 public interface TestRepository extends JpaRepository<Test, Integer> {
-    @Cacheable(value = "testCache")
-    public Test findOne(Integer id);
+
+    @Override
+    @Cacheable(value = "testCache", key = "#id")
+    Optional<Test> findById(Integer id);
 }
 ```
 
-The entity class must implement the Serializable interface, otherwise the program throws an error because the Java object cannot be serialized into Redis. By default, Spring Boot's Redis support uses DefaultSerializer, which is the JDK's own serialization.
+Compared with the old version of this article, there are two important changes here:
 
-There are the following serializers in total; see the [official documentation](https://docs.spring.io/spring-data/redis/docs/1.8.9.RELEASE/reference/html/#redis:serializer) for the use cases of each:
+- Since Spring Data JPA 2.0, the ```findOne``` method has been renamed to ```findById``` and returns an ```Optional```.
+- ```key = "#id"``` uses SpEL to specify the cache key directly from the method argument, producing a readable key such as ```testCache:1```. There is no longer any need to "prettify" keys by swapping the key serializer as the old version of this article did.
 
+Using the parameter name ```#id``` requires the ```-parameters``` compiler flag, which the Spring Boot Gradle/Maven plugins enable by default. If your project does not use these plugins, use ```#a0``` instead of ```#id```.
+
+The old version of this article said "the entity class must implement the Serializable interface" — that only holds for the default JDK serialization. With the JSON serialization configured in section 5, the entity class no longer needs to implement ```Serializable```.
+
+When data changes, combine ```@CachePut``` and ```@CacheEvict``` to keep the cache consistent with the database:
+
+```java
+@Override
+@CacheEvict(value = "testCache", key = "#id")
+void deleteById(Integer id);
 ```
-1. GenericJackson2JsonRedisSerializer
-2. GenericToStringSerializer
-3. Jackson2JsonRedisSerializer
-4. JacksonJsonRedisSerializer
-5. JdkSerializationRedisSerializer
-6. OxmSerializer
-7. StringRedisSerializer
-```
 
-At this point our application can query data from the Redis cache. If you don't mind how the KEYS stored in Redis look, the work ends here.
+At this point the application can query data from the Redis cache. With the default configuration, values are stored with JDK serialization — binary data with no expiration time — so if that matters to you, continue with the configuration below.
 
 ## 4. Readable Keys
 
-After running our application, executing the ```KEY *``` command in redis-cli shows that the key values look like a pile of gibberish:
+Current versions of Spring Data Redis serialize keys with the ```StringRedisSerializer``` by default, so combined with ```key = "#id"``` the keys are already readable strings. In redis-cli you can inspect them with the ```SCAN``` command (never use ```KEYS *``` in production — it blocks Redis):
 
 ```
-"testCache:\xac\xed\x00\x05sr\x00\x11java.lang.Integer\x12\xe2\xa0\xa4\xf7\x81\x878\x02\x00\x01I\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\x00\x01"
+SCAN 0 MATCH testCache:* COUNT 100
+1) "testCache:1"
 ```
 
-This kind of key value is probably unacceptable to anyone operating Redis, so we need to make the keys look nicer — at least human-readable.
+For the record, here is where the "gibberish" keys in the old version of this article came from: in the Spring Data Redis 1.x era, when no key was specified Spring used a ```SimpleKey``` object as the cache key, and that object was stored through JDK serialization, producing binary content such as ```\xac\xed\x00\x05...```. In current versions keys are serialized as strings by default, so this problem no longer exists.
 
-The reason for the keys shown above is that Spring uses the SimpleKey class by default to generate Redis keys.
+## 5. JSON Serialization and Expiration Time
 
-The solution is also simple: add a cache configuration that specifies how Redis keys are generated:
+The default value serializer is JDK serialization, which is unreadable and requires entities to implement ```Serializable```. With a cache configuration class you can switch value serialization to JSON and set a global expiration time and key prefix:
 
 ```java
 @Configuration
-public class CacheConfig extends CachingConfigurerSupport {
-
-    @Autowired
-    private RedisTemplate redisTemplate;
+public class CacheConfig implements CachingConfigurer {
 
     @Bean
-    public CacheManager cacheManager() {
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
-        redisTemplate.setKeySerializer(new GenericToStringSerializer<Object>(Object.class));
+        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(1))
+                .computePrefixWith(cacheName -> cacheName.concat(":"))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-        RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        cacheManager.setDefaultExpiration(3600);
-        cacheManager.setUsePrefix(true);
-        cacheManager.setCachePrefix(new RedisCachePrefix() {
-            private final RedisSerializer<String> serializer = new StringRedisSerializer();
-            private final String delimiter = ":";
-
-            public byte[] prefix(String cacheName) {
-                return this.serializer
-                        .serialize(cacheName.concat(this.delimiter));
-            }
-        });
-
-        return cacheManager;
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(cacheConfiguration)
+                .build();
     }
 }
 ```
 
-Among them,
+Compared with the configuration in the old version of this article, several things have changed:
 
-```java
-redisTemplate.setKeySerializer(new GenericToStringSerializer<Object>(Object.class));
+- The ```new RedisCacheManager(redisTemplate)``` constructor was removed in Spring Data Redis 2.0; use ```RedisCacheManager.builder(...)``` instead.
+- Expiration moved from ```setDefaultExpiration(3600)``` to ```entryTtl(Duration.ofHours(1))```.
+- The ```RedisCachePrefix``` interface was removed; customize the key prefix with ```computePrefixWith```.
+- The ```CachingConfigurerSupport``` base class was deprecated in Spring Framework 6.0; simply implement the ```CachingConfigurer``` interface.
+- Value serialization moved from JDK serialization to ```GenericJackson2JsonRedisSerializer```, so Redis stores readable JSON strings and entities no longer need to implement ```Serializable```.
+
+If you only need to adjust the TTL and null handling, you can do it without any code, using properties:
+
+```properties
+spring.cache.redis.time-to-live=1h
+spring.cache.redis.cache-null-values=false
 ```
 
-this line specifies how Redis key values are generated: the ```GenericToStringSerializer``` serializer converts Java objects into strings before storing them in Redis.
+Note that once ```disableCachingNullValues()``` forbids caching nulls, every request for a nonexistent record penetrates to the database; if lookups of missing data are common, consider caching empty values or null objects to protect against cache penetration.
 
-## 5. Summary
+One final note on versions: if your project has upgraded to Spring Boot 4.x (Spring Data Redis 4.0), replace the ```GenericJackson2JsonRedisSerializer``` (based on Jackson 2) with ```GenericJacksonJsonRedisSerializer``` (based on Jackson 3; the package root changed from ```com.fasterxml.jackson``` to ```tools.jackson```). The ```spring-cache``` module in the example project shows the Spring Boot 4.x style.
 
-Enabling Redis caching in Spring Boot is very simple — a few annotations are all it takes. In addition, by adding a cache configuration we can give the keys stored in Redis good readability instead of a pile of gibberish.
+## 6. Summary
+
+Enabling Redis caching in Spring Boot is very simple — a few annotations are all it takes. The ```key``` attribute of ```@Cacheable``` gives you readable cache keys, and ```RedisCacheManager.builder``` together with ```RedisCacheConfiguration``` lets you further customize the serialization and expiration time, so the data stored in Redis stays readable.
