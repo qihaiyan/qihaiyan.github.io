@@ -26,7 +26,7 @@ build.gradle:
 
 ``` groovy
 plugins {
-    id 'org.springframework.boot' version '3.0.2'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
 }
@@ -52,22 +52,20 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-json"
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'io.r2dbc:r2dbc-h2'
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'com.h2database:h2'
     testImplementation 'io.r2dbc:r2dbc-h2'
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.1"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.1.0"
     }
 }
 
@@ -76,7 +74,7 @@ test {
 }
 ```
 
-由于SpringCloudGateway基于SpringWebFlux技术构建，所以依赖中的数据库配置需要使用r2dbc 。
+由于SpringCloudGateway基于SpringWebFlux技术构建，所以依赖中的数据库配置需要使用r2dbc 。原 `spring-cloud-starter-gateway` 依赖已拆分为 `spring-cloud-starter-gateway-server-webflux` 与 `spring-cloud-starter-gateway-server-webmvc`（基于 WebMVC 的网关），本文使用 WebFlux 版本。示例中的版本号仅作参考，Spring Boot 与 Spring Cloud 的版本对应关系请以官方 wiki（https://github.com/spring-cloud/spring-cloud-release/wiki）为准。
 
 ## 三、配置文件
 

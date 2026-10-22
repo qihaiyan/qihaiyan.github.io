@@ -16,23 +16,39 @@ Continuing from the previous article on [Reactive programming](https://springcam
 
 We will use the Reactor library for the demonstration. Other tools can of course be used. If you don't want to copy and paste the code, you can use the example project on [GitHub](https://github.com/dsyer/reactive-notes) directly.
 
-Use [https://start.spring.io](https://start.spring.io) to create an empty project and add the Reactor Core dependency.
+Use [https://start.spring.io](https://start.spring.io) to create an empty project and add the Reactor Core dependency. It is recommended to manage the Reactor version through the reactor-bom (the 3.0.0.RC2 version used when this article was written is no longer available from Maven Central; the examples below use a current BOM version).
 
 You can use Maven:
 
 ``` xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-bom</artifactId>
+      <version>2025.0.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
 <dependency>
   <groupId>io.projectreactor</groupId>
   <artifactId>reactor-core</artifactId>
-  <version>3.0.0.RC2</version>
 </dependency>
 ```
 
 Or Gradle:
 
-``` java
-compile 'io.projectreactor:reactor-core:3.0.0.RC2'
+``` groovy
+dependencies {
+    implementation platform('io.projectreactor:reactor-bom:2025.0.0')
+    implementation 'io.projectreactor:reactor-core'
+}
 ```
+
+If your project is based on Spring Boot, you can also simply add the `org.springframework.boot:spring-boot-starter-webflux` dependency, which already includes reactor-core, so you don't need to manage the Reactor version separately.
 
 ## How It Works
 
@@ -78,7 +94,9 @@ Java 8 Streams have a similar way of processing data:
 
 ``` java
 
-Stream<String> stream = Streams.of("red", "white", "blue");
+import java.util.stream.Stream;
+
+Stream<String> stream = Stream.of("red", "white", "blue");
 Stream<String> upper = stream.map(value -> {
     System.out.println(value);
     return value.toUpperCase();
@@ -114,6 +132,8 @@ The output:
 09:17:59.667 [main] INFO reactor.core.publisher.FluxLog -  onComplete()
 
 ```
+
+Note: the log output above is from the Reactor 3.0 era when this article was written. Newer Reactor versions no longer have the `FluxLog` class; the `log()` output now comes from the concrete operator classes (such as `FluxIterable`, `FluxMap`, etc.), so the logger class names differ between versions, while the format of the log content stays roughly the same. The same applies to all the log outputs below.
 
 You can see that when subscribe() is called without arguments, it asks the publisher to send all the data — there is a single request, and it is "unbounded". We can also see the callbacks for each published item (onNext()), the completion callback (onComplete()), and the callback for the original subscription (onSubscribe()). If needed, we can also listen for these events using the Flux doOn*() methods.
 

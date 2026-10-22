@@ -52,7 +52,7 @@ Spring provides a way to define a custom cache resolver. With a custom resolver,
 
 ``` java
 @Configuration
-public class RedisCacheConfig extends CachingConfigurerSupport {
+public class RedisCacheConfig implements CachingConfigurer {
 
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
@@ -74,6 +74,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 ```
 
 The code above is the Redis cache configuration. The ```RedisCacheManager``` part is the regular cacheManager configuration, while the ```customCacheResolver``` part is the custom resolver configuration. By declaring the customCacheResolver bean, we can reference this custom resolver in cache annotations.
+Earlier examples typically wrote ```extends CachingConfigurerSupport```, but ```CachingConfigurerSupport``` has been deprecated since Spring Framework 6.0 — use ```implements CachingConfigurer``` instead. In fact, this scenario does not require implementing the interface at all; keeping just the two @Bean methods (redisCacheManager and customCacheResolver) also works.
 
 Once the customCacheResolver bean is defined, we can reference it in cache annotations. The save method mentioned above, after the change, looks like this:
 
@@ -89,6 +90,7 @@ Compared with the previous implementation, the CacheEvict annotation now specifi
 Above we covered how to configure and reference a cacheResolver; below we look at the implementation of a custom cacheResolver.
 
 ``` java
+@Slf4j
 public class CustomCacheResolver extends SimpleCacheResolver {
 
     public CustomCacheResolver(CacheManager cacheManager) {

@@ -9,6 +9,8 @@ image: assets/images/reactivehttp.png
 
 书接上文 [Reactive编程](https://springcamp.cn/reactive-program-2/) ，我们已经了解了基础的API，现在我们开始编写实际的应用。Reactive对并发编程进行了很好的抽象，也有很多底层的特性需要我们去关注。当使用这些特性时，我们可以对之前隐藏在容器、平台、框架中的细节进行控制。
 
+> 注：本文已更新。原文发布于 2018 年，当时所依赖与使用的 API 还是未正式发布的里程碑（milestone）版本，文中的依赖坐标与代码已按当前正式版本（Spring Boot 4.x、Reactor 3.7+）重写，章节结构与结论保持不变。
+
 ## Spring MVC由阻塞转向Reactive
 
 Reactive要求我们以不同的思路来看待问题。区别于传统的request->response模式，所有的数据都是发布为一个序列 (Publisher) 然后进行订阅（Subscriber）。区别于同步等待返回结果，改为注册一个回调。只要我们习惯了这种方式，就不会觉得很复杂。但是没办法让整个环境都同时变为Reactive模式，所以避免不了要跟老式的阻塞API打交道。
@@ -26,7 +28,7 @@ private HttpStatus block(int value) {
 
 <!-- more -->
 
-我们需要传递不同的参数来重复调用这个方法，并对返回的结果进行处理。这是一个典型的 "scatter-gather"应用场景。例如从多个页面中提取前N条数据。
+我们需要传递不同的参数来重复调用这个方法，并对返回的结果进行处理。这是一个典型的 "scatter-gather"应用场景。例如从多个页面中提取前N条数据。顺带一提，```RestTemplate``` 已进入维护模式，官方建议新代码使用同步的 ```RestClient```（Spring Boot 3.2 起提供），这里仅以它作为阻塞客户端的示例。
 
 这是一个采用错误方式的例子：
 
@@ -111,13 +113,13 @@ private Scheduler scheduler = Schedulers.newParallel("sub", 16);
 
 > Tomcat 默认会分配100个线程来处理请求，当所有的请求同时处理时，我们的 scheduler 线程池会成为一个瓶颈。我们的 scheduler 线程池数量远小于 Tomcat 的线程池数量。这说明性能调优不是一个简单的事情，需要考虑各个参数和资源的匹配情况。
 
-相比固定数量的线程池，我们可以采用更灵活的线程池，可以根据需要动态调整线程数量。Reactor 已经提供了这种机制，使用 ```Schedulers.elastic()``` 后可以看到当请求增多时，线程数量会随之增加。
+相比固定数量的线程池，我们可以采用更灵活的线程池，可以根据需要动态调整线程数量。Reactor 已经提供了这种机制，使用 ```Schedulers.boundedElastic()``` 后可以看到当请求增多时，线程数量会随之增加。顺带说明：早期的 ```Schedulers.elastic()``` 自 Reactor 3.4 起已废弃，替代者 ```boundedElastic()``` 对线程数量设置了上限（默认 10 × CPU 核数），多余的任务进入队列等待，可以防止线程无限增长而失控。
 
 ## 全面采用 Reactive
 
 从阻塞调用到reactive的桥接是一种有效的模式，并且用Spring MVC的技术很容易实现。接下来我们将完全弃用阻塞模式，采用新的API和新的工具。最终我们实现全栈Reactive。
 
-在我们的例子中，第一步先用 ```spring-boot-starter-web-reactive``` 替换 ```spring-boot-starter-web``` :
+在我们的例子中，第一步先用 ```spring-boot-starter-webflux``` 替换 ```spring-boot-starter-web``` 。早期这项能力还托管在一个 experimental 的 starter 中，从 Spring Boot 2.0 起才正式提供了 webflux starter：
 
 Maven:
 
@@ -125,22 +127,11 @@ Maven:
 
 <dependencies>
   <dependency>
-   <groupId>org.springframework.boot.experimental</groupId>
-     <artifactId>spring-boot-starter-web-reactive</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-webflux</artifactId>
   </dependency>
   ...
 </dependencies>
-    <dependencyManagement>
-     <dependencies>
-       <dependency>
-         <groupId>org.springframework.boot.experimental</groupId>
-         <artifactId>spring-boot-dependencies-web-reactive</artifactId>
-         <version>0.1.0.M1</version>
-         <type>pom</type>
-         <scope>import</scope>
-      </dependency>
-     </dependencies>
-    </dependencyManagement>
 
 ```
 
@@ -149,13 +140,8 @@ Gradle:
 ``` groovy
 
 dependencies {
-	compile('org.springframework.boot.experimental:spring-boot-starter-web-reactive')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
     ...
-}
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.boot.experimental:spring-boot-dependencies-web-reactive:0.1.0.M1"
-	}
 }
 
 ```
@@ -175,23 +161,27 @@ public Mono<Result> parallel() {
 
 ```
 
-将这段代码放到SpringBoot应用中，可以运行在 Tomcat, Jetty 或者 Netty, 取决于classpath引入了哪个包。Tomcat 是默认的容器，如果想用别的容器，需要把 Tomcat 从 classpath 中去掉，然后引入其它的容器。这3个容器在启动时间、内存使用和运行时资源上相差不大。
+将这段代码放到SpringBoot应用中，可以运行在 Tomcat, Jetty 或者 Netty, 取决于classpath引入了哪个容器。webflux starter 默认自带 Reactor Netty，开箱即可运行；如果 classpath 中同时存在 spring-boot-starter-web，Spring MVC 会优先生效。要想换用其它容器，需要把默认容器从 classpath 中去掉，然后引入其它的容器。这几款容器在启动时间、内存使用和运行时资源上相差不大。
 
-我们仍然调用 ```block()``` 阻塞服务接口，所以我们仍需在工作线程中订阅以免阻塞调用方。我们也可以采用一个非阻塞的客户端，例如用新的 ```WebClient``` 替换 ```RestTemplate``` :
+我们仍然调用 ```block()``` 阻塞服务接口，所以我们仍需在工作线程中订阅以免阻塞调用方。我们也可以采用一个非阻塞的客户端，例如用 ```WebClient``` 替换 ```RestTemplate``` :
 
 ``` java
 
-private WebClient client = new WebClient(new ReactorHttpClientRequestFactory());
+private WebClient client = WebClient.create();
 
 private Mono<HttpStatus> fetch(int value) {
-    return this.client.perform(HttpRequestBuilders.get("http://example.com"))
-            .extract(WebResponseExtractors.response(String.class))
+    return this.client.get()
+            .uri("http://example.com/{value}", value)
+            .retrieve()
+            .toBodilessEntity()
             .map(response -> response.getStatusCode());
 }
 
 ```
 
-注意 ```WebClient.perform()``` 的返回值是一个转换为 ```Mono<HttpStatus>``` 的Reactive类型，但是我们没有订阅它。订阅的工作由框架来完成。
+如果需要对 4xx/5xx 状态码做错误处理，可以在 ```retrieve()``` 之后链式调用 ```.onStatus(HttpStatusCode::isError, response -> ...)```。另外，早期版本中的 ```exchange()``` 方法自 Spring Framework 5.3 起已废弃，如需完全掌控响应的处理，推荐改用 ```exchangeToMono()```。
+
+注意 ```client.get()...retrieve()``` 返回的是一个Reactive类型，经 ```toBodilessEntity()``` 转换为 ```Mono<ResponseEntity<Void>>```，再 map 出 ```Mono<HttpStatus>```，但是我们没有订阅它。订阅的工作由框架来完成。
 
 ## 控制反转
 

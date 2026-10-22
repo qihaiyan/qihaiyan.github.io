@@ -96,15 +96,27 @@ In the controller, we inject the declared HTTP interface:
 
 When our own endpoint is called, it internally uses the methods declared by the injected MyService to call other systems' APIs.
 
-```java
-RestClient restClient = RestClient.builder(restTemplate).baseUrl("https://httpbin.org").build();
-RestClientAdapter adapter = RestClientAdapter.create(restClient);
-HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
-```
-
 ## 5. Implementing the HTTP interface
 
-Spring framework implements the HTTP interface methods through HttpServiceProxyFactory:
+Spring framework implements the HTTP interface methods through HttpServiceProxyFactory, with RestClient as the recommended underlying implementation:
+
+``` java
+@Configuration
+public class MyClientConfig {
+    @Bean
+    public MyService myService() {
+        RestClient restClient = RestClient.builder().baseUrl("https://httpbin.org").build();
+        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+
+        return factory.createClient(MyService.class);
+    }
+}
+```
+
+In the configuration above we can see how the bean for the MyService HTTP interface is initialized.
+
+If the project still uses RestTemplate, the client can also be created on top of RestTemplate via RestTemplateAdapter; this variant is kept for compatibility:
 
 ``` java
 @Configuration
@@ -125,23 +137,16 @@ public class MyClientConfig {
 }
 ```
 
-In the configuration above we can see how the bean for the MyService HTTP interface is initialized.
-
-If you want to use the new RestClient from Spring Boot 3.2, the initialization code can be changed to
-
-```java
-RestClient restClient = RestClient.builder(restTemplate).baseUrl("https://httpbin.org").build();
-RestClientAdapter adapter = RestClientAdapter.create(restClient);
-HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
-```
+In addition, Spring Boot 4 / Framework 7 offers an even simpler option: register HTTP interface clients with the `@ImportHttpServices(group = "...")` annotation together with HttpServiceClientRegistry, so there is no need to hand-write HttpServiceProxyFactory initialization code for each client.
 
 ## 6. Unit Testing
 
 The usual unit testing techniques still apply to the HTTP interface; see the article: [Spring Boot unit testing](https://springcamp.cn/spring-boot-unit-test/)
 
+The example is based on JUnit 5, with annotations from the org.junit.jupiter.api package; @SpringBootTest already includes SpringExtension, so there is no need for @RunWith(SpringRunner.class).
+
 ```java
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DemoApplicationTest {
 
@@ -152,7 +157,7 @@ public class DemoApplicationTest {
 
     private MockRestServiceServer mockRestServiceServer;
 
-    @Before
+    @BeforeEach
     public void before() {
         mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
         this.mockRestServiceServer.expect(ExpectedCount.manyTimes(), MockRestRequestMatchers.requestTo(Matchers.startsWithIgnoringCase("https://httpbin.org")))
@@ -175,3 +180,5 @@ public class DemoApplicationTest {
     }
 }
 ```
+
+Note that the object bound to MockRestServiceServer must match the client's underlying implementation: if the HTTP interface client is created on RestClientAdapter, bind with `MockRestServiceServer.bindTo(restClientBuilder)` (available since Spring 6.1); binding to a RestTemplate only works for clients created on RestTemplateAdapter.

@@ -11,7 +11,7 @@ description: "Convert LocalDateTime to UTC Epoch timestamps in Spring REST APIs 
 ---
 
 This post shows how to convert the LocalDateTime date type to timestamps in Spring REST APIs.
-The complete code is available in the example project [https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch](https://github.com/qihaiyan/springcamp/tree/main/spring-redis-spring-localdatetime-epoch)
+The complete code is available in the example project [https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch](https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch)
 
 ## 1. Overview
 
@@ -98,3 +98,43 @@ In the deserialization part, the Epoch timestamp is converted back to LocalDateT
 ```
 
 With this configuration, we can use the LocalDateTime type in entity classes. When a client calls the API, response results are automatically converted to Epoch values, and request parameters are automatically converted from Epoch to LocalDateTime.
+
+## 3. Version Applicability
+
+The code in this post is based on Jackson 2 (```Jackson2ObjectMapperBuilderCustomizer``` and friends) and applies to Spring Boot 2.x and 3.x. Starting from Spring Boot 4, Jackson 3 is the default: use ```JsonMapperBuilderCustomizer``` instead, and register Jackson 3's ```ValueSerializer```/```ValueDeserializer``` (renamed from Jackson 2's ```JsonSerializer```/```JsonDeserializer```). For deserialization you can get the long value directly via ```p.getLongValue()```, without going through ```NumberDeserializers```. The Spring Boot 4 version looks like this:
+
+``` java
+@Configuration
+public class LocalDateTimeToEpochSerdeConfig {
+
+    @Bean
+    public JsonMapperBuilderCustomizer jsonMapperBuilderCustomizer() {
+        return builder -> builder.serializerByType(LocalDateTime.class, new LocalDateTimeToEpochSerializer())
+                .deserializerByType(LocalDateTime.class, new LocalDateTimeFromEpochDeserializer());
+    }
+
+    /**
+     * Serialization
+     */
+    public static class LocalDateTimeToEpochSerializer extends ValueSerializer<LocalDateTime> {
+        @Override
+        public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
+                throws IOException {
+            if (value != null) {
+                long timestamp = value.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond();
+                gen.writeNumber(timestamp);
+            }
+        }
+    }
+
+    /**
+     * Deserialization
+     */
+    public static class LocalDateTimeFromEpochDeserializer extends ValueDeserializer<LocalDateTime> {
+        @Override
+        public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            return LocalDateTime.ofInstant(Instant.ofEpochSecond(p.getLongValue()), ZoneId.systemDefault());
+        }
+    }
+}
+```

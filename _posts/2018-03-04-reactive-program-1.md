@@ -76,7 +76,7 @@ coroutine可以相互之间传递控制权，不用由调用者统一协调，�
 
 ## Reactive Programming in Java
 
-java不是“reactive”的语言，不能原生支持Coroutine。在JVM上的其它语言（Scala 和 Clojure）可以很好的支持Coroutine，java直到jdk9才支持。但是很多技术已经在jvm上实现了Reactive的支持：
+java不是“reactive”的语言，不能原生支持Coroutine。在JVM上的其它语言（Scala 和 Clojure）可以很好的支持Coroutine，java直到JDK 9才通过引入 java.util.concurrent.Flow 包（即 Reactive Streams API）在库层面提供了支持，Java 至今没有语言级的 coroutine。但是很多技术已经在jvm上实现了Reactive的支持：
 
 ### Reactive Streams
 
@@ -90,23 +90,25 @@ Netflix开源的技术，内部已经使用Reactive编程已经很长时间了�
 
 Spring团队开源的技术。
 
-根据David Karnok的[Generations of Reactive](https://akarnokd.blogspot.co.uk/2016/03/operator-fusion-part-1.html)中的分类，RxJava是第四代Reactive技术。
+根据David Karnok的[Generations of Reactive](https://akarnokd.blogspot.co.uk/2016/03/operator-fusion-part-1.html)中的分类，Reactor是第四代Reactive技术。
 
 ### Spring Framework 5.0
 
-内置了Reactive的特性，包含了构建HTTP服务和客户端的工具。Spring构建于Reactor技术之上，但是用户可以自由选择底层是使用Reactor还是RxJava。服务器支持omcat, Jetty, Netty 和 Undertow。
+内置了Reactive的特性，包含了构建HTTP服务和客户端的工具。Spring构建于Reactor技术之上，但是用户可以自由选择底层是使用Reactor还是RxJava。服务器支持Tomcat, Jetty, Netty 和 Undertow。Reactive特性自 Spring Framework 5.0 引入后持续演进，目前最新版本为 Spring Framework 7（配套 Spring Boot 4.x），WebFlux 已经成熟稳定。
 
 ### [Ratpack](https://ratpack.io/)
 
-一组构建高性能web应用的工具，Spring Boot可以直接使用该框架。
+一组构建高性能web应用的工具，Spring Boot可以直接使用该框架。（注：Ratpack 目前已基本停止活跃开发。）
 
 ### Akka
 
-一个实现Actor模型的开发框架，可以在Scala和Java中使用，是第三代的Reactive技术。
+一个实现Actor模型的开发框架，可以在Scala和Java中使用，是第三代的Reactive技术。需要注意的是，Akka 在 2022 年将许可证变更为 BSL 商业许可，社区随后分叉出了 Apache Pekko。
 
 ## 4. 为什么是现在？
 
 Reactive技术的热度在不断提升，是因为该技术可以帮助我们节省服务器资源，可以用少量的线程支持更高的负载。Reactive、非阻塞、异步提供了很好的解决问题的方法。但是天下没有免费的午餐，每种技术都有适用场景。Reactive并不能直接解决我们的问题，只是让我们在解决问题时多了一种选择。
+
+另外值得一提的是，JDK 21+ 引入的虚拟线程（Virtual Threads）改变了“线程昂贵”这一前提：创建线程的成本变得非常低，IO 密集型场景因此多了一种新的选择。在 Spring Boot 3.2+ 中，只需设置 `spring.threads.virtual.enabled=true` 即可启用虚拟线程。
 
 ## 5. 总结
 

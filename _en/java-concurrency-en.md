@@ -11,7 +11,7 @@ description: "A practical guide to Java multithreading: race conditions, happens
 ---
 
 Commonly used Java concurrency programming techniques.
-The complete code is available in the example project [https://github.com/qihaiyan/springcamp/tree/main/spring-currency](https://github.com/qihaiyan/springcamp/tree/main/spring-currency).
+The complete code is available in the example project [https://github.com/qihaiyan/springcamp/tree/main/java-concurrency](https://github.com/qihaiyan/springcamp/tree/main/java-concurrency).
 
 ## 1. Overview
 

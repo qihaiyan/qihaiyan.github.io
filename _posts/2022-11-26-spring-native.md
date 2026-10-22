@@ -29,9 +29,9 @@ build.gradle:
 
 ``` groovy
 plugins {
-    id 'org.springframework.boot' version '3.0.0'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.graalvm.buildtools.native' version '0.9.22'
+    id 'org.graalvm.buildtools.native' version '0.9.28'
     id 'java'
 }
 
@@ -66,20 +66,9 @@ test {
 }
 ```
 
-与传统Spring Boot应用相比，gradle文件中增加了 org.graalvm.buildtools.native 这个plugin，其它的没有区别。
+与传统Spring Boot应用相比，gradle文件中增加了 org.graalvm.buildtools.native 这个plugin，其它的没有区别。示例中的版本号仅作参考，实际使用时请以官方发布的最新版本为准。
 
-由于 org.graalvm.buildtools.native 这个plugin没有发布到 Gradle Plugin Portal 中，[参照 https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)，因此需要在 settings.gradle 指定仓库地址：
-
-settings.gradle
-
-```groovy
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-```
+org.graalvm.buildtools.native 这个plugin已发布到 Gradle Plugin Portal 中，[参照 https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)，无需在 settings.gradle 中做额外的仓库配置。
 
 ## 三、主要程序代码
 
@@ -164,7 +153,7 @@ cn.springcamp.springnative.Application   : Started Application in 0.134 seconds 
 ## 五、单元测试
 
 传统的Spring Boot单元测试技术仍然可以使用。 [Spring Boot单元测试技术](https://springcamp.cn/spring-boot-unit-test/)在这篇文章中有专门介绍。
-需要注意的是 Spring Native不支持JUnit4，需要使用JUnit5。
+需要注意的是 Spring Boot AOT 的 nativeTest 需要使用 JUnit 5（不支持 JUnit 4）。
 
 单元测试代码：
 

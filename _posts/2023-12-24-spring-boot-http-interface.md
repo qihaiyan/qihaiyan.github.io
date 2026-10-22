@@ -93,15 +93,27 @@ public class MyController {
 
 当我们自己的接口被调用时，接口内部会通过注入的 MyService 声明的方法调用其它系统的接口。
 
-```java
-RestClient restClient = RestClient.builder(restTemplate).baseUrl("https://httpbin.org").build();
-RestClientAdapter adapter = RestClientAdapter.create(restClient);
-HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
-```
-
 ## 五、实现 HTTP interface
 
-Spring framework 通过 HttpServiceProxyFactory 来实现 HTTP interface 方法：
+Spring framework 通过 HttpServiceProxyFactory 来实现 HTTP interface 方法，推荐使用 RestClient 作为底层实现：
+
+``` java
+@Configuration
+public class MyClientConfig {
+    @Bean
+    public MyService myService() {
+        RestClient restClient = RestClient.builder().baseUrl("https://httpbin.org").build();
+        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+
+        return factory.createClient(MyService.class);
+    }
+}
+```
+
+在上述配置中，我们可以看到 MyService 这个 HTTP interface 对应的 Bean 的初始化方法。
+
+如果项目中仍在使用 RestTemplate，也可以通过 RestTemplateAdapter 基于 RestTemplate 创建客户端，作为兼容写法保留：
 
 ``` java
 @Configuration
@@ -122,23 +134,16 @@ public class MyClientConfig {
 }
 ```
 
-在上述配置中，我们可以看到 MyService 这个 HTTP interface 对应的 Bean 的初始化方法。
-
-如果想使用 Spring Boot 3.2 新出的 RestClient，那初始化代码可以改为
-
-```java
-RestClient restClient = RestClient.builder(restTemplate).baseUrl("https://httpbin.org").build();
-RestClientAdapter adapter = RestClientAdapter.create(restClient);
-HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
-```
+另外，在 Spring Boot 4 / Framework 7 中还提供了更简洁的方式：通过 `@ImportHttpServices(group = "...")` 注解配合 HttpServiceClientRegistry 注册 HTTP interface 客户端，无需再逐个手写 HttpServiceProxyFactory 的初始化代码。
 
 ## 六、单元测试
 
 常用的单元测试方法对于 HTTP interface 仍然可用，对应的文章可以参照：[springboot单元测试技术](https://springcamp.cn/spring-boot-unit-test/)
 
+示例基于 JUnit 5，注解均来自 org.junit.jupiter.api 包；@SpringBootTest 自带 SpringExtension，无需再添加 @RunWith(SpringRunner.class)。
+
 ```java
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DemoApplicationTest {
 
@@ -149,7 +154,7 @@ public class DemoApplicationTest {
 
     private MockRestServiceServer mockRestServiceServer;
 
-    @Before
+    @BeforeEach
     public void before() {
         mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
         this.mockRestServiceServer.expect(ExpectedCount.manyTimes(), MockRestRequestMatchers.requestTo(Matchers.startsWithIgnoringCase("https://httpbin.org")))
@@ -172,3 +177,5 @@ public class DemoApplicationTest {
     }
 }
 ```
+
+需要注意的是，MockRestServiceServer 绑定的对象要与客户端的底层实现保持一致：如果 HTTP interface 客户端是基于 RestClientAdapter 创建的，应使用 `MockRestServiceServer.bindTo(restClientBuilder)` 绑定（Spring 6.1+ 提供）；绑定 RestTemplate 的写法只对基于 RestTemplateAdapter 创建的客户端生效。

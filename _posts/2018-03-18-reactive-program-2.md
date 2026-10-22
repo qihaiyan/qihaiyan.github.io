@@ -16,23 +16,39 @@ image: assets/images/code.jpg
 
 我们用Reactor库来进行演示。当然也可以用其它的工具。如果不想拷贝黏贴代码，可以直接使用 [github](https://github.com/dsyer/reactive-notes) 上的示例项目。
 
-通过 [https://start.spring.io](https://start.spring.io) 来建立一个空的项目并添加Reactor Core依赖。
+通过 [https://start.spring.io](https://start.spring.io) 来建立一个空的项目并添加Reactor Core依赖。推荐通过 reactor-bom 统一管理 Reactor 的版本（本文写作时使用的 3.0.0.RC2 版本如今已无法从 Maven Central 获取，下例使用当前版本的 BOM）。
 
 可以使用Maven:
 
 ``` xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-bom</artifactId>
+      <version>2025.0.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
 <dependency>
   <groupId>io.projectreactor</groupId>
   <artifactId>reactor-core</artifactId>
-  <version>3.0.0.RC2</version>
 </dependency>
 ```
 
 也可以使用Gradle:
 
-``` java
-compile 'io.projectreactor:reactor-core:3.0.0.RC2'
+``` groovy
+dependencies {
+    implementation platform('io.projectreactor:reactor-bom:2025.0.0')
+    implementation 'io.projectreactor:reactor-core'
+}
 ```
+
+如果项目本身基于 Spring Boot，也可以直接添加 `org.springframework.boot:spring-boot-starter-webflux` 依赖，其中已经包含了 reactor-core，无需单独管理 Reactor 的版本。
 
 ## 工作原理
 
@@ -78,7 +94,9 @@ Java 8 的 Streams 也有类似的处理数据流的方式：
 
 ``` java
 
-Stream<String> stream = Streams.of("red", "white", "blue");
+import java.util.stream.Stream;
+
+Stream<String> stream = Stream.of("red", "white", "blue");
 Stream<String> upper = stream.map(value -> {
     System.out.println(value);
     return value.toUpperCase();
@@ -114,6 +132,8 @@ Flux.just("red", "white", "blue")
 09:17:59.667 [main] INFO reactor.core.publisher.FluxLog -  onComplete()
 
 ```
+
+注：以上日志输出来自本文写作时（Reactor 3.0 时代）的运行结果。新版 Reactor 中已经没有 `FluxLog` 这个类，`log()` 的日志改由各个具体的操作符类输出（例如 `FluxIterable`、`FluxMap` 等），不同版本的日志类名会有所不同，但日志内容的格式基本一致，下文中的日志输出同理。
 
 可以看到当subscribe()没有参数时，会请求 publisher 发送所有的数据 - 只有一个request并且是 "unbounded"。我们还可以看到发布的每一项的回调(onNext())，结束的回调(onComplete())，以及原始订阅的回调(onSubscribe())。如果需要，我们还可以用Flux的doOn*()方法来监听这些事件的回调。
 

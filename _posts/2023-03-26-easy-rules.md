@@ -15,7 +15,9 @@ image: assets/images/rule_engine.png
 
 ## 一、概述
 
-通过将业务规则配置的配置文件中，可以精简代码，同时已于维护，当规则修改时，只需要修改配置文件即可。easy-rules是一个小巧的规则引擎，支持spring的SPEL表达式，同时还支持 Apache JEXL 表达式和 MVL 表达式。
+通过将业务规则配置的配置文件中，可以精简代码，同时已于维护，当规则修改时，只需要修改配置文件即可。easy-rules是一个小巧的规则引擎，支持spring的SPEL表达式，同时还支持 Apache JEXL 表达式和 MVEL 表达式。
+
+需要提醒的是，easy-rules 自 2020 年底发布 4.1.0 版本后就不再有新版本发布，处于低维护状态，新项目选型时需要评估这一因素，可以考虑更活跃的替代方案（如 LiteFlow），或者基于 Spring 表达式自行封装规则求值逻辑。
 
 ## 二、项目中加入依赖
 
@@ -25,14 +27,13 @@ build.gradle:
 
 ``` groovy
 plugins {
-    id 'org.springframework.boot' version '3.0.5'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '4.1.1'
     id 'java'
 }
 
 group = 'cn.springcamp'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '21'
 
 configurations {
     compileOnly {
@@ -56,14 +57,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.1"
-    }
 }
 
 test {

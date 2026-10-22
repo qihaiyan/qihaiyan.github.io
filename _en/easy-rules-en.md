@@ -17,7 +17,9 @@ The complete code is available in the example project [https://github.com/qihaiy
 
 ## 1. Overview
 
-Moving business rules into configuration files streamlines the code and makes it easier to maintain: when a rule changes, only the configuration file needs to be modified. easy-rules is a compact rules engine that supports Spring SPEL expressions, as well as Apache JEXL expressions and MVL expressions.
+Moving business rules into configuration files streamlines the code and makes it easier to maintain: when a rule changes, only the configuration file needs to be modified. easy-rules is a compact rules engine that supports Spring SPEL expressions, as well as Apache JEXL expressions and MVEL expressions.
+
+One caveat worth noting: easy-rules has not released a new version since 4.1.0 at the end of 2020 and is in a low-maintenance state. Evaluate this when choosing it for a new project — consider a more actively maintained alternative such as LiteFlow, or roll your own rule evaluation on top of Spring expressions.
 
 ## 2. Adding the Dependencies to the Project
 
@@ -27,14 +29,13 @@ build.gradle:
 
 ``` groovy
 plugins {
-    id 'org.springframework.boot' version '3.0.5'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '4.1.1'
     id 'java'
 }
 
 group = 'cn.springcamp'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '21'
 
 configurations {
     compileOnly {
@@ -58,14 +59,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.1"
-    }
 }
 
 test {

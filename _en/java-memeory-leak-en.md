@@ -41,9 +41,9 @@ So pay special attention to how static fields are used: avoid having static fiel
 
 #### 2.2 The String.intern() Method
 
-Calling String.intern() on a large string puts the string into the JVM's memory pool (PermGen), which is never garbage collected. So if large strings are interned, a large amount of uncollectable memory is produced, causing a memory leak.
+Be careful when calling String.intern() on large strings. In early JDK versions, intern() put the string into the JVM's memory pool (PermGen), which was never garbage collected, so it easily caused memory leaks; PermGen was removed in Java 8 (JEP 122), and since Java 7 the string constant pool has lived in the normal heap, where interned strings are collected by the GC as usual. On Java 8+, however, if intern() is overused and a large number of long-lived interned strings accumulates, they keep occupying the string constant table and heap usage keeps growing, which can still lead to a memory leak.
 
-If you must intern large strings, adjust the size of PermGen with the -XX:MaxPermSize parameter.
+If you must intern large strings, adjust the size of the string constant table with the -XX:StringTableSize parameter.
 
 ### 2.3 Streams Not Closed After Reading
 
@@ -86,11 +86,11 @@ So implementing hashCode() and equals() for your classes is a good programming h
 
 #### 3.1 Enable GC Logging
 
-By specifying -verbose:gc in the JVM parameters, you can record the details of every GC run and use them to analyze memory usage.
+By specifying -Xlog:gc* in the JVM parameters (the unified logging syntax of JDK 9+; -verbose:gc was the syntax on JDK 8 and earlier), you can record the details of every GC run and use them to analyze memory usage.
 
 #### 3.2 Profiling
 
-Analyze memory with Visual VM or the JDK's built-in Java Mission Control.
+Produce a heap dump with the jcmd command (for example GC.heap_dump) and analyze memory with tools such as JFR (Java Flight Recorder, built into the JDK since 11) + JMC (Java Mission Control), Eclipse MAT, and async-profiler. (Note: since JDK 9, Visual VM and Java Mission Control are no longer bundled with the JDK, and Visual VM must be downloaded separately.)
 
 #### 3.3 Code Review
 

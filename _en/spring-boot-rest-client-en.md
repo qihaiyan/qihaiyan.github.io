@@ -12,7 +12,7 @@ description: "RestClient in Spring Boot 3.2 is a fluent, chainable alternative t
 
 Spring Boot 3.2 introduces the new RestClient for calling HTTP APIs, with a fluent API style that supports chained calls.
 
-The complete code is available in the example project [https://github.com/qihaiyan/springcamp/tree/main/spring-data-jdbc-client](https://github.com/qihaiyan/springcamp/tree/main/spring-data-jdbc-client).
+The complete code is available in the example project [https://github.com/qihaiyan/springcamp/tree/main/spring-rest-client](https://github.com/qihaiyan/springcamp/tree/main/spring-rest-client).
 
 ## 1. Overview
 
@@ -144,6 +144,8 @@ RestClient.builder().requestFactory(new HttpComponentsClientHttpRequestFactory(h
 ```
 
 We also configure a requestFactory for the RestClient, so it can call APIs over persistent connections.
+
+In fact, RestClient supports interceptors natively — there is no need to go through RestTemplate. Simply call `RestClient.builder().requestInterceptor(...)` or `.requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient()))` to configure them. In addition, starting with Spring Boot 3.4 (including 4.x), Boot auto-configures a RestClient.Builder bean that can be injected directly, so there is no need to create one manually.
 
 ## 3. Calling GET APIs
 

@@ -34,6 +34,8 @@ RestTemplateConfig.java:
 
 其中 ```interceptors``` 方法用来指定我们自己实现的日志打印 interceptors 。
 
+需要注意的是，从 Spring Boot 4 开始，RestTemplateBuilder 类的包名从 org.springframework.boot.web.client 变更为 org.springframework.boot.restclient，引入该类时需要注意。
+
 ## 三、实现日志打印 interceptors
 
 自定义的interceptors需要实现 ClientHttpRequestInterceptor 这个 interface。
@@ -92,11 +94,6 @@ static class BufferingClientHttpResponseWrapper implements ClientHttpResponse {
         }
 
         @NonNull
-        public int getRawStatusCode() throws IOException {
-            return this.response.getRawStatusCode();
-        }
-
-        @NonNull
         public String getStatusText() throws IOException {
             return this.response.getStatusText();
         }
@@ -119,6 +116,8 @@ static class BufferingClientHttpResponseWrapper implements ClientHttpResponse {
         }
     }
 ```
+
+需要说明的是，早期版本的 ClientHttpResponse 接口中还提供了 getRawStatusCode 方法，从 Spring Framework 7 开始该方法已从 ClientHttpResponse 接口中删除，如果需要获取原始状态码，可以使用 getStatusCode().value() 方法。
 
 这个类主要是对 ```getBody()``` 进行了特殊处理，在方法调用时，通过 ```treamUtils.copyToByteArray``` 将body数据复制到本地变量中。
 
@@ -152,3 +151,5 @@ RESPONSE body: {"code": 200}
 日志中打印的返回结果 ```{"code": 200}``` 是我们在单元测试中对 ```http://someservice/foo``` 接口mock的数据。
 
 具体如何对第三方接口进行mock，可以参照 [springboot单元测试技术](https://springcamp.cn/spring-boot-unit-test/) 这篇文章。
+
+另外，RestTemplate 从 Spring Framework 6.1 开始进入维护模式，新项目建议使用 RestClient 代替，RestClient 同样支持通过 ClientHttpRequestInterceptor 拦截器来统一打印请求和响应日志。

@@ -50,7 +50,7 @@ spring提供了自定义缓存resolver的方式，通过自定义resolver，可�
 
 ``` java
 @Configuration
-public class RedisCacheConfig extends CachingConfigurerSupport {
+public class RedisCacheConfig implements CachingConfigurer {
 
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
@@ -72,6 +72,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 ```
 
 以上代码是redis缓存的配置，其中 ```RedisCacheManager``` 部分是常规的cacheManager的配置， 而  ```customCacheResolver``` 部分是自定义resolver的配置，通过定义customCacheResolver这个bean，可以在cache注解中引用到这个自定义的resolver。
+早期的示例通常写成```extends CachingConfigurerSupport```，```CachingConfigurerSupport```自Spring Framework 6.0起已经废弃，应改为```implements CachingConfigurer```。实际上本场景并不需要实现这个接口，只保留redisCacheManager和customCacheResolver这两个@Bean也可以。
 
 定义好customCacheResolver的bean后，我们就可以在cache注解中引用，上面提到的数据保存方法改造后的代码：
 
@@ -87,6 +88,7 @@ DemoEntity save(DemoEntity entity);
 上面我们介绍了如果配置和引用cacheResolver，下面介绍自定义cacheResolver的实现。
 
 ``` java
+@Slf4j
 public class CustomCacheResolver extends SimpleCacheResolver {
 
     public CustomCacheResolver(CacheManager cacheManager) {

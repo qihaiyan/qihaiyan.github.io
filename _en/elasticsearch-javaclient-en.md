@@ -32,12 +32,7 @@ Gradle:
 
 ``` gradle
 dependencies {
-    implementation 'co.elastic.clients:elasticsearch-java:8.1.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
-
-    // Needed only if you use the spring-dependency-management
-    // and spring-boot Gradle plugins
-    implementation 'jakarta.json:jakarta.json-api:2.0.1' 
+    implementation 'co.elastic.clients:elasticsearch-java:8.19.22'
 }
 ```
 
@@ -50,27 +45,16 @@ Maven:
     <dependency>
       <groupId>co.elastic.clients</groupId>
       <artifactId>elasticsearch-java</artifactId>
-      <version>8.1.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.12.3</version>
-    </dependency>
-
-    <!-- Needed only if you use the spring-boot Maven plugin -->
-    <dependency> 
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-api</artifactId>
-      <version>2.0.1</version>
+      <version>8.19.22</version>
     </dependency>
 
   </dependencies>
 </project>
 ```
 
-The jakarta.json package is included to resolve compatibility issues with Spring Boot projects; for details see the [official documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/installation.html#spring-jakarta-json)
+Note that the dependencies above do not pin a jackson-databind version; Jackson is managed by the Spring Boot BOM. The 8.19.x line is the maintenance line of 8.x, and 9.x has also been released (the transport changed in 9.x — see the initialization section below).
+
+The early official documentation suggested manually adding the jakarta.json package to resolve compatibility issues with Spring Boot projects (see the [official documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/installation.html#spring-jakarta-json)). Since Spring Boot 3.x, the Boot BOM manages jakarta.json-api, so there is no need to add it manually; only older Boot versions need it, and the example project has this dependency commented out.
 
 ## 3. Initializing the JavaClient
 
@@ -83,6 +67,14 @@ The Java API Client consists of three parts:
 ``` java
     RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200)).build();
     ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+    elasticsearchClient = new ElasticsearchClient(transport);
+```
+
+The code above is the 8.x style and remains valid on 8.x. In 9.x, the underlying transport becomes Rest5Client, which is based on Apache HttpClient 5 (artifact co.elastic.clients:elasticsearch-rest5-client), and the initialization code changes accordingly:
+
+``` java
+    Rest5Client rest5Client = Rest5Client.builder(new HttpHost("localhost", 9200)).build();
+    ElasticsearchTransport transport = new Rest5ClientTransport(rest5Client, new JacksonJsonpMapper());
     elasticsearchClient = new ElasticsearchClient(transport);
 ```
 

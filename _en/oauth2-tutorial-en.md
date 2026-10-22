@@ -32,7 +32,7 @@ OAuth 2.0 is the replacement for OAuth 1.0, which was too complicated — for ex
 ### OAuth 2.0 Specification
 
 The purpose of this tutorial is to provide an overview of the OAuth 2.0 protocol to aid understanding, not to cover every detail of it.
-If you plan to implement the OAuth 2.0 protocol, it is best to read the detailed specification, available at: [http://tools.ietf.org/html/draft-ietf-oauth-v2-23](http://tools.ietf.org/html/draft-ietf-oauth-v2-23)
+If you plan to implement the OAuth 2.0 protocol, it is best to read the detailed specification, available at: [https://datatracker.ietf.org/doc/html/rfc6749](https://datatracker.ietf.org/doc/html/rfc6749)
 
 ## OAuth 2.0 Overview
 
@@ -134,12 +134,16 @@ The Authorization Code flow works as follows:
 
 ![Alt text](/images/oauth2/authorization-auth-code.png)
 #### Implicit
+> **Note: Implicit is deprecated.** Under RFC 9700 (OAuth 2.0 Security Best Current Practice) and OAuth 2.1, the implicit grant is deprecated because the access token is exposed directly in the URL fragment of the redirect URL; use the Authorization Code grant with PKCE instead. The protocol explanation below is kept as an introduction to how the grant works.
+
 Implicit is similar to Authorization Code; the only difference is that after the user logs in successfully, the access token is returned directly to the client application when redirecting to it.
 This means the access token is visible in the client application, whereas with Authorization Code the access token stays on the web server and is invisible to the client. This is the biggest difference between the two.
 Moreover, the client application only sends the client id to the authorization server. If the client password were sent as well, it would have to be stored in the client application, which is a security risk — a client password stored in a client application can easily be obtained through cracking. Here is a diagram:
 
 ![Alt text](/images/oauth2/authorization-implicit.png)
 #### Resource Owner Password Credentials
+> **Note: Resource Owner Password Credentials is deprecated.** Under RFC 9700 (OAuth 2.0 Security Best Current Practice), the password grant has been removed in OAuth 2.1; use the Authorization Code grant with PKCE instead. The protocol explanation below is kept as an introduction to how the grant works.
+
 Resource Owner Password Credentials (the password grant) allows the client application to use the user's username and password directly. For example, the user can enter their Twitter username and password directly in the client application.
 The password grant should only be used when the client application is fully trusted. (Since the username and password are entered in the client application, the application can capture and store them.)
 The password grant is typically used in rich web clients and native applications.
@@ -187,7 +191,7 @@ response_type 	Required. Fixed value "code"
 client_id 	Required. The client id generated when the client application registered with the authorization server.
 redirect_uri 	Optional. The redirect URL the client application provided when registering with the authorization server.
 scope 	Optional. The scope of the requested permissions.
-state 	Optional (recommended). A parameter in the client application's request URL; it can be any value.
+state 	Required (to prevent CSRF attacks, as required by the current best current practice RFC 9700). A parameter in the client application's request URL; it can be any value.
 ```
 ### Authorization Response
 The authorization response contains the authorization code, which must be provided later when obtaining the access token.
@@ -243,7 +247,7 @@ response_type 	Required. Must be set to token .
 client_id 	Required. The client identifier as assigned by the authorization server, when the client was registered.
 redirect_uri 	Optional. The redirect URI registered by the client.
 scope 	Optional. The possible scope of the request.
-state 	Optional (recommended). Any client state that needs to be passed on to the client request URI.
+state 	Required (to prevent CSRF attacks, as required by the current best current practice RFC 9700). Any client state that needs to be passed on to the client request URI.
 ```
 ### Implicit Authorization Response
 The response contains the following parameters; note that it is not in JSON format.

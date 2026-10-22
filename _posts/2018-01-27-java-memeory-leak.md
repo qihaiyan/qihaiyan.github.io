@@ -38,9 +38,9 @@ for (int i = 0; i < 1000000; i++) { list.add(random.nextDouble()); }
 
 #### 2.2 String的intern方法
 
-在大字符串上调用String.intern() 方法，intern()会将String放在jvm的内存池中（PermGen ），而jvm的内存池是不会被gc的。因此如果大字符串调用intern()方法后，会产生大量的无法gc的内存，导致内存泄漏。
+在大字符串上调用String.intern() 方法时需要谨慎。在早期的JDK版本中，intern()会将String放在jvm的内存池（PermGen）中，而jvm的内存池是不会被gc的，因此容易导致内存泄漏；PermGen已在Java 8中被移除（JEP 122），自Java 7起字符串常量池就位于普通堆中，interned字符串是可以被gc正常回收的。但是在Java 8+中，如果滥用intern()，产生大量长生命周期的interned字符串，它们会持续占用字符串常量表，使堆内存占用不断增长，仍然可能导致内存泄漏。
 
-如果必须要使用大字符串的intern方法，应该通过-XX:MaxPermSize参数调整PermGen内存的大小。
+如果必须要使用大字符串的intern方法，应该通过-XX:StringTableSize参数调整字符串常量表的大小。
 
 ### 2.3 读取流后没有关闭
 
@@ -83,11 +83,11 @@ try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 
 #### 3.1 记录gc日志
 
-通过在jvm参数中指定-verbose:gc，可以记录每次gc的详细情况，用于分析内存的使用。
+通过在jvm参数中指定-Xlog:gc*（JDK 9+的统一日志写法；JDK 8及之前的写法为-verbose:gc），可以记录每次gc的详细情况，用于分析内存的使用。
 
 #### 3.2 进行profiling
 
-通过Visual VM或jdk自带的Java Mission Control，进行内存分析。
+通过jcmd命令（如GC.heap_dump）生成堆转储，配合JFR（JDK 11起内置的Java Flight Recorder）+ JMC（Java Mission Control）、Eclipse MAT、async-profiler等工具进行内存分析。（注：JDK 9起Visual VM和Java Mission Control不再随JDK发行，Visual VM需单独下载。）
 
 #### 3.3 代码审查
 

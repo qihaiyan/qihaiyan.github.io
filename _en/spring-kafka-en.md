@@ -19,7 +19,7 @@ In real-world projects, Kafka is extremely common, especially in event-driven pr
 
 ## 2. KafkaListener
 
-KafkaListener is probably the most widely used approach today: it is simple to develop with and easy to understand. From a usability standpoint, however, it will likely be gradually replaced by spring-cloud-stream.
+KafkaListener is probably the most widely used approach today: it is simple to develop with and easy to understand. Looking at how things have evolved, @KafkaListener remains the mainstream choice for the vast majority of scenarios; spring-cloud-stream is better suited for cases that need switching between multiple binders (Kafka/RabbitMQ, etc.) or runtime-configurable destinations.
 KafkaListener is an annotation; adding it to a method makes that method process the received Kafka messages. The topic to consume is specified with the topics parameter, which supports SpEL expressions and can consume multiple Kafka topics at the same time:
 
 ```java
@@ -36,13 +36,15 @@ Kafka also needs to be configured: you can specify the address of the Kafka serv
 
 ```yml
 spring.kafka:
-    bootstrap-servers: 192.168.1.1:2181
+    bootstrap-servers: 192.168.1.1:9092
     consumer:
       group-id: utgroup
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 ```
+
+Note: 2181 is the ZooKeeper port — early versions of Kafka depended on ZooKeeper, and it is easy to confuse with Kafka's own port. Since Kafka 4.0, ZooKeeper has been completely removed; clients only need to connect to Kafka's own service port, 9092 by default.
 
 ## 3. ConcurrentMessageListenerContainer
 
@@ -105,7 +107,7 @@ For details, see the official Spring documentation: [https://spring.io/projects/
 spring-cloud-stream is built on spring-cloud-function: we only need to implement a function interface in our code to process Kafka messages, which is very simple to write.
 
 ``` java
-i@SpringBootApplication
+@SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {
@@ -136,7 +138,7 @@ spring:
         destination: testEmbeddedOut
     kafka:
       binder:
-        brokers: 192.168.1.1:2181
+        brokers: 192.168.1.1:9092
         configuration:
           key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
           value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer

@@ -31,9 +31,9 @@ build.gradle:
 
 ``` groovy
 plugins {
-    id 'org.springframework.boot' version '3.0.0'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.graalvm.buildtools.native' version '0.9.22'
+    id 'org.graalvm.buildtools.native' version '0.9.28'
     id 'java'
 }
 
@@ -68,20 +68,9 @@ test {
 }
 ```
 
-Compared with a traditional Spring Boot application, the gradle file adds the org.graalvm.buildtools.native plugin; everything else is unchanged.
+Compared with a traditional Spring Boot application, the gradle file adds the org.graalvm.buildtools.native plugin; everything else is unchanged. The version numbers in the example are for reference only; use the latest officially released versions.
 
-Since the org.graalvm.buildtools.native plugin is not published to the Gradle Plugin Portal (see [https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)), you need to specify the repository address in settings.gradle:
-
-settings.gradle
-
-```groovy
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-```
+The org.graalvm.buildtools.native plugin is published to the Gradle Plugin Portal (see [https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)), so no extra repository configuration in settings.gradle is needed.
 
 ## 3. Main Application Code
 
@@ -163,7 +152,7 @@ Although startup is much faster, compilation takes considerably longer — a dra
 
 ## 5. Unit Testing
 
-Traditional Spring Boot unit testing techniques still work. [Spring Boot unit testing](https://springcamp.cn/spring-boot-unit-test/) is covered in detail in that article. Note that Spring Native does not support JUnit4; you need to use JUnit5.
+Traditional Spring Boot unit testing techniques still work. [Spring Boot unit testing](https://springcamp.cn/spring-boot-unit-test/) is covered in detail in that article. Note that Spring Boot AOT's nativeTest requires JUnit 5 (JUnit 4 is not supported).
 
 Unit test code:
 

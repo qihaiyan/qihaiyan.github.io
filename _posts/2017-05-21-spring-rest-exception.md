@@ -36,7 +36,7 @@ categories: [spring boot]
 在一个接口中抛出这个异常类
 
 ```java
-@RequestMapping(value="/orders/{id}", method=GET)
+@GetMapping("/orders/{id}")
  public Order showOrder(@PathVariable("id") long id, Model model) {
      Order order = orderRepository.findOrderById(id);
      if (order == null) throw new OrderNotFoundException(id);
@@ -44,7 +44,7 @@ categories: [spring boot]
  }
 ```
 
-当这个接口中没有找到指定的order id时，就会返回404。原因是该接口抛出了OrderNotFoundException异常，而这个异常中@ResponseStatus注解指定了返回码是HttpStatus.NOT_FOUND，也就是400。
+当这个接口中没有找到指定的order id时，就会返回404。原因是该接口抛出了OrderNotFoundException异常，而这个异常中@ResponseStatus注解指定了返回码是HttpStatus.NOT_FOUND，也就是404。
 
 ## 三. 在接口中进行异常处理
 
@@ -138,6 +138,8 @@ public class ControllerWithExceptionHandling {
 }
 ```
 
+需要注意的是，从 Spring Boot 3 开始，ConstraintViolationException 所在的包从 javax.validation 变更为 jakarta.validation，使用时需要引入 jakarta.validation.ConstraintViolationException。
+
 这样，该类中的所有接口如果有异常发生，就会返回对应的 HTTP 状态码，并且在返回的报文体中包含错误描述信息。
 
 如果接口抛出的异常是ConstraintViolationException，就是返回handleValidationException方法中指定的状态码和错误信息，否则返回handleException方法中指定的状态码和错误信息。可以通过增加异常处理方法来处理更多特定的异常。
@@ -152,17 +154,16 @@ public class ControllerWithExceptionHandling {
 
 上述的方法中是处理特定接口类的异常，需要在每个接口类中进行异常处理。现在介绍一种更简单的全局异常处理方法。
 
-使用@ControllerAdvice类来进行全局异常处理。
+使用@RestControllerAdvice类来进行全局异常处理。@RestControllerAdvice相当于@ControllerAdvice和@ResponseBody的组合，方法上不用再单独添加@ResponseBody注解。
 
 ```java
-@ControllerAdvice
+@RestControllerAdvice
 class GlobalControllerExceptionHandler {
 
   // 异常处理方法：
   // 根据特定的异常返回指定的 HTTP 状态码
   @ResponseStatus(value=HttpStatus.BAD_REQUEST)  // 400
   @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseBody
   public RestServiceError handleValidationException(ConstraintViolationException ex) {
         Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
         StringBuilder strBuilder = new StringBuilder();
@@ -175,7 +176,6 @@ class GlobalControllerExceptionHandler {
   // 通用异常的处理，返回500
   @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)  // 500
   @ExceptionHandler(Exception.class)
-  @ResponseBody
   public RestServiceError handleException(Exception ex) {
         return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
   }
@@ -219,7 +219,7 @@ public class LocaleMessageUtil {
     public RestServiceError getLocalErrorMessage(RestServiceError.Type errorCode, String description) {
         Locale locale = LocaleContextHolder.getLocale();
         String errorMessage = messageSource.getMessage(errorCode.getCode(), null, locale);
-        RestServiceError error = RestServiceError.build(errorCode, errorMessage, description);
+        RestServiceError error = RestServiceError.build(errorCode, errorMessage + " " + description);
         return error;
     }
 
@@ -231,7 +231,7 @@ public class LocaleMessageUtil {
 对上一章节中介绍的全局异常处理方法进行简单的改造，就能支持多语言的异常信息。
 
 ```java
-@ControllerAdvice
+@RestControllerAdvice
 class GlobalControllerExceptionHandler {
   @Autowired
   LocaleMessageUtil localeMessageUtil;
@@ -239,22 +239,20 @@ class GlobalControllerExceptionHandler {
   // 根据特定的异常返回指定的 HTTP 状态码
   @ResponseStatus(value=HttpStatus.BAD_REQUEST)  // 400
   @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseBody
   public RestServiceError handleValidationException(ConstraintViolationException ex) {
         Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
         StringBuilder strBuilder = new StringBuilder();
         for (ConstraintViolation<?> violation : errors) {
             strBuilder.append(violation.getMessage() + "\n");
         }
-        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.IVALIDATION_ERROR);
+        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.VALIDATION_ERROR, strBuilder.toString());
   }
   
   // 通用异常的处理，返回500
   @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)  // 500
   @ExceptionHandler(Exception.class)
-  @ResponseBody
   public RestServiceError handleException(Exception ex) {
-        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.INTERNAL_SERVER_ERROR);
+        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
   }
 }
 ```
@@ -272,5 +270,22 @@ class GlobalControllerExceptionHandler {
 
 1. 在异常类中定义状态码和错误信息，适用于指定异常的处理
 2. 在REST接口类中定义状态码和错误信息，适用于指定接口类的处理
-3. 通过@ControllerAdvice注解定义全局状态码和错误信息
+3. 通过@RestControllerAdvice注解定义全局状态码和错误信息
 4. 通过SpringBoot的MessageSource来进行多语言支持的处理
+
+## 七. 附：ProblemDetail（RFC 9457）
+
+从 Spring Framework 6 开始，官方推荐错误响应使用 ProblemDetail（RFC 9457）定义的格式返回。使用时只需在异常处理方法中返回 ProblemDetail 对象：
+
+```java
+@RestControllerAdvice
+class GlobalControllerExceptionHandler {
+
+  @ExceptionHandler(OrderNotFoundException.class)
+  ProblemDetail handleOrderNotFoundException(OrderNotFoundException ex) {
+      ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+      problemDetail.setTitle("Order Not Found");
+      return problemDetail;
+  }
+}
+```

@@ -19,6 +19,8 @@ When developing database applications with Spring Boot, we usually configure the
 
 <!-- more -->
 
+Note that the approach in this article fits the scenario of plugging in a set of preconfigured datasources and accessing each of them. If you need to switch between datasources at runtime (for example, in a multi-tenant setup), Spring's ```AbstractRoutingDataSource``` or community dynamic-datasource libraries are a better fit — they focus on datasource routing.
+
 ## 2. Configuration File
 
 The yml configuration format supports list structures. We can put the datasources we need to access into a list, where each datasource specifies its own url, username, password, and query:
@@ -62,7 +64,7 @@ public class DatabaseConfig {
 
     @PostConstruct
     public void init() {
-        for (DbSchema current : this.getShemas()) {
+        for (DbSchema current : this.getSchemas()) {
             HikariConfig jdbcConfig = new HikariConfig();
             jdbcConfig.setJdbcUrl(current.getDatasource().getUrl());
             jdbcConfig.setUsername(current.getDatasource().getUsername());
@@ -92,6 +94,8 @@ public class DatabaseConfig {
 The ```DbSchema``` class corresponds to the individual configuration items of a datasource, including url, username, password, and query. It also defines a ```JdbcTemplate```: we can use each datasource's own JdbcTemplate to access the data of that datasource.
 
 The ```JdbcTemplate``` is initialized in the ```init``` method. The database connection pool is HikariCP, which is also the default connection pool used by Spring Boot. Every database connection configuration in the configuration file produces a corresponding ```DbSchema``` object, which is placed in the schemas list of the configuration class.
+
+Two package names differ across versions and are worth noting: ```@PostConstruct``` is in the ```jakarta.annotation``` package as of Spring Boot 3 (previously ```javax.annotation```); ```DataSourceProperties``` moved from ```org.springframework.boot.autoconfigure.jdbc``` to ```org.springframework.boot.jdbc.autoconfigure``` in Spring Boot 4, which split Spring Boot into modules. In Spring Boot 2/3 it is still in the original package.
 
 This approach also allows us to encrypt the database passwords in the configuration file. The password stored in the configuration file is the encrypted one, and in the init method we can decrypt ```current.getDatasource().getPassword()```. This improves system security and prevents database passwords from leaking through the configuration file.
 

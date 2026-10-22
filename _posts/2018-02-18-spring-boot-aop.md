@@ -138,11 +138,13 @@ public Object around(ProceedingJoinPoint joinPoint, TrackTime trackTime)
  -------------> Before Aspect 
  -------------> before execution of execution(String cn.springcamp.springaop.service.MyService.runFoo())
  -------------> foo
- -------------> Time Taken by execution(String cn.springcamp.springaop.service.MyService.runFoo()) with param[myService] is 8
- -------------> After Aspect 
- -------------> after execution of execution(String cn.springcamp.springaop.service.MyService.runFoo())
  -------------> AfterReturning Aspect 
  -------------> execution(String cn.springcamp.springaop.service.MyService.runFoo()) returned with value foo
+ -------------> After Aspect 
+ -------------> after execution of execution(String cn.springcamp.springaop.service.MyService.runFoo())
+ -------------> Time Taken by execution(String cn.springcamp.springaop.service.MyService.runFoo()) with param[myService] is 8
 ```
 
-可以看出几种 Aspect 的执行顺序依次为 Before After Around AfterReturning(AfterThrowing)
+可以看出几种 Advice 的执行顺序依次为 @Around → @Before → @AfterReturning(AfterThrowing) → @After。其中 @After 按照 AspectJ 的 finally 语义在最后执行，@Around 中位于 proceed 之后的逻辑会在 @After 之后执行。
+
+需要注意的是，从 Spring 5.2.7 开始（spring-framework#25291），Spring 调整了同一个 Aspect 内各种 Advice 的执行顺序，即上述顺序；在 5.2.7 之前的版本中，同一个 Aspect 内的执行顺序为 Before → Around → After → AfterReturning(AfterThrowing)。

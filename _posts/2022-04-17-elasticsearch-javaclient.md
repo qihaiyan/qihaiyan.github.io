@@ -30,12 +30,7 @@ Gradle:
 
 ``` gradle
 dependencies {
-    implementation 'co.elastic.clients:elasticsearch-java:8.1.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
-
-    // Needed only if you use the spring-dependency-management
-    // and spring-boot Gradle plugins
-    implementation 'jakarta.json:jakarta.json-api:2.0.1' 
+    implementation 'co.elastic.clients:elasticsearch-java:8.19.22'
 }
 ```
 
@@ -48,27 +43,16 @@ Maven:
     <dependency>
       <groupId>co.elastic.clients</groupId>
       <artifactId>elasticsearch-java</artifactId>
-      <version>8.1.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.12.3</version>
-    </dependency>
-
-    <!-- Needed only if you use the spring-boot Maven plugin -->
-    <dependency> 
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-api</artifactId>
-      <version>2.0.1</version>
+      <version>8.19.22</version>
     </dependency>
 
   </dependencies>
 </project>
 ```
 
-jakarta.json这个包的引入是为了解决springboot项目的兼容性问题，详见[官方文档](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/installation.html#spring-jakarta-json)
+上面的依赖中没有手动指定 jackson-databind 的版本号，Jackson 由 Spring Boot 的 BOM 统一管理即可。目前 8.19.x 是 8.x 的维护版本，9.x 也已正式发布（9.x 的 transport 有变化，见下文初始化部分）。
+
+早期的官方文档建议在 Spring Boot 项目中手动引入 jakarta.json 这个包以解决兼容性问题（详见[官方文档](https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/installation.html#spring-jakarta-json)）。从 Spring Boot 3.x 开始，Boot 的 BOM 已经管理了 jakarta.json-api，无需再手动引入，只有旧版本的 Boot 项目才需要这样做，示例项目中该依赖已注释掉。
 
 ## 三、JavaClient的初始化
 
@@ -81,6 +65,14 @@ Java API Client包含三部分：
 ``` java
     RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200)).build();
     ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+    elasticsearchClient = new ElasticsearchClient(transport);
+```
+
+上面是 8.x 的写法，在 8.x 中仍然可用。在 9.x 中，底层 transport 换成了基于 Apache HttpClient 5 的 Rest5Client（对应坐标 co.elastic.clients:elasticsearch-rest5-client），初始化代码相应调整为：
+
+``` java
+    Rest5Client rest5Client = Rest5Client.builder(new HttpHost("localhost", 9200)).build();
+    ElasticsearchTransport transport = new Rest5ClientTransport(rest5Client, new JacksonJsonpMapper());
     elasticsearchClient = new ElasticsearchClient(transport);
 ```
 

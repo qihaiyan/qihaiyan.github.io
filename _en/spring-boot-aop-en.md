@@ -140,11 +140,13 @@ When running the example project, the console outputs the following:
  -------------> Before Aspect 
  -------------> before execution of execution(String cn.springcamp.springaop.service.MyService.runFoo())
  -------------> foo
- -------------> Time Taken by execution(String cn.springcamp.springaop.service.MyService.runFoo()) with param[myService] is 8
- -------------> After Aspect 
- -------------> after execution of execution(String cn.springcamp.springaop.service.MyService.runFoo())
  -------------> AfterReturning Aspect 
  -------------> execution(String cn.springcamp.springaop.service.MyService.runFoo()) returned with value foo
+ -------------> After Aspect 
+ -------------> after execution of execution(String cn.springcamp.springaop.service.MyService.runFoo())
+ -------------> Time Taken by execution(String cn.springcamp.springaop.service.MyService.runFoo()) with param[myService] is 8
 ```
 
-As we can see, the aspects execute in the order: Before, After, Around, AfterReturning (AfterThrowing)
+As we can see, the advice executes in the order: @Around → @Before → @AfterReturning (AfterThrowing) → @After, where @After runs last following AspectJ's finally semantics, and the logic in @Around after proceed() runs after @After.
+
+Note that as of Spring 5.2.7 (spring-framework#25291), Spring adjusted the execution order of the advice types within the same aspect to the order above. In versions before 5.2.7, the order within the same aspect was Before → Around → After → AfterReturning (AfterThrowing).

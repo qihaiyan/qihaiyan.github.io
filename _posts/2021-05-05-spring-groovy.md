@@ -74,7 +74,7 @@ property这个标签可以对bean的属性进行初始化赋值。我们分别�
 
 spring-framework-4中引入了groovy声明bean的方式，我们用groovy来声明myServiceGroovy这个bean，相比于xml的方式，groovy的声明方式可读性更强一些。
 
-详细介绍见spring的官方博文： [Groovy Bean Configuration in Spring Framework 4](https://spring.io/blog/2014/03/03/groovy-bean-configuration-in-spring-framework-4)
+详细介绍见spring的官方博文（2014年的文章，属于历史资料）： [Groovy Bean Configuration in Spring Framework 4](https://spring.io/blog/2014/03/03/groovy-bean-configuration-in-spring-framework-4)
 
 ``` groovy
 import org.springframework.scripting.groovy.GroovyScriptFactory
@@ -170,6 +170,7 @@ public class MyEngine {
 ```
 
 首先我们初始化GroovyScriptEngine，在构造方法中传入脚本文件的路径。
+需要注意，```ResourceUtils.getFile("classpath:...")```只能获取文件系统中的真实文件，应用以fat jar方式部署时会抛出FileNotFoundException，此时应改用ClassPathResource以流的方式读取脚本，或者通过资源的URL基址来定位脚本目录。
 
 执行脚本的方法有2种，一种是获取到GroovyObject，通过invokeMethod来执行脚本中的某个方法，方法的参数通过Object数组传入。
 
@@ -189,3 +190,9 @@ binding.setVariable("arg", "test");
 binding.setVariable("funBean", funBean);
 Object result1 = engine.run("CalcScript.groovy", binding);
 ```
+
+## 四、现状说明
+
+本文最初写于2021年，这里补充一下当前（2026年）的现状。```lang:```这个XML命名空间以及```GroovyScriptFactory```/```ScriptFactoryPostProcessor```体系在Spring Framework 7中虽然仍然可用，但官方参考文档已经移除了Dynamic Language Support章节，这套机制被定位为遗留能力。目前推荐的做法有两种：一种是通过JSR-223的方式执行脚本，即```new ScriptEngineManager().getEngineByName("groovy")```，需要引入```org.apache.groovy:groovy-jsr223```依赖；另一种是用GroovyClassLoader或GroovyShell加载脚本，再以@Bean的方式注册到spring容器中。示例代码参见示例项目springcamp的spring-groovy模块：[https://github.com/qihaiyan/springcamp/tree/main/spring-groovy](https://github.com/qihaiyan/springcamp/tree/main/spring-groovy)。
+
+另外需要注意依赖坐标的变化：Groovy 5起，groovy的依赖坐标从```org.codehaus.groovy:groovy```变更为```org.apache.groovy:groovy```，升级时需要同步调整。

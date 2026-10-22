@@ -7,7 +7,7 @@ slug_zh: spring-boot-unit-test
 tags: [spring,java]
 categories: [spring boot]
 image: assets/images/ut.jpg
-description: "Spring Boot unit testing practice: testRestTemplate for REST calls, Mockito for external dependencies, embedded H2 and kafka, no external services needed."
+description: "Spring Boot unit testing practice: RestClient for REST calls, MockRestServiceServer for third-party APIs, embedded H2, redis and kafka, no external services needed."
 ---
 
 Throughout the software delivery process, the unit testing stage is the earliest point where defects can be discovered, and the stage where they can be regression-tested repeatedly. The more thorough the testing done at this stage, the better the software quality is assured.
@@ -17,20 +17,32 @@ The complete code is available in the example project [https://github.com/qihaiy
 
 End-to-end testing of a feature often depends on many external components, such as databases, redis, kafka, and third-party APIs, and the environment executing the unit tests may be network-restricted and unable to access these external services. Therefore, we want to use unit testing techniques to perform complete functional testing without depending on external services.
 
+This article has been updated: the example code has been migrated from JUnit 4 to JUnit 5 and rewritten for the current Spring Boot 4.x releases (the example project uses Spring Boot 4.1.1).
+
 ## 2. Testing REST Interfaces
 
-springboot provides the testRestTemplate tool for testing endpoints in unit tests. It only requires the relative path of the endpoint, without a domain name or port. This feature is very useful because the web server of the springboot unit test environment runs on a random port, specified by the following annotation:
+The web server of the springboot unit test environment runs on a random port, specified by the following annotation:
 
 ``` java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 ```
 
-Here is how to test our ```/remote``` endpoint with testRestTemplate:
+The actual port is injected with ```@LocalServerPort```, and requests are made with RestClient (the example project now uses RestClient instead of the TestRestTemplate commonly used in earlier versions). Here is how to test our ```/remote``` endpoint with RestClient:
 
 ``` java
+    @LocalServerPort
+    private int port;
+
+    private RestClient restClient;
+
+    @BeforeEach
+    void before() {
+        restClient = RestClient.builder().baseUrl("http://localhost:" + port).build();
+    }
+
     @Test
-    public void testRemoteCallRest() {
-        String resp = testRestTemplate.getForObject("/remote", String.class);
+    void testRemoteCallRest() {
+        String resp = restClient.get().uri("/remote").retrieve().body(String.class);
         System.out.println("remote result : " + resp);
         assertThat(resp, is("{\"code\": 200}"));
     }
@@ -40,22 +52,30 @@ Here is how to test our ```/remote``` endpoint with testRestTemplate:
 
 In the example above, our remote endpoint calls a third-party API ```http://someservice/foo```. Our build server may be network-restricted and unable to access this third-party API, which would make the unit tests impossible to run. We can solve this problem with the ```MockRestServiceServer``` tool provided by springboot.
 
-First, declare a MockRestServiceServer variable
+Adding the ```@AutoConfigureMockRestServiceServer``` annotation to the test class (provided by the ```spring-boot-starter-restclient-test``` dependency, using the gradle configuration as an example):
 
-``` java
-private MockRestServiceServer mockRestServiceServer;
+``` groovy
+testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
 ```
 
-Initialize it during the initialization phase of the unit test
+``` java
+@AutoConfigureMockRestServiceServer
+```
+
+This lets us inject a MockRestServiceServer bound to RestClient directly, without binding it manually:
 
 ``` java
-    @Before
-    public void before() {
-        mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
+    @Autowired
+    private MockRestServiceServer mockRestServiceServer;
+```
 
+Set up the expected response during the initialization phase of the unit test (the initialization method is now JUnit 5's ```@BeforeEach```):
+
+``` java
+    @BeforeEach
+    void before() {
         this.mockRestServiceServer.expect(manyTimes(), MockRestRequestMatchers.requestTo(Matchers.startsWithIgnoringCase("http://someservice/foo")))
                 .andRespond(withSuccess("{\"code\": 200}", MediaType.APPLICATION_JSON));
-
     }
 ```
 
@@ -71,11 +91,11 @@ Using the gradle configuration as an example:
 testImplementation 'com.h2database:h2'
 ```
 
-The database connection in the unit test configuration file uses h2:
+The database connection in the unit test configuration file uses h2 (note that the configuration key is ```spring.datasource.*```, not ```spring.data.*```):
 
 ``` yaml
 spring:
-  data:
+  datasource:
     url: jdbc:h2:mem:ut;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
@@ -92,7 +112,7 @@ myDomain = myDomainRepository.save(myDomain);
 When we call the endpoint to query the record in the database, the result is found correctly:
 
 ``` java
-MyDomain resp = testRestTemplate.getForObject("/db?id=" + myDomain.getId(), MyDomain.class);
+MyDomain resp = restClient.get().uri("/db?id=" + myDomain.getId()).retrieve().body(MyDomain.class);
 System.out.println("db result : " + resp);
 assertThat(resp.getName(), is("test"));
 ```
@@ -131,14 +151,13 @@ Define our own Page class:
 Call the endpoint and receive the custom Page class:
 
 ``` java
-RequestEntity<Void> requestEntity = RequestEntity.get("/dbpage").build();
-ResponseEntity<TestRestResponsePage<MyDomain>> pageResp = testRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<TestRestResponsePage<MyDomain>>() {
+ResponseEntity<TestRestResponsePage<MyDomain>> pageResp = restClient.get().uri("/dbpage").retrieve().toEntity(new ParameterizedTypeReference<TestRestResponsePage<MyDomain>>() {
     });
 System.out.println("dbpage result : " + pageResp);
 assertThat(pageResp.getBody().getTotalElements(), is(1L));
 ```
 
-Since the return type is generic, we need to use the ```testRestTemplate.exchange``` method; the get methods do not support generic return types.
+Since the return type is generic, we need to use the ```toEntity``` method with a ```ParameterizedTypeReference```; the ```body``` methods do not support generic return types.
 
 ## 5. Redis Dependencies
 
@@ -148,18 +167,19 @@ The original version was developed by a Chinese developer. The example uses a ve
 Using the gradle configuration as an example:
 
 ``` groovy
-testImplementation 'com.github.fppt:jedis-mock:1.0.1'
+testImplementation 'com.github.fppt:jedis-mock:1.1.8'
 ```
 
-The connection in the unit test configuration file uses the redis mock server:
+The redis connection in the unit test configuration file (since Spring Boot 3.0 the configuration keys have moved from ```spring.redis.*``` to ```spring.data.redis.*```):
 
 ``` yaml
 spring:
-  redis:
-    port: 10033
+  data:
+    redis:
+      port: 10033
 ```
 
-Add a separate redis configuration class that starts the redis mock server during unit tests:
+Add a separate redis configuration class that starts the redis mock server during unit tests, and import it into the test class with ```@Import(TestRedisConfiguration.class)```:
 
 ``` java
 @TestConfiguration
@@ -167,7 +187,7 @@ public class TestRedisConfiguration {
 
     private final RedisServer redisServer;
 
-    public TestRedisConfiguration(@Value("${spring.redis.port}") final int redisPort) throws IOException {
+    public TestRedisConfiguration(@Value("${spring.data.redis.port}") final int redisPort) {
         redisServer = RedisServer.newRedisServer(redisPort);
     }
 
@@ -178,7 +198,11 @@ public class TestRedisConfiguration {
 
     @PreDestroy
     public void preDestroy() {
-        redisServer.stop();
+        try {
+            redisServer.stop();
+        } catch (IOException ignored) {
+
+        }
     }
 }
 ```
@@ -193,25 +217,44 @@ Using the gradle configuration as an example:
 testImplementation "org.springframework.kafka:spring-kafka-test"
 ```
 
-Initialize EmbeddedKafka with a ClassRule; there are two topics: testEmbeddedIn and testEmbeddedOut.
+Spring Kafka 4.x has removed ```EmbeddedKafkaRule```, so the ```@ClassRule``` approach no longer works. Instead, use the ```@EmbeddedKafka``` annotation on the test class; there are two topics: testEmbeddedIn and testEmbeddedOut.
+
+``` java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext
+@EmbeddedKafka(
+        count = 1,
+        controlledShutdown = true,
+        topics = { "testEmbeddedIn", "testEmbeddedOut" }
+)
+class DemoApplicationTest {
+```
+
+Inject the ```EmbeddedKafkaBroker``` and use ```@DynamicPropertySource``` to point the spring cloud stream kafka binder at the embedded broker (```@EmbeddedKafka``` automatically sets the system property behind ```spring.kafka.bootstrap-servers```):
 
 ``` java
     private static final String INPUT_TOPIC = "testEmbeddedIn";
     private static final String OUTPUT_TOPIC = "testEmbeddedOut";
     private static final String GROUP_NAME = "embeddedKafkaApplication";
 
-    @ClassRule
-    public static EmbeddedKafkaRule embeddedKafkaRule = new EmbeddedKafkaRule(1, true, INPUT_TOPIC, OUTPUT_TOPIC);
+    @Autowired
+    private EmbeddedKafkaBroker embeddedKafka;
 
-    public static EmbeddedKafkaBroker embeddedKafka = embeddedKafkaRule.getEmbeddedKafka();
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-    private static KafkaTemplate<String, String> kafkaTemplate;
+    private Consumer<String, String> consumer;
 
-    private static Consumer<String, String> consumer;
+    @DynamicPropertySource
+    static void kafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.cloud.stream.kafka.binder.brokers", () -> System.getProperty(EmbeddedKafkaBroker.SPRING_EMBEDDED_KAFKA_BROKERS));
+    }
+```
 
-    @BeforeClass
-    public static void setup() {
+The kafkaTemplate and consumer initialization has moved from ```@BeforeClass``` into JUnit 5's ```@BeforeEach```, and the consumer is closed in ```@AfterEach```:
 
+``` java
+    @BeforeEach
+    void before() {
         Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
         DefaultKafkaProducerFactory<String, String> pf = new DefaultKafkaProducerFactory<>(senderProps);
         kafkaTemplate = new KafkaTemplate<>(pf, true);
@@ -222,12 +265,19 @@ Initialize EmbeddedKafka with a ClassRule; there are two topics: testEmbeddedIn 
         embeddedKafka.consumeFromAnEmbeddedTopic(consumer, OUTPUT_TOPIC);
     }
 
+    @AfterEach
+    void tearDown() {
+        if (consumer != null) {
+            consumer.close();
+        }
+    }
 ```
 
 In the unit test configuration file, these two kafka topics can be specified
 
 ``` yaml
-cloud.stream.bindings:
+spring:
+  cloud.stream.bindings:
     handle-out-0.destination: testEmbeddedOut
     handle-in-0.destination: testEmbeddedIn
     handle-in-0.group: embeddedKafkaApplication

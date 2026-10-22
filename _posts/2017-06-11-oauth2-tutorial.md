@@ -30,7 +30,7 @@ OAuth 2.0是OAuth 1.0的替代，因为OAuth 1.0太复杂了，比如OAuth 1.0�
 ### OAuth 2.0 规范
 
 这个教程的目的是提供一个OAuth 2.0协议的概览以帮助理解，而不是涵盖此协议的所有细节。
-如果你计划实现一个OAuth 2.0协议，最好是去阅读规范的详细内容，规范的地址：[http://tools.ietf.org/html/draft-ietf-oauth-v2-23](http://tools.ietf.org/html/draft-ietf-oauth-v2-23)
+如果你计划实现一个OAuth 2.0协议，最好是去阅读规范的详细内容，规范的地址：[https://datatracker.ietf.org/doc/html/rfc6749](https://datatracker.ietf.org/doc/html/rfc6749)
 
 ## OAuth 2.0 概述
 
@@ -132,12 +132,16 @@ Authorization Code（授权码）的认证过程如下：
 
 ![Alt text](/images/oauth2/authorization-auth-code.png)
 #### Implicit（简化模式）
+> **注意：Implicit（简化模式）已被弃用。** 按照RFC 9700（OAuth 2.0 Security Best Current Practice）与OAuth 2.1，由于access token会通过重定向URL的fragment直接暴露在浏览器中，该模式已被弃用，现行应使用授权码模式 + PKCE。下文对协议机制的讲解仅作原理性介绍。
+
 Implicit（简化模式）与Authorization Code（授权码模式）类似，区别仅在于当用户成功登录之后，重定向到客户端应用时，access token会直接返回给客户端应用。
 这意味着access token在客户端应用中是可见的。而Authorization Code（授权码模式），access token是在web服务器中的，对客户端来说不可见。这是这两种模式的最大区别。
 并且，客户端应用只发送client id到认证服务器。如果连同client password一起发送的话，client password需要存储在客户端应用中，这会是一个安全隐患，很容易通过破解手段拿到存放在客户端应用程序中的client password。下面是一个示例图：
 
 ![Alt text](/images/oauth2/authorization-implicit.png)
 #### Resource Owner Password Credentials（用户密码模式）
+> **注意：密码模式（Resource Owner Password Credentials）已被弃用。** 按照RFC 9700（OAuth 2.0 Security Best Current Practice），密码模式已在OAuth 2.1中被移除，现行应使用授权码模式 + PKCE。下文对协议机制的讲解仅作原理性介绍。
+
 Resource Owner Password Credentials（密码模式）允许客户端应用直接使用用户的用户名和密码。例如用户可以直接在客户端应用中录入Twitter的用户名和密码。
 只有在充分信任客户端应用的情况下，才能使用密码模式。（因为用户名和密码是在客户端应用中录入的，因此客户端应用可以获取并保存用户的用户名和密码）。
 密码模式一般在富web客户端应用和原生应用中使用。
@@ -185,7 +189,7 @@ response_type 	必选项，固定值为 "code"
 client_id 	必选项, 客户端应用在认证服务器注册时生成的client id.
 redirect_uri 	可选项. T客户端应用在认证服务器注册时填写的重定向URL地址.
 scope 	可选项. 请求的权限范围.
-state 	可选项 (建议提供). 客户端应用的请求URL中的参数，可以是任意值.
+state 	必选项 (现行最佳实践RFC 9700要求，用于防止CSRF攻击). 客户端应用的请求URL中的参数，可以是任意值.
 ```
 ### 授权响应
 授权响应含有授权码，这个授权码在后续获取access token时需要提供。
@@ -241,7 +245,7 @@ response_type 	Required. Must be set to token .
 client_id 	Required. The client identifier as assigned by the authorization server, when the client was registered.
 redirect_uri 	Optional. The redirect URI registered by the client.
 scope 	Optional. The possible scope of the request.
-state 	Optional (recommended). Any client state that needs to be passed on to the client request URI.
+state 	Required (to prevent CSRF attacks, as required by the current best current practice RFC 9700). Any client state that needs to be passed on to the client request URI.
 ```
 ### 简化模式授权响应
 响应包含以下参数，注意该响应的格式不是json的。

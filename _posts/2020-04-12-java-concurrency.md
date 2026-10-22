@@ -8,7 +8,7 @@ image: assets/images/java-concurrency.jpg
 ---
 
 常用的java并发编程技术。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-currency](https://github.com/qihaiyan/springcamp/tree/main/spring-currency)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/java-concurrency](https://github.com/qihaiyan/springcamp/tree/main/java-concurrency)
 
 ## 一、概述
 

@@ -37,6 +37,8 @@ RestTemplateConfig.java:
 
 The ```interceptors``` method specifies our own log-printing interceptors.
 
+Note that starting with Spring Boot 4, the RestTemplateBuilder class has moved from the org.springframework.boot.web.client package to org.springframework.boot.restclient, so pay attention to the package when importing it.
+
 ## 3. Implementing the Logging Interceptors
 
 The custom interceptor needs to implement the ClientHttpRequestInterceptor interface.
@@ -95,11 +97,6 @@ static class BufferingClientHttpResponseWrapper implements ClientHttpResponse {
         }
 
         @NonNull
-        public int getRawStatusCode() throws IOException {
-            return this.response.getRawStatusCode();
-        }
-
-        @NonNull
         public String getStatusText() throws IOException {
             return this.response.getStatusText();
         }
@@ -122,6 +119,8 @@ static class BufferingClientHttpResponseWrapper implements ClientHttpResponse {
         }
     }
 ```
+
+Note that earlier versions of the ClientHttpResponse interface also provided a getRawStatusCode method; as of Spring Framework 7 this method has been removed from the ClientHttpResponse interface. If you need the raw status code, use getStatusCode().value() instead.
 
 This class mainly gives ```getBody()``` special treatment: when the method is called, ```treamUtils.copyToByteArray``` copies the body data into a local variable.
 
@@ -155,3 +154,5 @@ RESPONSE body: {"code": 200}
 The response ```{"code": 200}``` printed in the log is the data we mocked for the ```http://someservice/foo``` API in the unit test.
 
 For details on how to mock a third-party API, see the article [Spring Boot unit testing](https://springcamp.cn/spring-boot-unit-test/).
+
+In addition, RestTemplate has been in maintenance mode since Spring Framework 6.1. For new projects, RestClient is recommended instead; RestClient also supports ClientHttpRequestInterceptor for centralized request and response logging.

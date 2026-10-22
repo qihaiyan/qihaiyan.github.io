@@ -17,7 +17,7 @@ image: assets/images/spring-kafka.jpeg
 
 ## 二、KafkaListener
 
-KafkaListener应该是目前使用比较多的一种方式，开发简单，易于理解。但是从易用性的角度，应该会逐步被spring-cloud-stream所替代。
+KafkaListener应该是目前使用比较多的一种方式，开发简单，易于理解。从这些年的发展来看，@KafkaListener至今仍是绝大多数场景的主流选择；spring-cloud-stream则更适合需要在多个binder（Kafka/RabbitMQ等）之间切换、或者destination需要在运行时可配置的场景。
 KafkaListener是一个注解，在对应的方法上加上这个注解，方法就可以处理接收到的kakfa消息，注解中通过topics参数指定需要消费的kakfa的topic，topics参数支持SPEL表达式，可以同时消费多个kafka topic：
 
 ```java
@@ -34,13 +34,15 @@ KafkaListener是一个注解，在对应的方法上加上这个注解，方法�
 
 ```yml
 spring.kafka:
-    bootstrap-servers: 192.168.1.1:2181
+    bootstrap-servers: 192.168.1.1:9092
     consumer:
       group-id: utgroup
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 ```
+
+注：2181是ZooKeeper的端口，早期版本的Kafka依赖ZooKeeper，很容易和Kafka自身的端口混淆。Kafka 4.0起已经彻底移除了ZooKeeper，客户端只需要连接Kafka自身的服务端口，默认为9092。
 
 ## 三、ConcurrentMessageListenerContainer
 
@@ -103,7 +105,7 @@ spring-cloud-stream是springcloud的一个子项目，这个项目的目标是�
 spring-cloud-stream是用了spring-cloud-function，我们只需要在程序中实现一个function接口，就可以处理kafka消息，编写非常简单。
 
 ``` java
-i@SpringBootApplication
+@SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {
@@ -134,7 +136,7 @@ spring:
         destination: testEmbeddedOut
     kafka:
       binder:
-        brokers: 192.168.1.1:2181
+        brokers: 192.168.1.1:9092
         configuration:
           key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
           value.serializer: org.apache.kafka.common.serialization.ByteArraySerializer

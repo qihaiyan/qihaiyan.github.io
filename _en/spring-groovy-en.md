@@ -76,7 +76,7 @@ The property tag initializes the bean's properties. We assign different initial 
 
 spring-framework-4 introduced declaring beans with groovy. We declare the myServiceGroovy bean with groovy; compared with xml, the groovy style is more readable.
 
-For details, see the official spring blog post: [Groovy Bean Configuration in Spring Framework 4](https://spring.io/blog/2014/03/03/groovy-bean-configuration-in-spring-framework-4)
+For details, see the official spring blog post (a 2014 article, now of historical interest): [Groovy Bean Configuration in Spring Framework 4](https://spring.io/blog/2014/03/03/groovy-bean-configuration-in-spring-framework-4)
 
 ``` groovy
 import org.springframework.scripting.groovy.GroovyScriptFactory
@@ -172,6 +172,7 @@ public class MyEngine {
 ```
 
 First we initialize GroovyScriptEngine, passing the script file path in the constructor.
+Note that ```ResourceUtils.getFile("classpath:...")``` only resolves real files on the filesystem; it throws a FileNotFoundException when the application is deployed as a fat jar. In that case, read the scripts as a stream through ClassPathResource, or locate the script directory via the resource URL base.
 
 There are two ways to execute a script. One is to obtain the GroovyObject and invoke a method in the script via invokeMethod, passing the method arguments as an Object array.
 
@@ -191,3 +192,9 @@ binding.setVariable("arg", "test");
 binding.setVariable("funBean", funBean);
 Object result1 = engine.run("CalcScript.groovy", binding);
 ```
+
+## 4. Current Status
+
+This post was originally written in 2021; here is the current (2026) status. The ```lang:``` XML namespace and the ```GroovyScriptFactory```/```ScriptFactoryPostProcessor``` mechanism still work in Spring Framework 7, but the official reference documentation has removed the Dynamic Language Support chapter, and this mechanism is now positioned as a legacy capability. Two approaches are recommended today: one is JSR-223, i.e. ```new ScriptEngineManager().getEngineByName("groovy")```, which requires the ```org.apache.groovy:groovy-jsr223``` dependency; the other is loading scripts with GroovyClassLoader or GroovyShell and registering them into the spring context as @Bean. For the example code, see the spring-groovy module of the example project springcamp: [https://github.com/qihaiyan/springcamp/tree/main/spring-groovy](https://github.com/qihaiyan/springcamp/tree/main/spring-groovy).
+
+Also note the dependency coordinate change: since Groovy 5, the groovy dependency coordinates have changed from ```org.codehaus.groovy:groovy``` to ```org.apache.groovy:groovy```; adjust them accordingly when upgrading.

@@ -38,7 +38,7 @@ Here is a user-defined exception class:
 Throw this exception from an endpoint:
 
 ```java
-@RequestMapping(value="/orders/{id}", method=GET)
+@GetMapping("/orders/{id}")
  public Order showOrder(@PathVariable("id") long id, Model model) {
      Order order = orderRepository.findOrderById(id);
      if (order == null) throw new OrderNotFoundException(id);
@@ -46,7 +46,7 @@ Throw this exception from an endpoint:
  }
 ```
 
-When the specified order id cannot be found, the endpoint returns 404. The reason is that the endpoint throws an OrderNotFoundException, and the @ResponseStatus annotation on that exception specifies the return code HttpStatus.NOT_FOUND, that is, 400.
+When the specified order id cannot be found, the endpoint returns 404. The reason is that the endpoint throws an OrderNotFoundException, and the @ResponseStatus annotation on that exception specifies the return code HttpStatus.NOT_FOUND, that is, 404.
 
 ## 3. Exception Handling in the Controller
 
@@ -140,6 +140,8 @@ public class ControllerWithExceptionHandling {
 }
 ```
 
+Note that since Spring Boot 3, ConstraintViolationException has moved from the javax.validation package to jakarta.validation, so you need to import jakarta.validation.ConstraintViolationException.
+
 This way, if an exception occurs in any endpoint of the class, the corresponding HTTP status code is returned, and the response body contains the error description.
 
 If the exception thrown by the endpoint is a ConstraintViolationException, the status code and error message defined in the handleValidationException method are returned; otherwise, the status code and error message defined in the handleException method are returned. You can add more exception handling methods to handle additional specific exceptions.
@@ -154,17 +156,16 @@ The error message structure is as follows:
 
 The approach above handles exceptions of a specific controller class and requires exception handling in every controller class. Now let's look at a simpler approach: global exception handling.
 
-Use a @ControllerAdvice class for global exception handling.
+Use a @RestControllerAdvice class for global exception handling. @RestControllerAdvice is a combination of @ControllerAdvice and @ResponseBody, so there is no need to add @ResponseBody to each method.
 
 ```java
-@ControllerAdvice
+@RestControllerAdvice
 class GlobalControllerExceptionHandler {
 
   // Exception handling methods:
   // return the specified HTTP status code for a particular exception
   @ResponseStatus(value=HttpStatus.BAD_REQUEST)  // 400
   @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseBody
   public RestServiceError handleValidationException(ConstraintViolationException ex) {
         Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
         StringBuilder strBuilder = new StringBuilder();
@@ -177,7 +178,6 @@ class GlobalControllerExceptionHandler {
   // Handling of generic exceptions, returns 500
   @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)  // 500
   @ExceptionHandler(Exception.class)
-  @ResponseBody
   public RestServiceError handleException(Exception ex) {
         return RestServiceError.build(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
   }
@@ -221,7 +221,7 @@ public class LocaleMessageUtil {
     public RestServiceError getLocalErrorMessage(RestServiceError.Type errorCode, String description) {
         Locale locale = LocaleContextHolder.getLocale();
         String errorMessage = messageSource.getMessage(errorCode.getCode(), null, locale);
-        RestServiceError error = RestServiceError.build(errorCode, errorMessage, description);
+        RestServiceError error = RestServiceError.build(errorCode, errorMessage + " " + description);
         return error;
     }
 
@@ -233,7 +233,7 @@ Here LocaleContextHolder.getLocale() is the method that reads the current locale
 With a small change to the global exception handling method introduced in the previous section, exception messages can support multiple languages.
 
 ```java
-@ControllerAdvice
+@RestControllerAdvice
 class GlobalControllerExceptionHandler {
   @Autowired
   LocaleMessageUtil localeMessageUtil;
@@ -241,22 +241,20 @@ class GlobalControllerExceptionHandler {
   // return the specified HTTP status code for a particular exception
   @ResponseStatus(value=HttpStatus.BAD_REQUEST)  // 400
   @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseBody
   public RestServiceError handleValidationException(ConstraintViolationException ex) {
         Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
         StringBuilder strBuilder = new StringBuilder();
         for (ConstraintViolation<?> violation : errors) {
             strBuilder.append(violation.getMessage() + "\n");
         }
-        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.IVALIDATION_ERROR);
+        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.VALIDATION_ERROR, strBuilder.toString());
   }
   
   // Handling of generic exceptions, returns 500
   @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)  // 500
   @ExceptionHandler(Exception.class)
-  @ResponseBody
   public RestServiceError handleException(Exception ex) {
-        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.INTERNAL_SERVER_ERROR);
+        return localeMessageUtil.getLocalErrorMessage(RestServiceError.Type.INTERNAL_SERVER_ERROR, ex.getMessage());
   }
 }
 ```
@@ -274,5 +272,22 @@ There are three commonly used exception handling approaches, and the third one i
 
 1. Define the status code and error message in the exception class, suitable for handling specific exceptions
 2. Define the status code and error message in the REST controller class, suitable for handling a specific controller class
-3. Define global status codes and error messages via the @ControllerAdvice annotation
+3. Define global status codes and error messages via the @RestControllerAdvice annotation
 4. Use Spring Boot's MessageSource for multi-language support
+
+## 7. Appendix: ProblemDetail (RFC 9457)
+
+Since Spring Framework 6, the officially recommended way to return error responses is the ProblemDetail format (RFC 9457). To use it, simply return a ProblemDetail object from the exception handling method:
+
+```java
+@RestControllerAdvice
+class GlobalControllerExceptionHandler {
+
+  @ExceptionHandler(OrderNotFoundException.class)
+  ProblemDetail handleOrderNotFoundException(OrderNotFoundException ex) {
+      ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+      problemDetail.setTitle("Order Not Found");
+      return problemDetail;
+  }
+}
+```

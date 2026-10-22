@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "springboot单元测试技术"
-description: "介绍 Spring Boot 单元测试的完整实践，涵盖 testRestTemplate 接口测试、Mockito 模拟外部依赖、嵌入组件替代数据库与 kafka 等，实现不依赖外部服务的全链路功能测试。"
+description: "介绍 Spring Boot 单元测试的完整实践，涵盖 RestClient 接口测试、MockRestServiceServer 模拟第三方接口、嵌入组件替代数据库与 kafka 等，实现不依赖外部服务的全链路功能测试。"
 date:   2021-04-18 17:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]
@@ -15,20 +15,32 @@ image: assets/images/ut.jpg
 
 一个功能的全链路测试，往往要依赖于很多外部组件，如数据库、redis、kafka、第三方接口等，单元测试的执行环境有可能受网络限制没有办法访问这些外部服务。因此，我们希望通过一些技术手段，能够用单元测试技术进行完整的功能测试，而不依赖于外部服务。
 
+本文已更新：示例代码已从 JUnit 4 迁移到 JUnit 5，并按当前的 Spring Boot 4.x 版本（示例项目使用 Spring Boot 4.1.1）重写。
+
 ## 二、REST接口的测试
 
-springboot提供了testRestTemplate工具用于在单元测试中测试接口，该工具只需指定接口的相对路径，不需要指定域名和端口。这个特性非常有用，因为springboot的单元测试运行环境的web服务是一个随机端口，是通过下面这个注解指定的：
+springboot的单元测试运行环境的web服务是一个随机端口，是通过下面这个注解指定的：
 
 ``` java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 ```
 
-以下是通过testRestTemplate测试我们开发的```/remote```接口的方法：
+测试时通过```@LocalServerPort```注入实际的端口号，再通过RestClient发起请求（示例中使用RestClient代替了早期版本常用的TestRestTemplate）。以下是通过RestClient测试我们开发的```/remote```接口的方法：
 
 ``` java
+    @LocalServerPort
+    private int port;
+
+    private RestClient restClient;
+
+    @BeforeEach
+    void before() {
+        restClient = RestClient.builder().baseUrl("http://localhost:" + port).build();
+    }
+
     @Test
-    public void testRemoteCallRest() {
-        String resp = testRestTemplate.getForObject("/remote", String.class);
+    void testRemoteCallRest() {
+        String resp = restClient.get().uri("/remote").retrieve().body(String.class);
         System.out.println("remote result : " + resp);
         assertThat(resp, is("{\"code\": 200}"));
     }
@@ -38,22 +50,30 @@ springboot提供了testRestTemplate工具用于在单元测试中测试接口，
 
 上面的例子中，我们的remote接口会调用一个第三方接口 ```http://someservice/foo```，我们的构建服务器中有可能受网络限制，无法访问这个第三方接口，就会导致单元测试无法执行。我们可以通过springboot提供的 ```MockRestServiceServer``` 工具来解决这个问题。
 
-首先定义一个MockRestServiceServer变量
+在测试类上增加 ```@AutoConfigureMockRestServiceServer``` 注解（由 ```spring-boot-starter-restclient-test``` 依赖提供，以gradle配置为例）：
 
-``` java
-private MockRestServiceServer mockRestServiceServer;
+``` groovy
+testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
 ```
 
-在单元测试的初始化阶段进行初始化
+``` java
+@AutoConfigureMockRestServiceServer
+```
+
+这样就可以直接注入一个绑定到RestClient的MockRestServiceServer变量，不再需要手工bind：
 
 ``` java
-    @Before
-    public void before() {
-        mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
+    @Autowired
+    private MockRestServiceServer mockRestServiceServer;
+```
 
+在单元测试的初始化阶段设置期望返回值（初始化方法已改为JUnit 5的 ```@BeforeEach```）：
+
+``` java
+    @BeforeEach
+    void before() {
         this.mockRestServiceServer.expect(manyTimes(), MockRestRequestMatchers.requestTo(Matchers.startsWithIgnoringCase("http://someservice/foo")))
                 .andRespond(withSuccess("{\"code\": 200}", MediaType.APPLICATION_JSON));
-
     }
 ```
 
@@ -69,11 +89,11 @@ private MockRestServiceServer mockRestServiceServer;
 testImplementation 'com.h2database:h2'
 ```
 
-单元测试配置文件中的数据库连接使用h2:
+单元测试配置文件中的数据库连接使用h2（注意配置键是 ```spring.datasource.*```，而不是 ```spring.data.*```）:
 
 ``` yaml
 spring:
-  data:
+  datasource:
     url: jdbc:h2:mem:ut;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
@@ -90,7 +110,7 @@ myDomain = myDomainRepository.save(myDomain);
 当我们调用接口查询数据库中的记录时，能够正确查询到结果：
 
 ``` java
-MyDomain resp = testRestTemplate.getForObject("/db?id=" + myDomain.getId(), MyDomain.class);
+MyDomain resp = restClient.get().uri("/db?id=" + myDomain.getId()).retrieve().body(MyDomain.class);
 System.out.println("db result : " + resp);
 assertThat(resp.getName(), is("test"));
 ```
@@ -129,14 +149,13 @@ assertThat(resp.getName(), is("test"));
 调用接口返回自定义的Page类：
 
 ``` java
-RequestEntity<Void> requestEntity = RequestEntity.get("/dbpage").build();
-ResponseEntity<TestRestResponsePage<MyDomain>> pageResp = testRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<TestRestResponsePage<MyDomain>>() {
+ResponseEntity<TestRestResponsePage<MyDomain>> pageResp = restClient.get().uri("/dbpage").retrieve().toEntity(new ParameterizedTypeReference<TestRestResponsePage<MyDomain>>() {
     });
 System.out.println("dbpage result : " + pageResp);
 assertThat(pageResp.getBody().getTotalElements(), is(1L));
 ```
 
-由于返回结果是泛型，所以需要使用```testRestTemplate.exchange```方法，get方法不支持返回泛型。
+由于返回结果是泛型，需要使用```toEntity```方法并传入```ParameterizedTypeReference```，```body```方法不支持返回泛型。
 
 ## 五、redis的依赖
 
@@ -146,18 +165,19 @@ assertThat(pageResp.getBody().getTotalElements(), is(1L));
 已gradle配置为例：
 
 ``` groovy
-testImplementation 'com.github.fppt:jedis-mock:1.0.1'
+testImplementation 'com.github.fppt:jedis-mock:1.1.8'
 ```
 
-单元测试配置文件中的数据库连接使用redis mockserver:
+单元测试配置文件中的redis连接（Spring Boot 3.0起配置键已从 ```spring.redis.*``` 迁移到 ```spring.data.redis.*```）:
 
 ``` yaml
 spring:
-  redis:
-    port: 10033
+  data:
+    redis:
+      port: 10033
 ```
 
-增加一个单独的redis配置文件，用于在单元测试中启动redis mockserver：
+增加一个单独的redis配置文件，用于在单元测试中启动redis mockserver，并在测试类上通过 ```@Import(TestRedisConfiguration.class)``` 引入该配置：
 
 ``` java
 @TestConfiguration
@@ -165,7 +185,7 @@ public class TestRedisConfiguration {
 
     private final RedisServer redisServer;
 
-    public TestRedisConfiguration(@Value("${spring.redis.port}") final int redisPort) throws IOException {
+    public TestRedisConfiguration(@Value("${spring.data.redis.port}") final int redisPort) {
         redisServer = RedisServer.newRedisServer(redisPort);
     }
 
@@ -176,7 +196,11 @@ public class TestRedisConfiguration {
 
     @PreDestroy
     public void preDestroy() {
-        redisServer.stop();
+        try {
+            redisServer.stop();
+        } catch (IOException ignored) {
+
+        }
     }
 }
 ```
@@ -191,25 +215,44 @@ spring提供了一个kafka的测试组件，可以在单元测试期间启动一
 testImplementation "org.springframework.kafka:spring-kafka-test"
 ```
 
-通过ClassRule初始化EmbeddedKafka，有两个topic: testEmbeddedIn 和 testEmbeddedOut 。
+Spring Kafka 4.x已移除 ```EmbeddedKafkaRule```，通过 ```@ClassRule``` 初始化的写法不再可用，改为在测试类上使用 ```@EmbeddedKafka``` 注解，有两个topic: testEmbeddedIn 和 testEmbeddedOut 。
+
+``` java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext
+@EmbeddedKafka(
+        count = 1,
+        controlledShutdown = true,
+        topics = { "testEmbeddedIn", "testEmbeddedOut" }
+)
+class DemoApplicationTest {
+```
+
+注入 ```EmbeddedKafkaBroker```，并通过 ```@DynamicPropertySource``` 将嵌入式broker的地址设置给spring cloud stream的kafka binder（```@EmbeddedKafka``` 会自动设置 ```spring.kafka.bootstrap-servers``` 对应的系统属性）：
 
 ``` java
     private static final String INPUT_TOPIC = "testEmbeddedIn";
     private static final String OUTPUT_TOPIC = "testEmbeddedOut";
     private static final String GROUP_NAME = "embeddedKafkaApplication";
 
-    @ClassRule
-    public static EmbeddedKafkaRule embeddedKafkaRule = new EmbeddedKafkaRule(1, true, INPUT_TOPIC, OUTPUT_TOPIC);
+    @Autowired
+    private EmbeddedKafkaBroker embeddedKafka;
 
-    public static EmbeddedKafkaBroker embeddedKafka = embeddedKafkaRule.getEmbeddedKafka();
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-    private static KafkaTemplate<String, String> kafkaTemplate;
+    private Consumer<String, String> consumer;
 
-    private static Consumer<String, String> consumer;
+    @DynamicPropertySource
+    static void kafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.cloud.stream.kafka.binder.brokers", () -> System.getProperty(EmbeddedKafkaBroker.SPRING_EMBEDDED_KAFKA_BROKERS));
+    }
+```
 
-    @BeforeClass
-    public static void setup() {
+kafkaTemplate和consumer的初始化从 ```@BeforeClass``` 改到了JUnit 5的 ```@BeforeEach``` 中，并在 ```@AfterEach``` 中关闭consumer：
 
+``` java
+    @BeforeEach
+    void before() {
         Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
         DefaultKafkaProducerFactory<String, String> pf = new DefaultKafkaProducerFactory<>(senderProps);
         kafkaTemplate = new KafkaTemplate<>(pf, true);
@@ -220,12 +263,19 @@ testImplementation "org.springframework.kafka:spring-kafka-test"
         embeddedKafka.consumeFromAnEmbeddedTopic(consumer, OUTPUT_TOPIC);
     }
 
+    @AfterEach
+    void tearDown() {
+        if (consumer != null) {
+            consumer.close();
+        }
+    }
 ```
 
 在单元测试程序的配置文件中，可以指定这2个kafka的topic
 
 ``` yaml
-cloud.stream.bindings:
+spring:
+  cloud.stream.bindings:
     handle-out-0.destination: testEmbeddedOut
     handle-in-0.destination: testEmbeddedIn
     handle-in-0.group: embeddedKafkaApplication

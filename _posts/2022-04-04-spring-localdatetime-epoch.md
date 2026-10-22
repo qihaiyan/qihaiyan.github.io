@@ -9,7 +9,7 @@ image: assets/images/epoch.jpg
 ---
 
 本文介绍spring-rest接口中的LocalDateTime日期类型转时间戳的方法。
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch](https://github.com/qihaiyan/springcamp/tree/main/spring-redis-spring-localdatetime-epoch)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch](https://github.com/qihaiyan/springcamp/tree/main/spring-localdatetime-epoch)
 
 ## 一、概述
 
@@ -96,3 +96,43 @@ public class LocalDateTimeToEpochSerdeConfig {
 ```
 
 通过以上配置，我们可以在实体类中使用LocalDateTime类型。客户端请求接口时，对于返回结果，自动转换为Epoch数据，对于请求参数，自动从Epoch转换为LocalDateTime。
+
+## 三、版本适用说明
+
+本文中的代码基于Jackson 2（```Jackson2ObjectMapperBuilderCustomizer```等），适用于Spring Boot 2.x和3.x。Spring Boot 4起默认使用Jackson 3，应改用```JsonMapperBuilderCustomizer```，并注册Jackson 3的```ValueSerializer```/```ValueDeserializer```（由Jackson 2的```JsonSerializer```/```JsonDeserializer```更名而来），反序列化时可以直接通过```p.getLongValue()```取得long值，不再需要借道```NumberDeserializers```。Spring Boot 4下的示例代码如下：
+
+``` java
+@Configuration
+public class LocalDateTimeToEpochSerdeConfig {
+
+    @Bean
+    public JsonMapperBuilderCustomizer jsonMapperBuilderCustomizer() {
+        return builder -> builder.serializerByType(LocalDateTime.class, new LocalDateTimeToEpochSerializer())
+                .deserializerByType(LocalDateTime.class, new LocalDateTimeFromEpochDeserializer());
+    }
+
+    /**
+     * 序列化
+     */
+    public static class LocalDateTimeToEpochSerializer extends ValueSerializer<LocalDateTime> {
+        @Override
+        public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
+                throws IOException {
+            if (value != null) {
+                long timestamp = value.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond();
+                gen.writeNumber(timestamp);
+            }
+        }
+    }
+
+    /**
+     * 反序列化
+     */
+    public static class LocalDateTimeFromEpochDeserializer extends ValueDeserializer<LocalDateTime> {
+        @Override
+        public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            return LocalDateTime.ofInstant(Instant.ofEpochSecond(p.getLongValue()), ZoneId.systemDefault());
+        }
+    }
+}
+```

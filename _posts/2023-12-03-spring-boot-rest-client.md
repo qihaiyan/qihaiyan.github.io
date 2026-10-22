@@ -9,7 +9,7 @@ image: assets/images/rest-client.jpg
 
 SpringBoot 3.2引入了新的 RestClient 用于http接口调用，采用了 fluent API 的风格，可以进行链式调用。
 
-具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-data-jdbc-client](https://github.com/qihaiyan/springcamp/tree/main/spring-data-jdbc-client)
+具体的代码参照 [示例项目 https://github.com/qihaiyan/springcamp/tree/main/spring-rest-client](https://github.com/qihaiyan/springcamp/tree/main/spring-rest-client)
 
 ## 一、概述
 
@@ -141,6 +141,8 @@ RestClient.builder().requestFactory(new HttpComponentsClientHttpRequestFactory(h
 ```
 
 同时我们给 RestClient 配置了 requestFactory ，可以使用长连接调用接口。
+
+其实 RestClient 原生就支持拦截器，无需借助 RestTemplate，直接调用 `RestClient.builder().requestInterceptor(...)` 或 `.requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient()))` 即可完成拦截器配置。另外从 Spring Boot 3.4 开始（包括 4.x），Boot 会自动配置 RestClient.Builder bean，可以直接注入使用，无需手动创建。
 
 ## 三、GET接口调用
 

@@ -53,9 +53,11 @@ public CommonsRequestLoggingFilter logFilter() {
 
 HandlerInterceptor can access the HttpServletRequest and HttpServletResponse during request processing, so it can print the request and response content.
 
+The older approach was to extend the HandlerInterceptorAdapter class, which was deprecated in Spring Framework 5.3 and removed in 6.0. Since all methods of the HandlerInterceptor interface now have default implementations, you can simply implement the HandlerInterceptor interface directly. Also note that starting with Spring Boot 3, the servlet API classes have moved from the javax package to jakarta, for example jakarta.servlet.http.HttpServletRequest.
+
 ```java
 @Component
-public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
+public class LogInterceptorAdapter implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request,
@@ -76,29 +78,29 @@ public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
 
 This approach has a flaw: for requests such as application/json, where the request parameters are placed in the body, the content has to be read through the InputStream, and an InputStream can only be read once.
 Once the InputStream has been read in a HandlerInterceptor, the subsequent processing can no longer read the content of the InputStream, which is a serious problem.
-Therefore HandlerInterceptor cannot be used to print the request body. The method can be adapted to print only GET request parameters, while the POST request parameters are logged with the RequestBodyAdviceAdapter method described below.
+Therefore HandlerInterceptor cannot be used to print the request body. The method can be adapted to print only GET request parameters and to move the logging logic into the afterCompletion method, while the POST request parameters are logged with the RequestBodyAdviceAdapter method described below.
 
 ```java
 @Slf4j
 @Component
-public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
+public class LogInterceptorAdapter implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) {
+    public void afterCompletion(HttpServletRequest request,
+                                HttpServletResponse response,
+                                Object handler,
+                                Exception ex) {
         if (DispatcherType.REQUEST.name().equals(request.getDispatcherType().name())
                 && request.getMethod().equals(HttpMethod.GET.name())) {
 
-            ServletRequest servletRequest = new ContentCachingRequestWrapper(request);
-            Map<String, String[]> params = servletRequest.getParameterMap();
+            Map<String, String[]> params = request.getParameterMap();
 
             // Read the request parameters from the request and log them
             params.forEach((key, value) -> log.info("logInterceptor " + key + "=" + Arrays.toString(value)));
             // Avoid reading the body from the inputStream and logging it
 
         }
-        return true;
+        log.info("logInterceptor afterCompletion status=" + response.getStatus());
     }
 }
 ```

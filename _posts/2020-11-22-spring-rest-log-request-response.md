@@ -51,9 +51,11 @@ public CommonsRequestLoggingFilter logFilter() {
 
 HandlerInterceptor 可以获取到接口执行过程中的 HttpServletRequest 和 HttpServletResponse 信息，因此能够打印出接口请求响应内容。
 
+早期的实现方式是继承 HandlerInterceptorAdapter 类，该类在 Spring Framework 5.3 中被标记为废弃，并在 6.0 中被移除。由于 HandlerInterceptor 接口中的方法都提供了 default 实现，现在直接实现 HandlerInterceptor 接口即可。另外，从 Spring Boot 3 开始，servlet 相关的类已从 javax 包迁移到 jakarta 包，例如 jakarta.servlet.http.HttpServletRequest。
+
 ```java
 @Component
-public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
+public class LogInterceptorAdapter implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request,
@@ -74,29 +76,29 @@ public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
 
 这种方式有个缺陷，对于 application/json 这种请求参数放在body中的方式，需要通过InputStream读取内容，而InputStream只能被读取一次，
 一旦在 HandlerInterceptor 中进行了 InputStream 的读取操作，后续的处理就读取不到InputStream中的内容，这是一个很严重的问题。
-因此 HandlerInterceptor 不能用于打印请求中的body，可以改造一下该方法，只打印get请求参数，post的请求参数用下面介绍的 RequestBodyAdviceAdapter 方法打印。
+因此 HandlerInterceptor 不能用于打印请求中的body，可以改造一下该方法，只打印get请求参数，并把打印逻辑移到 afterCompletion 方法中，post的请求参数用下面介绍的 RequestBodyAdviceAdapter 方法打印。
 
 ```java
 @Slf4j
 @Component
-public class LogInterceptorAdapter extends HandlerInterceptorAdapter {
+public class LogInterceptorAdapter implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) {
+    public void afterCompletion(HttpServletRequest request,
+                                HttpServletResponse response,
+                                Object handler,
+                                Exception ex) {
         if (DispatcherType.REQUEST.name().equals(request.getDispatcherType().name())
                 && request.getMethod().equals(HttpMethod.GET.name())) {
 
-            ServletRequest servletRequest = new ContentCachingRequestWrapper(request);
-            Map<String, String[]> params = servletRequest.getParameterMap();
+            Map<String, String[]> params = request.getParameterMap();
 
             // 从 request 中读取请求参数并打印
             params.forEach((key, value) -> log.info("logInterceptor " + key + "=" + Arrays.toString(value)));
             // 避免从 inputStream 中读取body并打印
 
         }
-        return true;
+        log.info("logInterceptor afterCompletion status=" + response.getStatus());
     }
 }
 ```

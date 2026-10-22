@@ -12,6 +12,8 @@ description: "Part 3 of the Reactive programming series: migrate a Spring MVC ap
 
 Continuing from the previous article on [Reactive programming](https://springcamp.cn/reactive-program-2/): we have covered the basic API, and now we start building a real application. Reactive is a good abstraction over concurrent programming, but it also exposes many low-level features that need our attention. When we use them, we can control details that used to be hidden inside containers, platforms, and frameworks.
 
+> Note: this article has been updated. It was originally published in 2018, when the dependencies and APIs it used were unreleased milestone versions. The dependency coordinates and code samples have been rewritten against the current GA releases (Spring Boot 4.x, Reactor 3.7+), keeping the original structure and conclusions.
+
 ## Spring MVC: From Blocking to Reactive
 
 Reactive asks us to look at problems with a different mindset. Instead of the traditional request->response pattern, all data is published as a sequence (a Publisher) and then subscribed to (a Subscriber). Instead of waiting synchronously for the result, we register a callback. Once we get used to this style it no longer feels complicated. But there is no way to make the whole environment reactive at the same time, so we inevitably have to deal with old-style blocking APIs.
@@ -29,7 +31,7 @@ private HttpStatus block(int value) {
 
 <!-- more -->
 
-We need to call this method repeatedly with different arguments and process the results. This is a typical "scatter-gather" scenario — for example, extracting the top N entries from multiple pages.
+We need to call this method repeatedly with different arguments and process the results. This is a typical "scatter-gather" scenario — for example, extracting the top N entries from multiple pages. One aside: ```RestTemplate``` has been in maintenance mode, and for new code the recommended synchronous client is ```RestClient``` (available since Spring Boot 3.2); it is used here simply as an example of a blocking client.
 
 Here is an example of the wrong way to do it:
 
@@ -114,13 +116,13 @@ private Scheduler scheduler = Schedulers.newParallel("sub", 16);
 
 > Tomcat allocates 100 threads for requests by default. When all requests are processed at the same time, our scheduler thread pool becomes a bottleneck — the number of threads in our scheduler pool is far smaller than Tomcat's. This shows that performance tuning is not a simple matter: you need to consider how the various parameters match the available resources.
 
-Instead of a fixed-size thread pool we can use a more flexible one that adjusts the number of threads dynamically as needed. Reactor already provides such a mechanism: with ```Schedulers.elastic()``` you can see the thread count grow as the number of requests increases.
+Instead of a fixed-size thread pool we can use a more flexible one that adjusts the number of threads dynamically as needed. Reactor already provides such a mechanism: with ```Schedulers.boundedElastic()``` you can see the thread count grow as the number of requests increases. One aside: the original ```Schedulers.elastic()``` has been deprecated since Reactor 3.4; its replacement ```boundedElastic()``` caps the thread count (10 x CPU cores by default) and queues excess tasks, which keeps the number of threads from growing out of control.
 
 ## Going Fully Reactive
 
 Bridging from blocking calls to reactive is an effective pattern, and it is easy to implement with Spring MVC. Next we will drop the blocking mode entirely and adopt the new API and the new tools. In the end we go fully reactive across the stack.
 
-In our example, the first step is to replace ```spring-boot-starter-web``` with ```spring-boot-starter-web-reactive```:
+In our example, the first step is to replace ```spring-boot-starter-web``` with ```spring-boot-starter-webflux``` (early on this capability was shipped as an experimental starter; the official webflux starter has been provided since Spring Boot 2.0):
 
 Maven:
 
@@ -128,22 +130,11 @@ Maven:
 
 <dependencies>
   <dependency>
-   <groupId>org.springframework.boot.experimental</groupId>
-     <artifactId>spring-boot-starter-web-reactive</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-webflux</artifactId>
   </dependency>
   ...
 </dependencies>
-    <dependencyManagement>
-     <dependencies>
-       <dependency>
-         <groupId>org.springframework.boot.experimental</groupId>
-         <artifactId>spring-boot-dependencies-web-reactive</artifactId>
-         <version>0.1.0.M1</version>
-         <type>pom</type>
-         <scope>import</scope>
-      </dependency>
-     </dependencies>
-    </dependencyManagement>
 
 ```
 
@@ -152,13 +143,8 @@ Gradle:
 ``` groovy
 
 dependencies {
-	compile('org.springframework.boot.experimental:spring-boot-starter-web-reactive')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
     ...
-}
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.boot.experimental:spring-boot-dependencies-web-reactive:0.1.0.M1"
-	}
 }
 
 ```
@@ -178,23 +164,27 @@ public Mono<Result> parallel() {
 
 ```
 
-Put this code into a Spring Boot application and it can run on Tomcat, Jetty, or Netty, depending on which jar is on the classpath. Tomcat is the default container; to use a different one, remove Tomcat from the classpath and bring in the other container. The three containers differ little in startup time, memory usage, and runtime resources.
+Put this code into a Spring Boot application and it can run on Tomcat, Jetty, or Netty, depending on which container is on the classpath. The webflux starter ships with Reactor Netty by default and works out of the box; if spring-boot-starter-web is also on the classpath, Spring MVC takes precedence. To switch to a different container, remove the default one from the classpath and bring in the other. The containers differ little in startup time, memory usage, and runtime resources.
 
-We still call ```block()``` to block the service endpoint, so we still need to subscribe on a worker thread to avoid blocking the caller. We can also switch to a non-blocking client, for example replacing ```RestTemplate``` with the new ```WebClient```:
+We still call ```block()``` to block the service endpoint, so we still need to subscribe on a worker thread to avoid blocking the caller. We can also switch to a non-blocking client, for example replacing ```RestTemplate``` with ```WebClient```:
 
 ``` java
 
-private WebClient client = new WebClient(new ReactorHttpClientRequestFactory());
+private WebClient client = WebClient.create();
 
 private Mono<HttpStatus> fetch(int value) {
-    return this.client.perform(HttpRequestBuilders.get("http://example.com"))
-            .extract(WebResponseExtractors.response(String.class))
+    return this.client.get()
+            .uri("http://example.com/{value}", value)
+            .retrieve()
+            .toBodilessEntity()
             .map(response -> response.getStatusCode());
 }
 
 ```
 
-Note that ```WebClient.perform()``` returns a reactive type that is converted into a ```Mono<HttpStatus>```, but we do not subscribe to it. The subscription is done by the framework.
+If you need to treat 4xx/5xx status codes as errors, chain a ```.onStatus(HttpStatusCode::isError, response -> ...)``` call after ```retrieve()```. Also note that the old ```exchange()``` method has been deprecated since Spring Framework 5.3; when you need full control over the response, prefer ```exchangeToMono()``` instead.
+
+Note that ```client.get()...retrieve()``` returns a reactive type, which ```toBodilessEntity()``` converts into a ```Mono<ResponseEntity<Void>>```; the map then produces a ```Mono<HttpStatus>```, but we do not subscribe to it. The subscription is done by the framework.
 
 ## Inversion of Control
 

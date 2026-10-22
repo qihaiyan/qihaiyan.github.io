@@ -7,11 +7,13 @@ slug_zh: secure-spring-boot-APIs-with-JWT
 tags: [spring,jwt]
 categories: [spring boot]
 image: assets/images/jwt.png
-description: "How to secure Spring Boot RESTful APIs with JWT: integrating Spring Security and JJWT, plus custom filters for token validation, with a full example project."
+description: "How to secure Spring Boot 3.x/4.x RESTful APIs with JWT: integrating Spring Security 6/7 and JJWT 0.12+, plus custom filters for token validation, with a full example project."
 ---
 ### Overview
 
-[Example](https://github.com/qihaiyan/jwt-boot-auth) https://github.com/qihaiyan/jwt-boot-auth
+[Example](https://github.com/qihaiyan/jwt-boot-auth) https://github.com/qihaiyan/jwt-boot-auth (the example code has been updated to match the current versions used in this article)
+
+This article was first written in 2017 and has been fully updated for Spring Boot 3.x/4.x + Spring Security 6/7: the security configuration now uses a SecurityFilterChain bean with lambda DSL, the JWT library has been upgraded to JJWT 0.12+, and the servlet APIs have moved to jakarta.
 
 Spring Boot makes it very convenient to develop RESTful APIs. In production, it is essential to protect the published APIs with authorization. In this article we will look at how to use JWT to add authorization to an API, ensuring that only authorized users can access it.
 
@@ -50,7 +52,7 @@ gradle bootRun
 Once the application has started, you can simply call the API with curl:
 
 ``` shell
-curl http://localhost:8080/tasks
+curl http://localhost:8080/hello
 ```
 
 At this point our API is complete. However, it has no authorization protection at all — anyone can access it, which is insecure. Next we will add an authorization mechanism.
@@ -62,10 +64,10 @@ First, add an entity class MyUser:
 ``` java
 package com.example.jwtauth;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class MyUser {
@@ -176,6 +178,23 @@ After a user enters a username and password, they are compared against the user 
 
 4. Checking the permissions
 
+Now let's start the implementation. We use the JJWT library to generate and validate tokens; add the following dependencies to build.gradle (Gradle now uses implementation to declare dependencies — the old compile configuration has been deprecated):
+
+``` groovy
+dependencies {
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+}
+```
+
+The HS512 algorithm requires a key of at least 64 bytes; if the key is too short, a WeakKeyException is thrown when issuing a token. We configure a sufficiently long secret (Base64-encoded, 65 bytes after decoding) in application.yml:
+
+``` yaml
+jwt:
+  secret: Y2hhbmdlLXRoaXMtc2VjcmV0LWluLXByb2R1Y3Rpb24taXQtbXVzdC1iZS1sb25nLWVub3VnaC1mb3ItaHM1MTI=
+```
+
 #### Handling Login
 
 Create a class JWTLoginFilter. Its core job is to generate a token after the username and password are verified, and return the token to the client:
@@ -185,68 +204,68 @@ package com.example.jwtauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 
-public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
-    private AuthenticationManager authenticationManager;
+public class JWTLoginFilter extends OncePerRequestFilter {
 
-    public JWTLoginFilter(AuthenticationManager authenticationManager) {
+    private static final long EXPIRATION = 24 * 60 * 60 * 1000;
+
+    private final AuthenticationManager authenticationManager;
+    private final SecretKey secretKey;
+
+    public JWTLoginFilter(AuthenticationManager authenticationManager, String secret) {
         this.authenticationManager = authenticationManager;
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req,
-                                                HttpServletResponse res) throws AuthenticationException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        if (!"POST".equals(request.getMethod()) || !"/login".equals(request.getServletPath())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             MyUser user = new ObjectMapper()
-                    .readValue(req.getInputStream(), MyUser.class);
+                    .readValue(request.getInputStream(), MyUser.class);
 
-            return authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(),
-                            user.getPassword(),
-                            new ArrayList<>())
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                            user.getPassword()));
+
+            String token = Jwts.builder()
+                    .subject(authentication.getName())
+                    .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                    .signWith(secretKey)
+                    .compact();
+            response.addHeader("Authorization", "Bearer " + token);
+        } catch (AuthenticationException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-    }
-
-    @Override
-    protected void successfulAuthentication(HttpServletRequest req,
-                                            HttpServletResponse res,
-                                            FilterChain chain,
-                                            Authentication auth) throws IOException, ServletException {
-
-        String token = Jwts.builder()
-                .setSubject(((User) auth.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000))
-                .signWith(SignatureAlgorithm.HS512, "MyJwtSecret")
-                .compact();
-        res.addHeader("Authorization", "Bearer " + token);
     }
 }
 ```
 
-This class extends UsernamePasswordAuthenticationFilter and overrides two of its methods:
+This class extends OncePerRequestFilter, which guarantees that each request passes through the filter exactly once. In the doFilterInternal method, we first check whether the request is a POST to /login; if not, it is not a login request and is simply handed over to the following filters.
 
-`attemptAuthentication`: receives and parses the user's credentials.
-
-`successfulAuthentication`: called after the user logs in successfully; we generate the token in this method.
+For a login request, the username and password are parsed from the request body and passed to `authenticationManager.authenticate`. The AuthenticationManager calls the UserDetailsService to load the user from the database and verifies the password with BCryptPasswordEncoder. Once authentication succeeds, we generate the token in this method: the subject is the username and the token is valid for 24 hours. `signWith(secretKey)` automatically selects the signature algorithm based on the key length; our key satisfies the HS512 requirement, so HS512 is used. The generated token is returned to the client in the `Authorization: Bearer` header; if authentication fails, a 401 is returned.
 
 #### Token Verification
 
@@ -257,117 +276,159 @@ Create a JwtAuthenticationFilter class in which we implement the token validatio
 ``` java
 package com.example.jwtauth;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.springframework.security.authentication.AuthenticationManager;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
-public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
-    public JwtAuthenticationFilter(AuthenticationManager authManager) {
-        super(authManager);
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final SecretKey secretKey;
+
+    public JwtAuthenticationFilter(String secret) {
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req,
-                                    HttpServletResponse res,
-                                    FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader("Authorization");
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
-            chain.doFilter(req, res);
+            filterChain.doFilter(request, response);
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        UsernamePasswordAuthenticationToken authentication =
+                getAuthentication(header.replace("Bearer ", ""));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
+        if (authentication != null) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        filterChain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null) {
+    private UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        try {
             // parse the token.
             String user = Jwts.parser()
-                    .setSigningKey("MyJwtSecret")
-                    .parseClaimsJws(token.replace("Bearer ", ""))
-                    .getBody()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
                     .getSubject();
 
             if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(user, null, List.of());
             }
-            return null;
+        } catch (JwtException | IllegalArgumentException e) {
+            // invalid or expired token; ignore it, the request will be rejected by the authorization check
         }
         return null;
     }
 }
 ```
 
-This class extends BasicAuthenticationFilter. In the doFilterInternal method, it reads the token from the `Authorization` entry of the HTTP header and then validates the token's validity with the methods provided by the Jwts library. If validation passes, the request is treated as an authorized, legitimate request.
+This class also extends OncePerRequestFilter. In the doFilterInternal method, it reads the token from the `Authorization` entry of the HTTP header and then validates the token's validity with the methods provided by the Jwts library: `parseSignedClaims` checks the signature and expiration and parses out the claims. If validation passes, the authentication information is stored in the SecurityContextHolder, and the following authorization checks treat the request as an authorized, legitimate request. If the token is invalid or expired, `parseSignedClaims` throws a JwtException; we simply ignore it here, and the request is rejected by the following authorization checks.
 
 #### Spring Security Configuration
 
 The Spring Security configuration wires the pieces above together.
 
+In Spring Security 6.0, the once-ubiquitous WebSecurityConfigurerAdapter has been removed, and the antMatchers and and() chained style has been deprecated along with it. The current approach is to define a SecurityFilterChain bean and configure everything with the lambda DSL (the replacement for antMatchers is requestMatchers).
+
 ``` java
 package com.example.jwtauth;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
-public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private UserDetailsService userDetailsService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+@EnableWebSecurity
+public class MyWebSecurityConfig {
 
-    public MyWebSecurityConfig(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userDetailsService = userDetailsService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    @Bean
+    public UserDetailsService userDetailsService(MyUserRepository myUserRepository) {
+        return username -> {
+            MyUser myUser = myUserRepository.findByUsername(username);
+            if (myUser == null) {
+                throw new UsernameNotFoundException("User not found: " + username);
+            }
+            return User.withUsername(myUser.getUsername())
+                    .password(myUser.getPassword())
+                    .roles("USER")
+                    .build();
+        };
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilter(new JWTLoginFilter(authenticationManager()))
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()));
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   AuthenticationManager authenticationManager,
+                                                   @Value("${jwt.secret}") String secret) throws Exception {
+        http
+                .cors(withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/users/signup").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JWTLoginFilter(authenticationManager, secret),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(secret),
+                        UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 }
 ```
 
-This is standard Spring Security configuration, so I won't go into the details. Note these two lines
+The configuration class defines three beans:
+
+1. UserDetailsService: loads users from the database. With this bean in place, together with the BCryptPasswordEncoder bean defined earlier, Spring Security automatically builds a DaoAuthenticationProvider from them to handle username and password authentication — this replaces the old configure(AuthenticationManagerBuilder) override.
+
+2. AuthenticationManager: obtained from the AuthenticationConfiguration and exposed as a bean, for the login filter to use.
+
+3. SecurityFilterChain: puts the configuration above together. Note these two lines
 
 ``` 
-.addFilter(new JWTLoginFilter(authenticationManager()))
-.addFilter(new JwtAuthenticationFilter(authenticationManager()))
+.addFilterBefore(new JWTLoginFilter(authenticationManager, secret), UsernamePasswordAuthenticationFilter.class)
+.addFilterBefore(new JwtAuthenticationFilter(secret), UsernamePasswordAuthenticationFilter.class)
 ```
 
-which add the JWT filters we defined to the Spring Security processing flow.
+which add the JWT filters we defined to the Spring Security processing flow. Since JWT is stateless, the session creation policy is also set to STATELESS here.
 
 Now let's do a simple verification of our application:
 

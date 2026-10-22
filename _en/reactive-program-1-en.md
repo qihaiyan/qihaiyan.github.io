@@ -75,7 +75,7 @@ Coroutines can pass control to one another without the caller coordinating every
 
 ## Reactive Programming in Java
 
-Java is not a "reactive" language and cannot natively support coroutines. Other languages on the JVM (Scala and Clojure) support coroutines well; Java only gained support in JDK 9. But many technologies already provide reactive support on the JVM:
+Java is not a "reactive" language and cannot natively support coroutines. Other languages on the JVM (Scala and Clojure) support coroutines well; Java only gained library-level support in JDK 9 through the java.util.concurrent.Flow package (the Reactive Streams API), and even today Java has no language-level coroutines. But many technologies already provide reactive support on the JVM:
 
 ### Reactive Streams
 
@@ -93,19 +93,21 @@ According to the classification in David Karnok's [Generations of Reactive](http
 
 ### Spring Framework 5.0
 
-Has reactive features built in, including tools for building HTTP services and clients. Spring is built on top of Reactor, but users are free to choose Reactor or RxJava underneath. The supported servers are Tomcat, Jetty, Netty, and Undertow.
+Has reactive features built in, including tools for building HTTP services and clients. Spring is built on top of Reactor, but users are free to choose Reactor or RxJava underneath. The supported servers are Tomcat, Jetty, Netty, and Undertow. The reactive support first introduced in Spring Framework 5.0 has kept evolving and today spans Spring Framework 7 (with Spring Boot 4.x), where WebFlux is mature and stable.
 
 ### [Ratpack](https://ratpack.io/)
 
-A set of tools for building high-performance web applications. Spring Boot can use this framework directly.
+A set of tools for building high-performance web applications. Spring Boot can use this framework directly. (Note: Ratpack has largely stopped active development.)
 
 ### Akka
 
-A development framework implementing the Actor Model, usable from Scala and Java, and third-generation reactive technology.
+A development framework implementing the Actor Model, usable from Scala and Java, and third-generation reactive technology. Note that Akka changed its license to the commercial BSL in 2022, and the community forked it into Apache Pekko.
 
 ## 4. Why Now?
 
 Interest in reactive technology keeps growing because it helps us save server resources: a small number of threads can support a much higher load. Reactive, non-blocking, asynchronous — these provide a good way to solve problems. But there is no free lunch, and every technology has its appropriate use cases. Reactive does not solve our problems directly; it just gives us one more option when solving them.
+
+It is also worth noting that virtual threads, introduced in JDK 21+, change the premise that "threads are expensive": creating a thread has become very cheap, giving IO-intensive workloads a new alternative. In Spring Boot 3.2+ you only need to set `spring.threads.virtual.enabled=true` to enable them.
 
 ## 5. Summary
 

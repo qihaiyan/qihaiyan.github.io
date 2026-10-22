@@ -28,7 +28,7 @@ build.gradle:
 
 ``` groovy
 plugins {
-    id 'org.springframework.boot' version '3.0.2'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
 }
@@ -54,22 +54,20 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-json"
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'io.r2dbc:r2dbc-h2'
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'com.h2database:h2'
     testImplementation 'io.r2dbc:r2dbc-h2'
-    testImplementation 'org.junit.vintage:junit-vintage-engine'
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.1"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.1.0"
     }
 }
 
@@ -78,7 +76,7 @@ test {
 }
 ```
 
-Since SpringCloudGateway is built on Spring WebFlux, the database configuration in the dependencies needs to use r2dbc.
+Since SpringCloudGateway is built on Spring WebFlux, the database configuration in the dependencies needs to use r2dbc. The former spring-cloud-starter-gateway dependency has been split into spring-cloud-starter-gateway-server-webflux and spring-cloud-starter-gateway-server-webmvc (the WebMVC-based gateway); this article uses the WebFlux variant. The version numbers in the example are for reference only; for the compatibility matrix between Spring Boot and Spring Cloud, refer to the official wiki (https://github.com/spring-cloud/spring-cloud-release/wiki).
 
 ## 3. Configuration File
 

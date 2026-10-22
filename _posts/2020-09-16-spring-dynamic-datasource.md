@@ -17,6 +17,8 @@ image: assets/images/dynamic-datasource.png
 
 <!-- more -->
 
+需要注意的是，本文的方案适合"批量接入多个配置好的数据源，并分别访问"的场景。如果需求是程序在运行时于多个数据源之间切换（例如多租户场景），更合适的是Spring提供的```AbstractRoutingDataSource```，或者社区中的dynamic-datasource类组件，它们专注于数据源的路由选择。
+
 ## 二、配置文件
 
 yml格式的配置文件支持list结构，我们可以把需要访问的数据源配置到list结构中，每个数据源指定各自的url、用户名、密码、查询语句：
@@ -60,7 +62,7 @@ public class DatabaseConfig {
 
     @PostConstruct
     public void init() {
-        for (DbSchema current : this.getShemas()) {
+        for (DbSchema current : this.getSchemas()) {
             HikariConfig jdbcConfig = new HikariConfig();
             jdbcConfig.setJdbcUrl(current.getDatasource().getUrl());
             jdbcConfig.setUsername(current.getDatasource().getUsername());
@@ -90,6 +92,8 @@ public class DatabaseConfig {
 其中的```DbSchema```类对应了数据源的各项配置，包括url、用户名、密码、查询语句，另外还定义了一个```JdbcTemplate```，我们可以用每个数据源自己的JdbcTemplate去访问本数据源的数据。
 
 在```init```方法中初始化```JdbcTemplate```。数据库连接池采用HikariCP，这也是springboot默认使用的数据库连接池。配置文件中所有的数据库连接配置都生成一个对应的```DbSchema```对象，放到配置类的schemas这个list中。
+
+有两个包名存在版本差异，需要注意：```@PostConstruct``` 在Spring Boot 3及以上版本中位于 ```jakarta.annotation``` 包（此前在 ```javax.annotation``` 包）；```DataSourceProperties``` 在Spring Boot 4中已从 ```org.springframework.boot.autoconfigure.jdbc``` 挪到 ```org.springframework.boot.jdbc.autoconfigure```（Spring Boot 4进行了模块化拆分），Spring Boot 2/3中仍在原包名下。
 
 通过这种方式，我们还可以实现配置文件中数据库密码的加密。配置文件中的数据库密码是加密后的密码，可以在init方法中，对```current.getDatasource().getPassword()```解密。这样能够提升系统的安全性，防止数据库密码通过配置文件泄漏。
 
