@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    {% include lang-alternate.html %}
     {% if paginator and paginator.page > 1 %}
     <title>{{ page.title }} | {{ site.title }}</title>
+    {% seo title=false %}
+    {% elsif is_en %}
+    <title>{{ page.title }} | {{ site.name_en }}</title>
     {% seo title=false %}
     {% else %}
     {% seo %}
     {% endif %}
     {% feed_meta %}
 
-    {% include lang-alternate.html %}
     {% if is_en %}
     <link rel="alternate" hreflang="en" href="{{ site.url }}{{ page.url }}">
     <link rel="alternate" hreflang="zh" href="{{ site.url }}{{ alt_url }}">
@@ -56,7 +59,7 @@
     <!-- Navbar -->
     <nav id="MagicMenu" class="topnav navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="{{ site.baseurl }}/index.html"><strong>{{site.name}}</strong></a>
+        <a class="navbar-brand" href="{{ site.baseurl }}{% if is_en %}/en/{% else %}/index.html{% endif %}"><strong>{% if is_en %}{{ site.name_en }}{% else %}{{ site.name }}{% endif %}</strong></a>
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
@@ -87,7 +90,7 @@
         <div class="container">
         <div class="row align-items-center justify-content-between">
             <div>
-                <span class="navbar-brand mr-2 mb-0"><strong>海思</strong></span>
+                <span class="navbar-brand mr-2 mb-0"><strong>{% if is_en %}{{ site.name_en }}{% else %}{{ site.name }}{% endif %}</strong></span>
                 <span>Copyright © <script>document.write(new Date().getFullYear())</script>.</span>
 
                 <!--  Github Repo Star Btn-->
