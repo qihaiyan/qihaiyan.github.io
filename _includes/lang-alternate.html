@@ -18,7 +18,13 @@
   {% when '/en/categories.html' %}
     {% assign alt_url = '/categories.html' %}
   {% else %}
-    {% assign alt_url = page.url | replace: '/', '' | remove_last: '-en' | prepend: '/' %}
+    {% comment %}
+      英文文章 URL 由 collection permalink /:name/ 生成，形如 /spring-native-en/，
+      直接把结尾的 -en/ 替换为 / 即得中文版 URL。
+      注意：不要用 remove_last，GitHub Pages 构建的 Liquid 4 没有该过滤器，
+      会静默跳过导致 alt_url 指向英文页自身（点“中文”按钮不跳转）。
+    {% endcomment %}
+    {% assign alt_url = page.url | replace: '-en/', '/' %}
   {% endcase %}
 {% else %}
   {% case page.url %}

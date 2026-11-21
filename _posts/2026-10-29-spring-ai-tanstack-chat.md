@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "SpringAI+TanStack AI实现流式AI聊天"
+title:  "SpringAI+TanStackAI实现AI Agent"
 description: "介绍如何用 Spring AI 实现 AG-UI 协议的后端，与 TanStack AI（@tanstack/ai-react）前端对接，实现流式输出的 AI 聊天界面：多轮对话、中断生成、新会话，服务端无状态。"
 date:   2026-10-29 15:30:00 +0800
 tags: [spring,java,ai,react]

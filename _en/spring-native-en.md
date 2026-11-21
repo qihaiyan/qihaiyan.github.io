@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "AOT (GraalVM Native Image) Application Development with Spring Boot 3"
+title:  "AOT (GraalVM Native Image) Application Development with Spring Boot"
 date:   2022-11-26 17:50:00 +0800
 lang: en
 slug_zh: spring-native
 tags: [spring,GraalVM Native]
 categories: [spring boot]
 image: assets/images/spring-native.jpg
-description: "Spring Boot 3 AOT and GraalVM Native Image: hint configuration for reflection and proxies to build fast, small native executables for cloud-native apps."
+description: "Spring Boot AOT and GraalVM Native Image: hint configuration for reflection and proxies to build fast, small native executables for cloud-native apps."
 ---
 
 GraalVM Native Images is a compilation tool that uses AOT (Ahead-of-Time) technology to compile Java programs directly into native executables. The resulting program no longer depends on a JRE at runtime, starts quickly, and consumes few resources — huge advantages over traditional Java programs. For cloud-native applications, programs built with GraalVM Native Images are very small and well suited to cloud-native environments, whereas traditional Java images are often criticized for having to bundle a large JRE or JDK.

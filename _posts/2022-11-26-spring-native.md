@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Spring Boot 3的AOT（GraalVM Native Image）应用开发"
-description: "介绍 Spring Boot 3 的 AOT 与 GraalVM Native Image 技术，讲解反射、动态代理等资源的 Hint 配置，将 Java 程序编译为启动快、体积小的原生可执行程序，适配云原生场景。"
+title:  "Spring Boot 的AOT（GraalVM Native Image）应用开发"
+description: "介绍 Spring Boot 的 AOT 与 GraalVM Native Image 技术，讲解反射、动态代理等资源的 Hint 配置，将 Java 程序编译为启动快、体积小的原生可执行程序，适配云原生场景。"
 date:   2022-11-26 17:50:00 +0800
 tags: [spring,GraalVM Native]
 categories: [spring boot]
@@ -14,7 +14,7 @@ Spring Boot从3.0版本开始支持AOT技术。
 
 ## 一、概述
 
-Spring Boot 3.0 仍然支持传统的开发方式，既编译生成jar包，通过JRE来执行，在此基础上，通过调整编译方式，可以编译生成直接运行的可执行程序，Spring AOT与传统应用的区别包括：
+Spring Boot 3 之后仍然支持传统的开发方式，既编译生成jar包，通过JRE来执行，在此基础上，通过调整编译方式，可以编译生成直接运行的可执行程序，Spring AOT与传统应用的区别包括：
 
 1. 程序运行时动态调整的资源无法直接使用，例如反射、动态代理等，需要在代码中通过Hint为编译器指定
 2. 应用的classpath在编译后就固定了，不能动态调整
