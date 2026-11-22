@@ -23,18 +23,15 @@
     {% elsif alt_url != '' %}
     <link rel="alternate" hreflang="zh" href="{{ site.url }}{{ page.url }}">
     <link rel="alternate" hreflang="en" href="{{ site.url }}{{ alt_url }}">
-    <script>
-        // 非中文浏览器自动切换到英文版；用户点过“中文版”后本次会话不再跳转
-        (function () {
-            try {
-                var nav = (navigator.language || navigator.userLanguage || 'zh').toLowerCase();
-                if (nav.indexOf('zh') !== 0 && sessionStorage.getItem('langChoice') !== 'zh') {
-                    location.replace('{{ alt_url | prepend: site.baseurl }}');
-                }
-            } catch (e) { }
-        })();
-    </script>
+    <script>window.langAlt = '{{ alt_url | prepend: site.baseurl }}';</script>
+    <script src="{{site.baseurl}}/assets/js/lang-redirect.js" defer></script>
     {% endif %}
+    {% comment %}
+      语言自动跳转逻辑在 assets/js/lang-redirect.js,目标 URL 通过 window.langAlt 注入。
+      注意:不要把 location.replace 内联回 HTML——AI Search 的静态爬虫会把页面文档里的
+      location.replace 当成重定向声明,把英文页内容存到中文 URL 名下,
+      导致中文文章从搜索索引中消失(2026-11 实测)。
+    {% endcomment %}
 
     <link rel="shortcut icon" type="image/x-icon" href="{{site.baseurl}}/{{site.favicon}}">
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Spring Data Envers 支持有条件变动纪录的保存和查询"
+title:  "Spring Data Envers 支持数据审计"
 date:   2023-10-15 16:20:00 +0800
 tags: [spring,java]
 categories: [spring boot]
