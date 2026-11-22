@@ -17,20 +17,17 @@
     {% endif %}
     {% feed_meta %}
 
-    {% if is_en %}
-    <link rel="alternate" hreflang="en" href="{{ site.url }}{{ page.url }}">
-    <link rel="alternate" hreflang="zh" href="{{ site.url }}{{ alt_url }}">
-    {% elsif alt_url != '' %}
-    <link rel="alternate" hreflang="zh" href="{{ site.url }}{{ page.url }}">
-    <link rel="alternate" hreflang="en" href="{{ site.url }}{{ alt_url }}">
+    {% if alt_url != '' and page.lang != 'en' %}
     <script>window.langAlt = '{{ alt_url | prepend: site.baseurl }}';</script>
     <script src="{{site.baseurl}}/assets/js/lang-redirect.js" defer></script>
     {% endif %}
     {% comment %}
       语言自动跳转逻辑在 assets/js/lang-redirect.js,目标 URL 通过 window.langAlt 注入。
-      注意:不要把 location.replace 内联回 HTML——AI Search 的静态爬虫会把页面文档里的
-      location.replace 当成重定向声明,把英文页内容存到中文 URL 名下,
-      导致中文文章从搜索索引中消失(2026-11 实测)。
+      注意1:不要把 location.replace 内联回 HTML——AI Search 的静态爬虫会把页面文档里的
+      location.replace 当成重定向声明,把英文页内容存到中文 URL 名下(2026-11 实测)。
+      注意2:不要加 <link rel="alternate" hreflang> —— AI Search 会把 hreflang 互指的
+      中英两个 URL 当作同一文档分组,统一存英文变体内容,导致中文文章从索引中消失
+      (2026-11 实测:语言切换按钮与自动跳转均不依赖 hreflang,移除无副作用)。
     {% endcomment %}
 
     <link rel="shortcut icon" type="image/x-icon" href="{{site.baseurl}}/{{site.favicon}}">
